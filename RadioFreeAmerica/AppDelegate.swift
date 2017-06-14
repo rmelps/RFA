@@ -10,9 +10,10 @@ import UIKit
 import Firebase
 import FacebookCore
 import FacebookLogin
+import GoogleSignIn
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
 
     var window: UIWindow?
 
@@ -21,6 +22,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         FIRApp.configure()
         
         SDKApplicationDelegate.shared.application(application, didFinishLaunchingWithOptions: launchOptions)
+        
+        GIDSignIn.sharedInstance().clientID = FIRApp.defaultApp()?.options.clientID
+        GIDSignIn.sharedInstance().delegate = self
         
         
         return true
@@ -51,7 +55,38 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
         let handler: Bool = SDKApplicationDelegate.shared.application(app, open: url, options: options)
         
+        GIDSignIn.sharedInstance().handle(url,
+                                          sourceApplication:options[UIApplicationOpenURLOptionsKey.sourceApplication] as? String,
+                                          annotation: [:])
+        
         return handler
+    }
+    
+    func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
+        if let error = error {
+            print(error.localizedDescription)
+            return
+        }
+        
+        guard let authentication = user.authentication else { return }
+        let credential = FIRGoogleAuthProvider.credential(withIDToken: authentication.idToken,
+                                                       accessToken: authentication.accessToken)
+        FIRAuth.auth()?.signIn(with: credential, completion: { (user:FIRUser?, error:Error?) in
+            if let error = error {
+                print(error.localizedDescription)
+                return
+            }
+            
+            if let rootVC = self.window?.rootViewController as? MainViewController {
+                rootVC.resizeAndMoveLogInButton(button: rootVC.logInWithGoogleButton, type: .google)
+            }
+            
+            print(credential.provider)
+        })
+    }
+    
+    func sign(_ signIn: GIDSignIn!, didDisconnectWith user: GIDGoogleUser!, withError error: Error!) {
+        // Perform any actions when user disconnects with app here...
     }
 
 
