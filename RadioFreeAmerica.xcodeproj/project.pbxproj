@@ -12,9 +12,12 @@
 		951D228D1EEF3DA5005264A7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 951D228B1EEF3DA5005264A7 /* Main.storyboard */; };
 		951D228F1EEF3DA5005264A7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 951D228E1EEF3DA5005264A7 /* Assets.xcassets */; };
 		951D22921EEF3DA5005264A7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 951D22901EEF3DA5005264A7 /* LaunchScreen.storyboard */; };
+		951D229A1EEF3EAC005264A7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 951D22991EEF3EAC005264A7 /* GoogleService-Info.plist */; };
+		EA25DE04343B6E4ADE610C92 /* Pods_RadioFreeAmerica.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B89A5A22515871740B93D705 /* Pods_RadioFreeAmerica.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7E41EC5B91D9721D985ABB90 /* Pods-RadioFreeAmerica.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RadioFreeAmerica.release.xcconfig"; path = "Pods/Target Support Files/Pods-RadioFreeAmerica/Pods-RadioFreeAmerica.release.xcconfig"; sourceTree = "<group>"; };
 		951D22841EEF3DA5005264A7 /* RadioFreeAmerica.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RadioFreeAmerica.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		951D22871EEF3DA5005264A7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		951D22891EEF3DA5005264A7 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -22,6 +25,9 @@
 		951D228E1EEF3DA5005264A7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		951D22911EEF3DA5005264A7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		951D22931EEF3DA5005264A7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		951D22991EEF3EAC005264A7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		A2EA3C87DBE567095C362C21 /* Pods-RadioFreeAmerica.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RadioFreeAmerica.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RadioFreeAmerica/Pods-RadioFreeAmerica.debug.xcconfig"; sourceTree = "<group>"; };
+		B89A5A22515871740B93D705 /* Pods_RadioFreeAmerica.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RadioFreeAmerica.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -29,17 +35,28 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EA25DE04343B6E4ADE610C92 /* Pods_RadioFreeAmerica.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2A62155AA92293C8BD98501E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B89A5A22515871740B93D705 /* Pods_RadioFreeAmerica.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		951D227B1EEF3DA5005264A7 = {
 			isa = PBXGroup;
 			children = (
 				951D22861EEF3DA5005264A7 /* RadioFreeAmerica */,
 				951D22851EEF3DA5005264A7 /* Products */,
+				C88D44B825F6E43FD6CD0B15 /* Pods */,
+				2A62155AA92293C8BD98501E /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -60,8 +77,18 @@
 				951D228E1EEF3DA5005264A7 /* Assets.xcassets */,
 				951D22901EEF3DA5005264A7 /* LaunchScreen.storyboard */,
 				951D22931EEF3DA5005264A7 /* Info.plist */,
+				951D22991EEF3EAC005264A7 /* GoogleService-Info.plist */,
 			);
 			path = RadioFreeAmerica;
+			sourceTree = "<group>";
+		};
+		C88D44B825F6E43FD6CD0B15 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				A2EA3C87DBE567095C362C21 /* Pods-RadioFreeAmerica.debug.xcconfig */,
+				7E41EC5B91D9721D985ABB90 /* Pods-RadioFreeAmerica.release.xcconfig */,
+			);
+			name = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -71,9 +98,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 951D22961EEF3DA5005264A7 /* Build configuration list for PBXNativeTarget "RadioFreeAmerica" */;
 			buildPhases = (
+				82F5887E7E3D839E08893970 /* [CP] Check Pods Manifest.lock */,
 				951D22801EEF3DA5005264A7 /* Sources */,
 				951D22811EEF3DA5005264A7 /* Frameworks */,
 				951D22821EEF3DA5005264A7 /* Resources */,
+				213977D41971C655251F9D1A /* [CP] Embed Pods Frameworks */,
+				9D7BA3BA59456F1F4B70B01B /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -124,6 +154,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				951D229A1EEF3EAC005264A7 /* GoogleService-Info.plist in Resources */,
 				951D22921EEF3DA5005264A7 /* LaunchScreen.storyboard in Resources */,
 				951D228F1EEF3DA5005264A7 /* Assets.xcassets in Resources */,
 				951D228D1EEF3DA5005264A7 /* Main.storyboard in Resources */,
@@ -131,6 +162,54 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		213977D41971C655251F9D1A /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-RadioFreeAmerica/Pods-RadioFreeAmerica-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		82F5887E7E3D839E08893970 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		9D7BA3BA59456F1F4B70B01B /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-RadioFreeAmerica/Pods-RadioFreeAmerica-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		951D22801EEF3DA5005264A7 /* Sources */ = {
@@ -261,6 +340,7 @@
 		};
 		951D22971EEF3DA5005264A7 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A2EA3C87DBE567095C362C21 /* Pods-RadioFreeAmerica.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = A5EQQRPM7V;
@@ -274,6 +354,7 @@
 		};
 		951D22981EEF3DA5005264A7 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7E41EC5B91D9721D985ABB90 /* Pods-RadioFreeAmerica.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = A5EQQRPM7V;
