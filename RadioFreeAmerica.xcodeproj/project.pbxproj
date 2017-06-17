@@ -13,6 +13,7 @@
 		951D228F1EEF3DA5005264A7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 951D228E1EEF3DA5005264A7 /* Assets.xcassets */; };
 		951D22921EEF3DA5005264A7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 951D22901EEF3DA5005264A7 /* LaunchScreen.storyboard */; };
 		951D229A1EEF3EAC005264A7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 951D22991EEF3EAC005264A7 /* GoogleService-Info.plist */; };
+		951D22A01EF492C5005264A7 /* MenuButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951D229F1EF492C5005264A7 /* MenuButton.swift */; };
 		EA25DE04343B6E4ADE610C92 /* Pods_RadioFreeAmerica.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B89A5A22515871740B93D705 /* Pods_RadioFreeAmerica.framework */; };
 /* End PBXBuildFile section */
 
@@ -26,6 +27,7 @@
 		951D22911EEF3DA5005264A7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		951D22931EEF3DA5005264A7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		951D22991EEF3EAC005264A7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		951D229F1EF492C5005264A7 /* MenuButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuButton.swift; sourceTree = "<group>"; };
 		A2EA3C87DBE567095C362C21 /* Pods-RadioFreeAmerica.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RadioFreeAmerica.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RadioFreeAmerica/Pods-RadioFreeAmerica.debug.xcconfig"; sourceTree = "<group>"; };
 		B89A5A22515871740B93D705 /* Pods_RadioFreeAmerica.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RadioFreeAmerica.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -74,6 +76,7 @@
 				951D22871EEF3DA5005264A7 /* AppDelegate.swift */,
 				951D22891EEF3DA5005264A7 /* MainViewController.swift */,
 				951D228B1EEF3DA5005264A7 /* Main.storyboard */,
+				951D229F1EF492C5005264A7 /* MenuButton.swift */,
 				951D228E1EEF3DA5005264A7 /* Assets.xcassets */,
 				951D22901EEF3DA5005264A7 /* LaunchScreen.storyboard */,
 				951D22931EEF3DA5005264A7 /* Info.plist */,
@@ -218,6 +221,7 @@
 			files = (
 				951D228A1EEF3DA5005264A7 /* MainViewController.swift in Sources */,
 				951D22881EEF3DA5005264A7 /* AppDelegate.swift in Sources */,
+				951D22A01EF492C5005264A7 /* MenuButton.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -6,6 +6,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12089"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -21,18 +22,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZkG-H3-vM8">
-                                <rect key="frame" x="95" y="337" width="185" height="33"/>
-                                <color key="backgroundColor" red="0.37570501179999999" green="0.66657312369999999" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <fontDescription key="fontDescription" name="BodoniSvtyTwoOSITCTT-Bold" family="Bodoni 72 Oldstyle" pointSize="17"/>
-                                <size key="titleShadowOffset" width="1" height="1"/>
-                                <state key="normal" title="Sign In with Google">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="logInWithGoogleButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="azH-lh-Asa"/>
-                                </connections>
-                            </button>
                             <button opaque="NO" contentMode="top" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="H2y-fK-5nC">
                                 <rect key="frame" x="95" y="297" width="185" height="33"/>
                                 <color key="backgroundColor" red="0.25247731800000001" green="0.3610482216" blue="0.67668074369999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -47,14 +36,56 @@
                                     <action selector="loginWithFacebookButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="s5B-8f-Wpo"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZkG-H3-vM8">
+                                <rect key="frame" x="95" y="337" width="185" height="33"/>
+                                <color key="backgroundColor" red="0.37570501179999999" green="0.66657312369999999" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <fontDescription key="fontDescription" name="BodoniSvtyTwoOSITCTT-Bold" family="Bodoni 72 Oldstyle" pointSize="17"/>
+                                <size key="titleShadowOffset" width="1" height="1"/>
+                                <state key="normal" title="Sign In with Google">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="logInWithGoogleButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="azH-lh-Asa"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mMw-Cj-x2y" customClass="MenuButton" customModule="RadioFreeAmerica" customModuleProvider="target">
+                                <rect key="frame" x="147.5" y="120" width="80" height="80"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="80" id="NOb-Pn-bcB"/>
+                                    <constraint firstAttribute="width" secondItem="mMw-Cj-x2y" secondAttribute="height" multiplier="1:1" id="rNe-Rd-IfM"/>
+                                </constraints>
+                                <state key="normal" image="cassette"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="buttonColor">
+                                        <color key="value" red="0.81697964449541283" green="0.44615808409270269" blue="0.34308022558908652" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vx8-dh-zS7" customClass="MenuButton" customModule="RadioFreeAmerica" customModuleProvider="target">
+                                <rect key="frame" x="147.5" y="487" width="80" height="80"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="vx8-dh-zS7" secondAttribute="height" multiplier="1:1" id="7Ss-mC-I38"/>
+                                    <constraint firstAttribute="width" constant="80" id="P39-qH-72p"/>
+                                </constraints>
+                                <state key="normal" image="microphone"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="buttonColor">
+                                        <color key="value" red="0.72237498894169694" green="0.80443663990825687" blue="0.44017838083123428" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="0.30886844629999999" green="0.77870556189999995" blue="0.44214075450000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="vx8-dh-zS7" secondAttribute="bottom" constant="100" id="31B-Vq-FvR"/>
+                            <constraint firstItem="vx8-dh-zS7" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="97a-PL-KQm"/>
                             <constraint firstItem="ZkG-H3-vM8" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Lmy-11-aH4"/>
                             <constraint firstItem="ZkG-H3-vM8" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="20" id="TYd-uh-ZPn"/>
                             <constraint firstItem="H2y-fK-5nC" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="-20" id="VqT-ME-TpU"/>
                             <constraint firstItem="H2y-fK-5nC" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="f9M-DS-ieD"/>
+                            <constraint firstItem="mMw-Cj-x2y" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="100" id="oTV-cW-itP"/>
                             <constraint firstItem="ZkG-H3-vM8" firstAttribute="width" secondItem="H2y-fK-5nC" secondAttribute="width" id="pvI-S6-rA9"/>
+                            <constraint firstItem="mMw-Cj-x2y" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="v36-a0-TxC"/>
                         </constraints>
                     </view>
                     <connections>
@@ -65,6 +96,10 @@
                         <outlet property="logInButtonWidthConstraint" destination="wZY-He-W1u" id="U4r-bY-o2Q"/>
                         <outlet property="logInWithFacebookButton" destination="H2y-fK-5nC" id="bIg-hI-OR8"/>
                         <outlet property="logInWithGoogleButton" destination="ZkG-H3-vM8" id="Raj-aK-au8"/>
+                        <outlet property="producerPortalButton" destination="mMw-Cj-x2y" id="6s1-Yu-Sl7"/>
+                        <outlet property="producerPortalButtonYConstraint" destination="oTV-cW-itP" id="tfY-Q4-rmC"/>
+                        <outlet property="wordsmithPortalButton" destination="vx8-dh-zS7" id="NI4-7S-xfz"/>
+                        <outlet property="wordsmithPortalButtonYConstraint" destination="31B-Vq-FvR" id="BrN-Xo-rwu"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -72,4 +107,8 @@
             <point key="canvasLocation" x="136.80000000000001" y="124.58770614692655"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="cassette" width="112" height="112"/>
+        <image name="microphone" width="100" height="100"/>
+    </resources>
 </document>

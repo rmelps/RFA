@@ -58,7 +58,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
         GIDSignIn.sharedInstance().handle(url,
                                           sourceApplication:options[UIApplicationOpenURLOptionsKey.sourceApplication] as? String,
                                           annotation: [:])
-        
         return handler
     }
     
@@ -78,7 +77,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
             }
             
             if let rootVC = self.window?.rootViewController as? MainViewController {
-                rootVC.resizeAndMoveLogInButton(button: rootVC.logInWithGoogleButton, type: .google)
+                rootVC.resizeAndMoveLogInButton(button: rootVC.logInWithGoogleButton, type: .google, signingIn: true)
             }
             
             print(credential.provider)
