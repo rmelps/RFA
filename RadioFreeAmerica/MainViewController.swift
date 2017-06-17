@@ -203,16 +203,20 @@ class MainViewController: UIViewController, GIDSignInUIDelegate {
         var thisButtonTitle = String()
         var mainButtonTransform = CGAffineTransform()
         var mainButtonAlpha = CGFloat()
+        var mainDelay: Double = 0.0
+        var logDelay: Double = 0.0
         
         if dirIn {
             otherButtonAlpha = 0
             thisButtonTitle = "Sign Out"
             mainButtonTransform = CGAffineTransform.identity
             mainButtonAlpha = 1
+            mainDelay = 0.5
         } else {
             otherButtonAlpha = 1
             mainButtonTransform = CGAffineTransform.init(scaleX: 0.1, y: 0.1)
             mainButtonAlpha = 0
+            logDelay = 0.5
         }
         
         if type == .facebook {
@@ -244,8 +248,14 @@ class MainViewController: UIViewController, GIDSignInUIDelegate {
             
         }
         
+        UIView.animate(withDuration: 0.4, delay: mainDelay, usingSpringWithDamping: 0.3, initialSpringVelocity: 6, options: .curveEaseInOut, animations: {
+            self.producerPortalButton.alpha = mainButtonAlpha
+            self.wordsmithPortalButton.alpha = mainButtonAlpha
+            self.producerPortalButton.transform = mainButtonTransform
+            self.wordsmithPortalButton.transform = mainButtonTransform
+        }, completion: nil)
         
-        UIView.animateKeyframes(withDuration: 0.5, delay: 0.0, options: .calculationModeCubicPaced, animations: {
+        UIView.animateKeyframes(withDuration: 0.5, delay: logDelay, options: .calculationModeCubicPaced, animations: {
             
             self.view.layoutIfNeeded()
             
@@ -270,13 +280,6 @@ class MainViewController: UIViewController, GIDSignInUIDelegate {
             (_) in
             button.layoutIfNeeded()
             button.setTitle(thisButtonTitle, for: .normal)
-            
-            UIView.animate(withDuration: 0.4, delay: 0.1, usingSpringWithDamping: 0.3, initialSpringVelocity: 6, options: .curveEaseInOut, animations: {
-                self.producerPortalButton.alpha = mainButtonAlpha
-                self.wordsmithPortalButton.alpha = mainButtonAlpha
-                self.producerPortalButton.transform = mainButtonTransform
-                self.wordsmithPortalButton.transform = mainButtonTransform
-            }, completion: nil)
             
             self.isSignedIn = dirIn
             
