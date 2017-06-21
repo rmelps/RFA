@@ -206,8 +206,9 @@ class MainViewController: UIViewController, GIDSignInUIDelegate {
         UIView.animate(withDuration: 1.5, animations: { 
             self.portalLabel.alpha = 1
         }) { (_) in
+            self.performSegue(withIdentifier: "chooseGenreSegue", sender: self)
         }
-        self.performSegue(withIdentifier: "chooseGenreSegue", sender: self)
+        
         
     }
     @IBAction func producerPortalButtonTapped(_ sender: MenuButton) {

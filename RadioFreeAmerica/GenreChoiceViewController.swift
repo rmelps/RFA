@@ -8,7 +8,7 @@
 
 import UIKit
 
-class GenreChoiceViewController: UICollectionViewController {
+class GenreChoiceViewController: UIViewController {
     
     var choices = [GenreChoices]()
 

@@ -10,6 +10,6 @@ import UIKit
 
 class GenreCollectionViewCell: UICollectionViewCell {
     
-    @IBOutlet weak var genreTitle: UILabel!
-
+    @IBOutlet weak var genreLabel: UILabel!
+    
 }

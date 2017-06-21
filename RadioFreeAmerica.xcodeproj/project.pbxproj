@@ -20,6 +20,7 @@
 		951D22AB1EFA08CE005264A7 /* GenreCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951D22AA1EFA08CE005264A7 /* GenreCollectionViewCell.swift */; };
 		951D22AD1EFA09FB005264A7 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951D22AC1EFA09FB005264A7 /* User.swift */; };
 		951D22AF1EFA0A24005264A7 /* Track.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951D22AE1EFA0A24005264A7 /* Track.swift */; };
+		951D22B21EFA0EC4005264A7 /* GenreCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951D22B11EFA0EC4005264A7 /* GenreCollectionViewController.swift */; };
 		EA25DE04343B6E4ADE610C92 /* Pods_RadioFreeAmerica.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B89A5A22515871740B93D705 /* Pods_RadioFreeAmerica.framework */; };
 /* End PBXBuildFile section */
 
@@ -40,6 +41,7 @@
 		951D22AA1EFA08CE005264A7 /* GenreCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GenreCollectionViewCell.swift; sourceTree = "<group>"; };
 		951D22AC1EFA09FB005264A7 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		951D22AE1EFA0A24005264A7 /* Track.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Track.swift; sourceTree = "<group>"; };
+		951D22B11EFA0EC4005264A7 /* GenreCollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GenreCollectionViewController.swift; sourceTree = "<group>"; };
 		A2EA3C87DBE567095C362C21 /* Pods-RadioFreeAmerica.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RadioFreeAmerica.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RadioFreeAmerica/Pods-RadioFreeAmerica.debug.xcconfig"; sourceTree = "<group>"; };
 		B89A5A22515871740B93D705 /* Pods_RadioFreeAmerica.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RadioFreeAmerica.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -85,18 +87,19 @@
 		951D22861EEF3DA5005264A7 /* RadioFreeAmerica */ = {
 			isa = PBXGroup;
 			children = (
+				951D22B01EFA0E5B005264A7 /* View */,
+				951D22A91EFA081F005264A7 /* Model */,
 				951D22871EEF3DA5005264A7 /* AppDelegate.swift */,
 				951D22891EEF3DA5005264A7 /* MainViewController.swift */,
 				951D228B1EEF3DA5005264A7 /* Main.storyboard */,
+				951D22B11EFA0EC4005264A7 /* GenreCollectionViewController.swift */,
 				951D22A51EF9F016005264A7 /* GenreChoiceViewController.swift */,
-				951D22A91EFA081F005264A7 /* Model */,
 				951D22A31EF9E442005264A7 /* WordsmithPageViewController.swift */,
 				951D229F1EF492C5005264A7 /* MenuButton.swift */,
 				951D228E1EEF3DA5005264A7 /* Assets.xcassets */,
 				951D22901EEF3DA5005264A7 /* LaunchScreen.storyboard */,
 				951D22931EEF3DA5005264A7 /* Info.plist */,
 				951D22991EEF3EAC005264A7 /* GoogleService-Info.plist */,
-				951D22AA1EFA08CE005264A7 /* GenreCollectionViewCell.swift */,
 			);
 			path = RadioFreeAmerica;
 			sourceTree = "<group>";
@@ -109,6 +112,14 @@
 				951D22AE1EFA0A24005264A7 /* Track.swift */,
 			);
 			name = Model;
+			sourceTree = "<group>";
+		};
+		951D22B01EFA0E5B005264A7 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				951D22AA1EFA08CE005264A7 /* GenreCollectionViewCell.swift */,
+			);
+			name = View;
 			sourceTree = "<group>";
 		};
 		C88D44B825F6E43FD6CD0B15 /* Pods */ = {
@@ -249,6 +260,7 @@
 				951D22A81EFA0819005264A7 /* GenreChoices.swift in Sources */,
 				951D228A1EEF3DA5005264A7 /* MainViewController.swift in Sources */,
 				951D22A61EF9F016005264A7 /* GenreChoiceViewController.swift in Sources */,
+				951D22B21EFA0EC4005264A7 /* GenreCollectionViewController.swift in Sources */,
 				951D22AD1EFA09FB005264A7 /* User.swift in Sources */,
 				951D22AF1EFA0A24005264A7 /* Track.swift in Sources */,
 				951D22881EEF3DA5005264A7 /* AppDelegate.swift in Sources */,
