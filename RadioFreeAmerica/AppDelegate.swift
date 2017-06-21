@@ -62,25 +62,43 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
     }
     
     func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
+        
+        let rootVC = self.window?.rootViewController as? MainViewController
+        let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+        
+        if let rootVC = rootVC {
+            activityIndicator.hidesWhenStopped = true
+            activityIndicator.center = rootVC.wordsmithPortalButton.center
+            rootVC.view.addSubview(activityIndicator)
+            activityIndicator.startAnimating()
+        }
+        
         if let error = error {
             print(error.localizedDescription)
+            activityIndicator.stopAnimating()
             return
         }
         
-        guard let authentication = user.authentication else { return }
+        guard let authentication = user.authentication else {
+            activityIndicator.stopAnimating()
+            return
+        }
+        
         let credential = FIRGoogleAuthProvider.credential(withIDToken: authentication.idToken,
                                                        accessToken: authentication.accessToken)
         FIRAuth.auth()?.signIn(with: credential, completion: { (user:FIRUser?, error:Error?) in
+            
+            activityIndicator.stopAnimating()
+            
             if let error = error {
                 print(error.localizedDescription)
                 return
             }
             
-            if let rootVC = self.window?.rootViewController as? MainViewController {
+            if let rootVC = rootVC {
                 rootVC.resizeAndMoveLogInButton(button: rootVC.logInWithGoogleButton, type: .google, signingIn: true)
             }
             
-            print(credential.provider)
         })
     }
     

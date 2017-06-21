@@ -17,6 +17,11 @@ enum SignInButtonType {
     case facebook
 }
 
+enum PortalType {
+    case producer
+    case wordsmith
+}
+
 class MainViewController: UIViewController, GIDSignInUIDelegate {
     
     @IBOutlet weak var wordsmithPortalButtonYConstraint: NSLayoutConstraint!
@@ -30,6 +35,9 @@ class MainViewController: UIViewController, GIDSignInUIDelegate {
     @IBOutlet weak var logInWithGoogleButton: UIButton!
     @IBOutlet weak var logInButtonCenterXAlignment: NSLayoutConstraint!
     @IBOutlet weak var logInButtonCenterYAlignment: NSLayoutConstraint!
+    
+    // Create label for when user enters portal
+    let portalLabel = UILabel()
     
     // Music Note particle emitter
     let particleEmitter = CAEmitterLayer()
@@ -69,6 +77,15 @@ class MainViewController: UIViewController, GIDSignInUIDelegate {
         facebookOrigXConst = logInButtonCenterXAlignment.constant
         facebookOrigYConst = logInButtonCenterYAlignment.constant
         
+        // Configure portal label
+        portalLabel.frame = CGRect(origin: CGPoint.zero, size: CGSize(width: self.view.bounds.width * 0.75, height: 500.0))
+        portalLabel.textAlignment = .center
+        portalLabel.adjustsFontSizeToFitWidth = true
+        portalLabel.adjustsFontForContentSizeCategory = true
+        portalLabel.center = view.center
+        portalLabel.minimumScaleFactor = 0.05
+        portalLabel.alpha = 0
+        
     }
    
     override func viewWillAppear(_ animated: Bool) {
@@ -96,6 +113,15 @@ class MainViewController: UIViewController, GIDSignInUIDelegate {
         
         wordsmithPortalButtonYConstraint.constant = self.view.bounds.height / 4 - 40
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        switch segue.identifier! {
+        case "chooseGenreSegue":
+            break
+        default:
+            break
+        }
+    }
 
     @IBAction func loginWithFacebookButtonTapped(_ sender: UIButton) {
         
@@ -120,9 +146,16 @@ class MainViewController: UIViewController, GIDSignInUIDelegate {
                 case .cancelled:
                     print("cancelled")
                 default:
+                    let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+                    activityIndicator.hidesWhenStopped = true
+                    activityIndicator.center = self.wordsmithPortalButton.center
+                    self.view.addSubview(activityIndicator)
+                    activityIndicator.startAnimating()
+                    
                     if let token = AccessToken.current {
                         let credential = FIRFacebookAuthProvider.credential(withAccessToken: token.authenticationToken)
                         FIRAuth.auth()?.signIn(with: credential, completion: { (user:FIRUser?, error:Error?) in
+                            activityIndicator.stopAnimating()
                             if let error = error {
                                 print(error.localizedDescription)
                             } else {
@@ -130,11 +163,14 @@ class MainViewController: UIViewController, GIDSignInUIDelegate {
                                 
                                 for profile in user!.providerData {
                                     let photoUrl = profile.photoURL?.absoluteString
+                                    let name = profile.displayName
+                                    print(name ?? "no name")
                                     print(photoUrl ?? "no photoURL")
                                 }
                             }
                         })
                     } else {
+                        activityIndicator.stopAnimating()
                         print("No access token could be found...")
                     }
                 }
@@ -158,6 +194,23 @@ class MainViewController: UIViewController, GIDSignInUIDelegate {
         } else {
            GIDSignIn.sharedInstance().signIn()
         }
+    }
+    @IBAction func wordsmithPortalButtonTapped(_ sender: MenuButton) {
+        
+        portalLabel.font = UIFont(name: "GillSans-BoldItalic", size: 45)
+        
+        portalLabel.text = "Entering the Wordsmith Portal"
+        
+        self.view.addSubview(portalLabel)
+        
+        UIView.animate(withDuration: 1.5, animations: { 
+            self.portalLabel.alpha = 1
+        }) { (_) in
+        }
+        self.performSegue(withIdentifier: "chooseGenreSegue", sender: self)
+        
+    }
+    @IBAction func producerPortalButtonTapped(_ sender: MenuButton) {
     }
     
     func createMusicNoteParticles() {

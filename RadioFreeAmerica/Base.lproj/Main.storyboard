@@ -7,6 +7,7 @@
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12089"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -60,6 +61,9 @@
                                         <color key="value" red="0.81697964449541283" green="0.44615808409270269" blue="0.34308022558908652" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="producerPortalButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="rlq-eI-Xnd"/>
+                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vx8-dh-zS7" customClass="MenuButton" customModule="RadioFreeAmerica" customModuleProvider="target">
                                 <rect key="frame" x="147.5" y="487" width="80" height="80"/>
@@ -73,6 +77,9 @@
                                         <color key="value" red="0.72237498894169694" green="0.80443663990825687" blue="0.44017838083123428" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="wordsmithPortalButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="pMF-Qb-2hH"/>
+                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" red="0.30886844629999999" green="0.77870556189999995" blue="0.44214075450000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -100,11 +107,83 @@
                         <outlet property="producerPortalButtonYConstraint" destination="oTV-cW-itP" id="tfY-Q4-rmC"/>
                         <outlet property="wordsmithPortalButton" destination="vx8-dh-zS7" id="NI4-7S-xfz"/>
                         <outlet property="wordsmithPortalButtonYConstraint" destination="31B-Vq-FvR" id="BrN-Xo-rwu"/>
+                        <segue destination="8Nc-eA-Rln" kind="presentation" identifier="chooseGenreSegue" modalTransitionStyle="crossDissolve" id="OOi-b2-bAd"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="136.80000000000001" y="124.58770614692655"/>
+        </scene>
+        <!--Genre Choice View Controller-->
+        <scene sceneID="qze-tX-fBt">
+            <objects>
+                <viewController id="8Nc-eA-Rln" customClass="GenreChoiceViewController" customModule="RadioFreeAmerica" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="R51-P9-QfF"/>
+                        <viewControllerLayoutGuide type="bottom" id="iaZ-Az-isX"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="F4v-ld-M4X">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="3aj-fj-huW">
+                                <rect key="frame" x="16" y="162" width="343" height="343"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="3aj-fj-huW" secondAttribute="height" multiplier="1:1" id="Q0r-Oj-5ZL"/>
+                                </constraints>
+                                <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="10" minimumInteritemSpacing="10" id="O6U-Us-e2i">
+                                    <size key="itemSize" width="214" height="212"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="dAu-eS-x6o" customClass="GenreCollectionViewCell" customModule="RadioFreeAmerica" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="66" width="214" height="212"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="214" height="212"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="q72-nG-LJk">
+                                                    <rect key="frame" x="86" y="96" width="42" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </view>
+                                        <constraints>
+                                            <constraint firstItem="q72-nG-LJk" firstAttribute="centerY" secondItem="dAu-eS-x6o" secondAttribute="centerY" id="Lks-09-1U9"/>
+                                            <constraint firstItem="q72-nG-LJk" firstAttribute="centerX" secondItem="dAu-eS-x6o" secondAttribute="centerX" id="ZPo-Rz-woW"/>
+                                        </constraints>
+                                        <connections>
+                                            <outlet property="genreTitle" destination="q72-nG-LJk" id="ZLW-GS-Yh4"/>
+                                        </connections>
+                                    </collectionViewCell>
+                                </cells>
+                            </collectionView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="3aj-fj-huW" firstAttribute="leading" secondItem="F4v-ld-M4X" secondAttribute="leadingMargin" id="dgv-Z3-1sq"/>
+                            <constraint firstItem="3aj-fj-huW" firstAttribute="centerY" secondItem="F4v-ld-M4X" secondAttribute="centerY" id="gto-bm-6YM"/>
+                            <constraint firstItem="3aj-fj-huW" firstAttribute="trailing" secondItem="F4v-ld-M4X" secondAttribute="trailingMargin" id="vuw-5Y-uaw"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="FME-md-y78" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="136.80000000000001" y="884.70764617691157"/>
+        </scene>
+        <!--Wordsmith Page View Controller-->
+        <scene sceneID="JEz-ze-WON">
+            <objects>
+                <pageViewController autoresizesArchivedViewToFullSize="NO" transitionStyle="pageCurl" navigationOrientation="horizontal" spineLocation="min" id="J0z-G2-BQw" customClass="WordsmithPageViewController" customModule="RadioFreeAmerica" customModuleProvider="target" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="YVg-xp-07A" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1049" y="125"/>
         </scene>
     </scenes>
     <resources>
