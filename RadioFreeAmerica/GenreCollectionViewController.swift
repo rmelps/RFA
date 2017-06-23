@@ -8,20 +8,38 @@
 
 import UIKit
 
-private let reuseIdentifier = "Cell"
+enum GenreChoices: Int {
+    case rap = 0, techno, trap
+}
 
-class GenreCollectionViewController: UICollectionViewController {
+class GenreCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
+    
+    let reuseIdentifier = "GenreCell"
+    let sectionInsets = UIEdgeInsets(top: 15.0, left: 15.0, bottom: 15.0, right: 15.0)
+    let itemsPerRow: CGFloat = 1
+    var genreCount: Int!
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        collectionView?.translatesAutoresizingMaskIntoConstraints = false
+        
+        let topCon = collectionView?.topAnchor.constraint(equalTo: view.topAnchor)
+        let bottomCon = collectionView?.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        let leftCon = collectionView?.leftAnchor.constraint(equalTo: view.leftAnchor)
+        let rightCon = collectionView?.rightAnchor.constraint(equalTo: view.rightAnchor)
+        
+        topCon?.isActive = true
+        bottomCon?.isActive = true
+        leftCon?.isActive = true
+        rightCon?.isActive = true
 
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Register cell classes
-        self.collectionView!.register(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
-
-        // Do any additional setup after loading the view.
+        // The last element in the GenreChoices enum. If a genre is added after this value, will
+        // need to update the below equation to include that value
+        
+        genreCount = GenreChoices.trap.hashValue + 1
+        
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -43,17 +61,34 @@ class GenreCollectionViewController: UICollectionViewController {
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 0
+        return 1
     }
 
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of items
-        return 0
+        
+        return genreCount
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath)
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! GenreCollectionViewCell
+        if let genre = GenreChoices(rawValue: indexPath.row) {
+            switch genre {
+            case .rap:
+                cell.genreLabel.text = "Rap"
+            case .techno:
+                cell.genreLabel.text = "Techno"
+            case .trap:
+                cell.genreLabel.text = "Trap"
+            }
+        }
+        
+        cell.backgroundColor = .yellow
+        cell.layer.cornerRadius = 15.0
+        cell.layer.borderColor = cell.genreLabel.backgroundColor?.cgColor
+        cell.layer.borderWidth = 10.0
+        
+        
     
         // Configure the cell
     
@@ -62,33 +97,22 @@ class GenreCollectionViewController: UICollectionViewController {
 
     // MARK: UICollectionViewDelegate
 
-    /*
-    // Uncomment this method to specify if the specified item should be highlighted during tracking
-    override func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
-        return true
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
+        let paddingSpace = sectionInsets.top * (itemsPerRow + 1)
+        let availableHeight = view.frame.height - paddingSpace
+        let heightPerItem = availableHeight / itemsPerRow
+        
+        return CGSize(width: heightPerItem, height: heightPerItem)
     }
-    */
-
-    /*
-    // Uncomment this method to specify if the specified item should be selected
-    override func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        return true
-    }
-    */
-
-    /*
-    // Uncomment these methods to specify if an action menu should be displayed for the specified item, and react to actions performed on the item
-    override func collectionView(_ collectionView: UICollectionView, shouldShowMenuForItemAt indexPath: IndexPath) -> Bool {
-        return false
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, canPerformAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) -> Bool {
-        return false
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, performAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) {
     
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        
+        return sectionInsets
     }
-    */
-
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        
+        return sectionInsets.left
+    }
 }

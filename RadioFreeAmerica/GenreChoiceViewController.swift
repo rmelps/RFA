@@ -10,12 +10,17 @@ import UIKit
 
 class GenreChoiceViewController: UIViewController {
     
-    var choices = [GenreChoices]()
-
+    // Background Color Gradient
+    var gradient: CAGradientLayer!
+    var gradientColor: CGColor!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        gradient.colors?[gradient.colors!.endIndex - 1] = gradientColor
+        self.view.layer.insertSublayer(gradient, at: 0)
 
-        // Do any additional setup after loading the view.
+        
     }
 
 }

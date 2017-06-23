@@ -117,7 +117,10 @@ class MainViewController: UIViewController, GIDSignInUIDelegate {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         switch segue.identifier! {
         case "chooseGenreSegue":
-            break
+            let vc = segue.destination as! GenreChoiceViewController
+            vc.gradient = self.gradient
+            vc.gradientColor = wordsmithPortalButton.buttonColor.cgColor
+            
         default:
             break
         }

@@ -12,4 +12,6 @@ class GenreCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet weak var genreLabel: UILabel!
     
+    @IBOutlet weak var leadingCon: NSLayoutConstraint!
+    @IBOutlet weak var trailingCon: NSLayoutConstraint!
 }
