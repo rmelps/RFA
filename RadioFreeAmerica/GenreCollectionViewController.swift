@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import AVFoundation
 
 enum GenreChoices: Int {
     case rap = 0, techno, trap
@@ -18,6 +19,9 @@ class GenreCollectionViewController: UICollectionViewController, UICollectionVie
     let sectionInsets = UIEdgeInsets(top: 15.0, left: 15.0, bottom: 15.0, right: 15.0)
     let itemsPerRow: CGFloat = 1
     var genreCount: Int!
+    
+    // AV Player Layer
+    var playerLayer = AVPlayerLayer()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,21 +46,6 @@ class GenreCollectionViewController: UICollectionViewController, UICollectionVie
         
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using [segue destinationViewController].
-        // Pass the selected object to the new view controller.
-    }
-    */
-
     // MARK: UICollectionViewDataSource
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -76,6 +65,7 @@ class GenreCollectionViewController: UICollectionViewController, UICollectionVie
             switch genre {
             case .rap:
                 cell.genreLabel.text = "Rap"
+                setCellVideoLayer(cell: cell, resourceName: "rock")
             case .techno:
                 cell.genreLabel.text = "Techno"
             case .trap:
@@ -93,6 +83,26 @@ class GenreCollectionViewController: UICollectionViewController, UICollectionVie
         // Configure the cell
     
         return cell
+    }
+    
+    func setCellVideoLayer(cell: GenreCollectionViewCell, resourceName: String) {
+        
+        let playerLayer = AVPlayerLayer()
+        playerLayer.frame = cell.avLayerView.bounds
+        playerLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
+        
+        guard let url = Bundle.main.path(forResource: resourceName, ofType: "m4v") else {
+            print("\(resourceName) not found!")
+            return
+        }
+        
+        let player = AVPlayer(url: URL(fileURLWithPath: url))
+        player.actionAtItemEnd = .none
+        player.volume = 0.0
+        playerLayer.player = player
+        cell.avLayerView.layer.addSublayer(playerLayer)
+        cell.avLayerView.playerLayer = playerLayer
+        player.play()
     }
 
     // MARK: UICollectionViewDelegate
@@ -114,5 +124,11 @@ class GenreCollectionViewController: UICollectionViewController, UICollectionVie
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         
         return sectionInsets.left
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        print("selected a cell")
+        
+        self.performSegue(withIdentifier: "showWordsmithPagesSegue", sender: self)
     }
 }

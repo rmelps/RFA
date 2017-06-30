@@ -8,6 +8,7 @@
 
 import UIKit
 import Firebase
+import FirebaseDatabase
 import FacebookLogin
 import FacebookCore
 import GoogleSignIn
@@ -54,6 +55,9 @@ class MainViewController: UIViewController, GIDSignInUIDelegate {
     var facebookOrigXConst: CGFloat!
     var facebookOrigYConst: CGFloat!
     
+    // Firebase Database references
+    var userDBRef: FIRDatabaseReference!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -85,6 +89,9 @@ class MainViewController: UIViewController, GIDSignInUIDelegate {
         portalLabel.center = view.center
         portalLabel.minimumScaleFactor = 0.05
         portalLabel.alpha = 0
+        
+        // Configure FIRDatabaseReferences
+        userDBRef = FIRDatabase.database().reference().child("users")
         
     }
    
@@ -161,16 +168,26 @@ class MainViewController: UIViewController, GIDSignInUIDelegate {
                             activityIndicator.stopAnimating()
                             if let error = error {
                                 print(error.localizedDescription)
-                            } else {
-                                self.resizeAndMoveLogInButton(button: sender, type: .facebook, signingIn: true)
+                                return
+                            }
+                            
+                            self.resizeAndMoveLogInButton(button: sender, type: .facebook, signingIn: true)
+                            
+                            if let firUser = user {
                                 
-                                for profile in user!.providerData {
-                                    let photoUrl = profile.photoURL?.absoluteString
-                                    let name = profile.displayName
-                                    print(name ?? "no name")
-                                    print(photoUrl ?? "no photoURL")
+                                let thisUserDBRef = self.userDBRef.child(firUser.uid)
+                                
+                                for profile in firUser.providerData {
+                                    
+                                    let userProf = User(uid: firUser.uid, name: profile.displayName!, photoPath: String(describing: profile.photoURL!))
+                                    
+                                    thisUserDBRef.setValue(userProf.toAny())
+                                    
                                 }
                             }
+                            
+                            
+                            
                         })
                     } else {
                         activityIndicator.stopAnimating()

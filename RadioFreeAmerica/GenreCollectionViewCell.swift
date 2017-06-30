@@ -10,6 +10,7 @@ import UIKit
 
 class GenreCollectionViewCell: UICollectionViewCell {
     
+    @IBOutlet weak var avLayerView: VideoContainerView!
     @IBOutlet weak var genreLabel: UILabel!
     
     @IBOutlet weak var leadingCon: NSLayoutConstraint!

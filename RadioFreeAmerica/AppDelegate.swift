@@ -9,6 +9,8 @@
 import UIKit
 import Firebase
 import FacebookCore
+import FirebaseDatabase
+import FirebaseStorage
 import FacebookLogin
 import GoogleSignIn
 
@@ -84,8 +86,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
             return
         }
         
-        let credential = FIRGoogleAuthProvider.credential(withIDToken: authentication.idToken,
-                                                       accessToken: authentication.accessToken)
+        let credential = FIRGoogleAuthProvider.credential(withIDToken: authentication.idToken, accessToken: authentication.accessToken)
         FIRAuth.auth()?.signIn(with: credential, completion: { (user:FIRUser?, error:Error?) in
             
             activityIndicator.stopAnimating()
@@ -99,13 +100,69 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
                 rootVC.resizeAndMoveLogInButton(button: rootVC.logInWithGoogleButton, type: .google, signingIn: true)
             }
             
+            if let firUser = user {
+                print("found user...")
+                
+                let userDBRef = FIRDatabase.database().reference().child("users")
+                let profPicStorRef = FIRStorage.storage().reference().child("profilePics")
+                
+                let thisUserDBRef = userDBRef.child(firUser.uid)
+                
+                for profile in firUser.providerData {
+                    print("found provider data...")
+                    
+                    let profPic = profile.photoURL!
+                    let userProf = User(uid: firUser.uid, name: profile.displayName!, photoPath: String(describing: profPic))
+                    
+                    userDBRef.observeSingleEvent(of: .value, with: { (snapShot) in
+                        
+                        if snapShot.hasChild(firUser.uid) {
+                            let snapVal = snapShot.childSnapshot(forPath: firUser.uid).value as? [String: Any]
+                            print("observing user database...")
+                            
+                            if let url = snapVal?["photoPath"] as? String {
+                                print("found URL")
+                                
+                                let providerURL = String(describing:profPic)
+                                
+                                if url != providerURL {
+                                    print("url's are not the same")
+                                    self.fetchAndSaveProfileImage(url: profile.photoURL!, storeRef: profPicStorRef, uid: firUser.uid)
+                                }
+                                
+                                thisUserDBRef.setValue(userProf.toAny())
+                            }
+                        } else {
+                            self.fetchAndSaveProfileImage(url: profile.photoURL!, storeRef: profPicStorRef, uid: firUser.uid)
+                            thisUserDBRef.setValue(userProf.toAny())
+                        }
+                        
+                    })
+                    
+                }
+                
+            }
         })
     }
     
     func sign(_ signIn: GIDSignIn!, didDisconnectWith user: GIDGoogleUser!, withError error: Error!) {
         // Perform any actions when user disconnects with app here...
     }
-
-
+    
+    func fetchAndSaveProfileImage(url: URL, storeRef: FIRStorageReference, uid: String) {
+        
+        print("fetching image...")
+        
+        let session = URLSession(configuration: .default)
+        let request = URLRequest(url: url)
+        
+        let task = session.dataTask(with: request) { (data:Data?, response:URLResponse?, error:Error?) in
+            if error == nil, data != nil {
+                storeRef.child(uid).put(data!)
+            }
+        }
+        task.resume()
+    }
+    
 }
 

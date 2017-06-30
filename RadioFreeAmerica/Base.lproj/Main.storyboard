@@ -150,10 +150,46 @@
         <!--Wordsmith Page View Controller-->
         <scene sceneID="JEz-ze-WON">
             <objects>
-                <pageViewController autoresizesArchivedViewToFullSize="NO" transitionStyle="pageCurl" navigationOrientation="horizontal" spineLocation="min" id="J0z-G2-BQw" customClass="WordsmithPageViewController" customModule="RadioFreeAmerica" customModuleProvider="target" sceneMemberID="viewController"/>
+                <pageViewController autoresizesArchivedViewToFullSize="NO" transitionStyle="scroll" navigationOrientation="horizontal" spineLocation="none" id="J0z-G2-BQw" customClass="WordsmithPageViewController" customModule="RadioFreeAmerica" customModuleProvider="target" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="YVg-xp-07A" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1049" y="125"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="vzY-ka-PRA">
+            <objects>
+                <viewController storyboardIdentifier="wordsmithSecond" useStoryboardIdentifierAsRestorationIdentifier="YES" id="b5D-hJ-CUm" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="yQb-ac-h4w"/>
+                        <viewControllerLayoutGuide type="bottom" id="BgF-iy-Ww4"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="yTG-r9-LY7">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" red="0.1647058824" green="0.33725490200000002" blue="0.87843137250000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="VO8-2G-GLU" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1854" y="290"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="EcW-Mz-OBh">
+            <objects>
+                <viewController storyboardIdentifier="wordsmithFirst" useStoryboardIdentifierAsRestorationIdentifier="YES" id="J7U-QE-YMz" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="BEo-9I-bRg"/>
+                        <viewControllerLayoutGuide type="bottom" id="2Z1-OV-5gU"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="6km-ac-nr3">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" red="0.93352207570000001" green="0.92979462639999999" blue="0.32557228510000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="r4t-OK-zlm" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1854" y="-369"/>
         </scene>
         <!--Genre Collection View Controller-->
         <scene sceneID="cKM-5u-vTM">
@@ -177,6 +213,10 @@
                                     <rect key="frame" x="0.0" y="0.0" width="184" height="189"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
+                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OfG-4h-MjZ" customClass="VideoContainerView" customModule="RadioFreeAmerica" customModuleProvider="target">
+                                            <rect key="frame" x="0.0" y="0.0" width="184" height="189"/>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="z9M-tv-ngK">
                                             <rect key="frame" x="13" y="78" width="158" height="33"/>
                                             <color key="backgroundColor" red="0.30886844629999999" green="0.77870556189999995" blue="0.44214075450000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -188,11 +228,16 @@
                                 </view>
                                 <constraints>
                                     <constraint firstAttribute="trailingMargin" secondItem="z9M-tv-ngK" secondAttribute="trailing" constant="5" id="5aK-6o-195"/>
+                                    <constraint firstAttribute="trailing" secondItem="OfG-4h-MjZ" secondAttribute="trailing" id="OeM-oj-8bs"/>
                                     <constraint firstItem="z9M-tv-ngK" firstAttribute="centerX" secondItem="a5L-gd-nhe" secondAttribute="centerX" id="U3S-ze-C4w"/>
+                                    <constraint firstAttribute="bottom" secondItem="OfG-4h-MjZ" secondAttribute="bottom" id="ZqL-Gp-5m9"/>
                                     <constraint firstItem="z9M-tv-ngK" firstAttribute="centerY" secondItem="a5L-gd-nhe" secondAttribute="centerY" id="b6w-qV-XC0"/>
                                     <constraint firstItem="z9M-tv-ngK" firstAttribute="leading" secondItem="a5L-gd-nhe" secondAttribute="leadingMargin" constant="5" id="bgi-RR-bu0"/>
+                                    <constraint firstItem="OfG-4h-MjZ" firstAttribute="top" secondItem="a5L-gd-nhe" secondAttribute="top" id="bgv-Gl-LmB"/>
+                                    <constraint firstItem="OfG-4h-MjZ" firstAttribute="leading" secondItem="a5L-gd-nhe" secondAttribute="leading" id="fDe-7y-Z6J"/>
                                 </constraints>
                                 <connections>
+                                    <outlet property="avLayerView" destination="OfG-4h-MjZ" id="qwn-yr-AM6"/>
                                     <outlet property="genreLabel" destination="z9M-tv-ngK" id="Wu3-tQ-6Xl"/>
                                     <outlet property="leadingCon" destination="bgi-RR-bu0" id="eY7-89-Pcb"/>
                                     <outlet property="trailingCon" destination="5aK-6o-195" id="DN8-oq-dId"/>
@@ -200,10 +245,31 @@
                             </collectionViewCell>
                         </cells>
                     </collectionView>
+                    <connections>
+                        <segue destination="J0z-G2-BQw" kind="show" identifier="showWordsmithPagesSegue" id="uKp-ad-DFE"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="CVS-5G-BZK" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="844" y="884.70764617691157"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="WWA-0n-cIy">
+            <objects>
+                <viewController storyboardIdentifier="wordsmithThird" useStoryboardIdentifierAsRestorationIdentifier="YES" id="EYT-zw-WHu" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="C8Q-gi-wtY"/>
+                        <viewControllerLayoutGuide type="bottom" id="nBL-B7-s71"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="sgG-Bf-rzc">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" red="0.30886844629999999" green="0.77870556189999995" blue="0.44214075450000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Ke8-lT-eAe" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1854" y="989"/>
         </scene>
     </scenes>
     <resources>
