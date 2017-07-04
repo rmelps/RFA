@@ -11,9 +11,14 @@ import UIKit
 class WordsmithPageViewController: UIPageViewController, UIPageViewControllerDataSource {
     
     var orderedViewControllers: [UIViewController]!
+    var signedInUser: User!
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        
+        
+        signedInUser = (UIApplication.shared.delegate as! AppDelegate).signedInUser!
         
         orderedViewControllers = [
             self.instatiateViewControllers(storyboardID: "wordsmithFirst"),
@@ -23,8 +28,24 @@ class WordsmithPageViewController: UIPageViewController, UIPageViewControllerDat
 
         dataSource = self
         
-        if let firstViewController = orderedViewControllers.first {
+        if let firstViewController = orderedViewControllers.first as? WordsmithHomeViewController {
+            
+            firstViewController.pageVC = self
+            firstViewController.firstName = getFirstName(user: signedInUser)
+            firstViewController.image = (UIApplication.shared.delegate as! AppDelegate).signedInProfileImage
             setViewControllers([firstViewController], direction: .forward, animated: true, completion: nil)
+        }
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        for view in self.view.subviews {
+            if view is UIScrollView {
+                view.frame = UIScreen.main.bounds
+            } else if view is UIPageControl {
+                view.backgroundColor = .clear
+            }
         }
     }
     
@@ -35,10 +56,24 @@ class WordsmithPageViewController: UIPageViewController, UIPageViewControllerDat
         return vc
     }
     
+    func getFirstName(user: User) -> String {
+        
+        var firstNameChars = [Character]()
+        for char in user.name.characters {
+            if char != " " {
+                firstNameChars.append(char)
+            } else {
+               return String(firstNameChars)
+            }
+        }
+        
+        return user.name
+        
+    }
+    
     // MARK: UIPageViewControllerDataSource
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        print("configuring viewController before")
         
         guard let viewControllerIndex = orderedViewControllers.index(of: viewController) else {
             return nil
@@ -58,7 +93,6 @@ class WordsmithPageViewController: UIPageViewController, UIPageViewControllerDat
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        print("configuring view controller after")
         
         guard let viewControllerIndex = orderedViewControllers.index(of: viewController) else {
             print("returning nil")

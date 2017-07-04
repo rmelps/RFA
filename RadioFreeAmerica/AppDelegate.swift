@@ -18,6 +18,8 @@ import GoogleSignIn
 class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
 
     var window: UIWindow?
+    var signedInProfileImage: UIImage?
+    var signedInUser: User?
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
@@ -101,7 +103,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
             }
             
             if let firUser = user {
-                print("found user...")
                 
                 let userDBRef = FIRDatabase.database().reference().child("users")
                 let profPicStorRef = FIRStorage.storage().reference().child("profilePics")
@@ -109,30 +110,49 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
                 let thisUserDBRef = userDBRef.child(firUser.uid)
                 
                 for profile in firUser.providerData {
-                    print("found provider data...")
                     
-                    let profPic = profile.photoURL!
-                    let userProf = User(uid: firUser.uid, name: profile.displayName!, photoPath: String(describing: profPic))
+                    let profPic = String(describing: profile.photoURL!)
                     
                     userDBRef.observeSingleEvent(of: .value, with: { (snapShot) in
+                    
                         
                         if snapShot.hasChild(firUser.uid) {
-                            let snapVal = snapShot.childSnapshot(forPath: firUser.uid).value as? [String: Any]
-                            print("observing user database...")
+                            let snap = snapShot.childSnapshot(forPath: firUser.uid)
+                            let snapVal = snap.value as? [String: Any]
+                            
+                            let userProf = User(userData: firUser, snapShot: snap, picURL: profPic)
+                            self.signedInUser = userProf
                             
                             if let url = snapVal?["photoPath"] as? String {
                                 print("found URL")
                                 
-                                let providerURL = String(describing:profPic)
                                 
-                                if url != providerURL {
+                                if url != profPic {
                                     print("url's are not the same")
                                     self.fetchAndSaveProfileImage(url: profile.photoURL!, storeRef: profPicStorRef, uid: firUser.uid)
+                                } else {
+                                    
+                                    let thisProfPicStoreRef = profPicStorRef.child(firUser.uid)
+                                    
+                                    thisProfPicStoreRef.data(withMaxSize: 5 * 1024 * 1024, completion: { (data, error) in
+                                        print("finished grabbing data from storage...")
+                                        
+                                        if error != nil {
+                                        print(error?.localizedDescription)
+                                        }
+                                        
+                                        if error == nil, data != nil {
+                                            print("retrieved image data")
+                                            self.signedInProfileImage = UIImage(data: data!)
+                                        }
+                                    })
                                 }
                                 
                                 thisUserDBRef.setValue(userProf.toAny())
                             }
                         } else {
+                            let userProf = User(uid: firUser.uid, name: profile.displayName!, photoPath: profPic)
+                            self.signedInUser = userProf
                             self.fetchAndSaveProfileImage(url: profile.photoURL!, storeRef: profPicStorRef, uid: firUser.uid)
                             thisUserDBRef.setValue(userProf.toAny())
                         }
@@ -159,6 +179,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
         let task = session.dataTask(with: request) { (data:Data?, response:URLResponse?, error:Error?) in
             if error == nil, data != nil {
                 storeRef.child(uid).put(data!)
+                self.signedInProfileImage = UIImage(data: data!)
             }
         }
         task.resume()

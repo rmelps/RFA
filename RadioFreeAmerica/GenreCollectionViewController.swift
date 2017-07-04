@@ -45,6 +45,17 @@ class GenreCollectionViewController: UICollectionViewController, UICollectionVie
         
         
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        switch segue.identifier! {
+        case "showWordsmithPagesSegue":
+            
+            let vc = segue.destination as! WordsmithPageViewController
+            
+        default:
+            break
+        }
+    }
 
     // MARK: UICollectionViewDataSource
 

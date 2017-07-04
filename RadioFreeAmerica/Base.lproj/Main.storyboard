@@ -153,7 +153,7 @@
                 <pageViewController autoresizesArchivedViewToFullSize="NO" transitionStyle="scroll" navigationOrientation="horizontal" spineLocation="none" id="J0z-G2-BQw" customClass="WordsmithPageViewController" customModule="RadioFreeAmerica" customModuleProvider="target" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="YVg-xp-07A" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1049" y="125"/>
+            <point key="canvasLocation" x="1577" y="885"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="vzY-ka-PRA">
@@ -171,12 +171,12 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="VO8-2G-GLU" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1854" y="290"/>
+            <point key="canvasLocation" x="2302" y="885"/>
         </scene>
-        <!--View Controller-->
+        <!--Wordsmith Home View Controller-->
         <scene sceneID="EcW-Mz-OBh">
             <objects>
-                <viewController storyboardIdentifier="wordsmithFirst" useStoryboardIdentifierAsRestorationIdentifier="YES" id="J7U-QE-YMz" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="wordsmithFirst" useStoryboardIdentifierAsRestorationIdentifier="YES" id="J7U-QE-YMz" customClass="WordsmithHomeViewController" customModule="RadioFreeAmerica" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="BEo-9I-bRg"/>
                         <viewControllerLayoutGuide type="bottom" id="2Z1-OV-5gU"/>
@@ -184,12 +184,62 @@
                     <view key="view" contentMode="scaleToFill" id="6km-ac-nr3">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" red="0.93352207570000001" green="0.92979462639999999" blue="0.32557228510000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="YgL-b2-I2t">
+                                <rect key="frame" x="16" y="40" width="343" height="109"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Welcome" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.40000000000000002" translatesAutoresizingMaskIntoConstraints="NO" id="vTO-W2-3Jy">
+                                        <rect key="frame" x="0.0" y="0.0" width="343" height="35"/>
+                                        <fontDescription key="fontDescription" name="LucidaGrande" family="Lucida Grande" pointSize="30"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.40000000000000002" translatesAutoresizingMaskIntoConstraints="NO" id="fkH-od-0Zo">
+                                        <rect key="frame" x="0.0" y="35" width="343" height="74"/>
+                                        <fontDescription key="fontDescription" name="Kailasa-Bold" family="Kailasa" pointSize="45"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                            </stackView>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="7WQ-hG-DEg">
+                                <rect key="frame" x="137" y="154" width="100" height="100"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="7WQ-hG-DEg" secondAttribute="height" multiplier="1:1" id="2ga-zN-bJW"/>
+                                    <constraint firstAttribute="width" constant="100" id="GuM-5p-wmY"/>
+                                </constraints>
+                            </imageView>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="b1a-l5-kjG">
+                                <rect key="frame" x="16" y="252" width="343" height="385"/>
+                                <color key="backgroundColor" red="0.92114552019999996" green="0.93352207570000001" blue="0.60003244690000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="385" id="3YH-P6-eEL"/>
+                                </constraints>
+                            </scrollView>
+                        </subviews>
+                        <color key="backgroundColor" red="0.30886844629999999" green="0.77870556189999995" blue="0.44214075450000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="YgL-b2-I2t" firstAttribute="leading" secondItem="6km-ac-nr3" secondAttribute="leadingMargin" id="3eP-rf-b2x"/>
+                            <constraint firstItem="7WQ-hG-DEg" firstAttribute="centerX" secondItem="6km-ac-nr3" secondAttribute="centerX" id="MP9-cf-adH"/>
+                            <constraint firstItem="b1a-l5-kjG" firstAttribute="leading" secondItem="6km-ac-nr3" secondAttribute="leadingMargin" id="Rf5-Aa-vaJ"/>
+                            <constraint firstItem="2Z1-OV-5gU" firstAttribute="top" secondItem="b1a-l5-kjG" secondAttribute="bottom" constant="30" id="SrG-nj-Ssh"/>
+                            <constraint firstItem="YgL-b2-I2t" firstAttribute="top" secondItem="BEo-9I-bRg" secondAttribute="bottom" constant="20" id="Uc6-pA-Glc"/>
+                            <constraint firstItem="b1a-l5-kjG" firstAttribute="trailing" secondItem="6km-ac-nr3" secondAttribute="trailingMargin" id="Y5V-C4-xZa"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="YgL-b2-I2t" secondAttribute="trailing" id="ZwR-im-a89"/>
+                            <constraint firstItem="YgL-b2-I2t" firstAttribute="centerX" secondItem="6km-ac-nr3" secondAttribute="centerX" id="hgL-6o-Vht"/>
+                            <constraint firstItem="7WQ-hG-DEg" firstAttribute="top" secondItem="YgL-b2-I2t" secondAttribute="bottom" constant="5" id="zUv-2Y-slA"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="profilePicImageView" destination="7WQ-hG-DEg" id="Myb-nJ-6de"/>
+                        <outlet property="scrollViewHeightConstraint" destination="3YH-P6-eEL" id="pZv-9D-M6V"/>
+                        <outlet property="statView" destination="b1a-l5-kjG" id="RJa-Qs-FjN"/>
+                        <outlet property="userNameLabel" destination="fkH-od-0Zo" id="4i6-oq-BfV"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="r4t-OK-zlm" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1854" y="-369"/>
+            <point key="canvasLocation" x="2301.5999999999999" y="239.73013493253376"/>
         </scene>
         <!--Genre Collection View Controller-->
         <scene sceneID="cKM-5u-vTM">
@@ -264,12 +314,12 @@
                     <view key="view" contentMode="scaleToFill" id="sgG-Bf-rzc">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" red="0.30886844629999999" green="0.77870556189999995" blue="0.44214075450000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" red="0.1647058824" green="0.72941176470000002" blue="0.87843137250000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ke8-lT-eAe" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1854" y="989"/>
+            <point key="canvasLocation" x="2302" y="1540"/>
         </scene>
     </scenes>
     <resources>

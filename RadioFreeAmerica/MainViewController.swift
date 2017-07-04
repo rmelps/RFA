@@ -9,6 +9,7 @@
 import UIKit
 import Firebase
 import FirebaseDatabase
+import FirebaseStorage
 import FacebookLogin
 import FacebookCore
 import GoogleSignIn
@@ -135,6 +136,10 @@ class MainViewController: UIViewController, GIDSignInUIDelegate {
 
     @IBAction func loginWithFacebookButtonTapped(_ sender: UIButton) {
         
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+        activityIndicator.hidesWhenStopped = true
+        
         let loginManager = LoginManager()
         
         if isSignedIn {
@@ -147,7 +152,85 @@ class MainViewController: UIViewController, GIDSignInUIDelegate {
                 print(error.localizedDescription)
             }
             
+        } else if let accessToken = AccessToken.current {
+            activityIndicator.center = self.wordsmithPortalButton.center
+            self.view.addSubview(activityIndicator)
+            activityIndicator.startAnimating()
+            
+            let credential = FIRFacebookAuthProvider.credential(withAccessToken: accessToken.authenticationToken)
+            FIRAuth.auth()?.signIn(with: credential, completion: { (user:FIRUser?, error:Error?) in
+                activityIndicator.stopAnimating()
+                if let error = error {
+                    print(error.localizedDescription)
+                    return
+                }
+                
+                self.resizeAndMoveLogInButton(button: sender, type: .facebook, signingIn: true)
+                
+                if let firUser = user {
+                    
+                    let userDBRef = FIRDatabase.database().reference().child("users")
+                    let profPicStorRef = FIRStorage.storage().reference().child("profilePics")
+                    
+                    let thisUserDBRef = userDBRef.child(firUser.uid)
+                    
+                    for profile in firUser.providerData {
+                        
+                        let profPic = String(describing: profile.photoURL!)
+                        
+                        userDBRef.observeSingleEvent(of: .value, with: { (snapShot) in
+                            
+                            
+                            if snapShot.hasChild(firUser.uid) {
+                                let snap = snapShot.childSnapshot(forPath: firUser.uid)
+                                let snapVal = snap.value as? [String: Any]
+                                
+                                let userProf = User(userData: firUser, snapShot: snap, picURL: profPic)
+                                appDelegate.signedInUser = userProf
+                                
+                                if let url = snapVal?["photoPath"] as? String {
+                                    print("found URL")
+                                    
+                                    
+                                    if url != profPic {
+                                        print("url's are not the same")
+                                        appDelegate.fetchAndSaveProfileImage(url: profile.photoURL!, storeRef: profPicStorRef, uid: firUser.uid)
+                                    } else {
+                                        
+                                        let thisProfPicStoreRef = profPicStorRef.child(firUser.uid)
+                                        
+                                        thisProfPicStoreRef.data(withMaxSize: 5 * 1024 * 1024, completion: { (data, error) in
+                                            print("finished grabbing data from storage...")
+                                            
+                                            if error != nil {
+                                                print(error?.localizedDescription)
+                                            }
+                                            
+                                            if error == nil, data != nil {
+                                                print("retrieved image data")
+                                                appDelegate.signedInProfileImage = UIImage(data: data!)
+                                            }
+                                        })
+                                    }
+                                    
+                                    thisUserDBRef.setValue(userProf.toAny())
+                                }
+                            } else {
+                                let userProf = User(uid: firUser.uid, name: profile.displayName!, photoPath: profPic)
+                                appDelegate.signedInUser = userProf
+                                appDelegate.fetchAndSaveProfileImage(url: profile.photoURL!, storeRef: profPicStorRef, uid: firUser.uid)
+                                thisUserDBRef.setValue(userProf.toAny())
+                            }
+                            
+                        })
+                        
+                    }
+                    
+                }
+            })
+
         } else {
+            
             loginManager.logIn([.publicProfile], viewController: self) { (result: LoginResult) in
                 
                 switch result {
@@ -155,9 +238,12 @@ class MainViewController: UIViewController, GIDSignInUIDelegate {
                     print(error.localizedDescription)
                 case .cancelled:
                     print("cancelled")
-                default:
-                    let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
-                    activityIndicator.hidesWhenStopped = true
+                case .success(let grantedPermissions, let declinedPermissions, let accessToken):
+                    
+                    print(grantedPermissions)
+                    print(declinedPermissions)
+                    print(accessToken)
+                    
                     activityIndicator.center = self.wordsmithPortalButton.center
                     self.view.addSubview(activityIndicator)
                     activityIndicator.startAnimating()
@@ -176,12 +262,54 @@ class MainViewController: UIViewController, GIDSignInUIDelegate {
                             if let firUser = user {
                                 
                                 let thisUserDBRef = self.userDBRef.child(firUser.uid)
+                                let profPicStorRef = FIRStorage.storage().reference().child("profilePics")
                                 
                                 for profile in firUser.providerData {
                                     
+                                    let profPic = profile.photoURL!
                                     let userProf = User(uid: firUser.uid, name: profile.displayName!, photoPath: String(describing: profile.photoURL!))
+                                    appDelegate.signedInUser = userProf
                                     
-                                    thisUserDBRef.setValue(userProf.toAny())
+                                    self.userDBRef.observeSingleEvent(of: .value, with: { (snapShot) in
+                                        
+                                        if snapShot.hasChild(firUser.uid) {
+                                            let snapVal = snapShot.childSnapshot(forPath: firUser.uid).value as? [String: Any]
+                                            print("observing user database...")
+                                            
+                                            if let url = snapVal?["photoPath"] as? String {
+                                                print("found URL")
+                                                
+                                                let providerURL = String(describing:profPic)
+                                                
+                                                if url != providerURL {
+                                                    print("url's are not the same")
+                                                    appDelegate.fetchAndSaveProfileImage(url: profile.photoURL!, storeRef: profPicStorRef, uid: firUser.uid)
+                                                } else {
+                                                    
+                                                    let thisProfPicStoreRef = profPicStorRef.child(firUser.uid)
+                                                    
+                                                    thisProfPicStoreRef.data(withMaxSize: 5 * 1024 * 1024, completion: { (data, error) in
+                                                        print("finished grabbing data from storage...")
+                                                        
+                                                        if let error = error {
+                                                            print(error.localizedDescription)
+                                                        }
+                                                        
+                                                        if error == nil, data != nil {
+                                                            print("retrieved image data")
+                                                            appDelegate.signedInProfileImage = UIImage(data: data!)
+                                                        }
+                                                    })
+                                                }
+                                                
+                                                thisUserDBRef.setValue(userProf.toAny())
+                                            }
+                                        } else {
+                                            appDelegate.fetchAndSaveProfileImage(url: profile.photoURL!, storeRef: profPicStorRef, uid: firUser.uid)
+                                            thisUserDBRef.setValue(userProf.toAny())
+                                        }
+                                        
+                                    })
                                     
                                 }
                             }

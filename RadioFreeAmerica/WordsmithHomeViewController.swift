@@ -1,0 +1,93 @@
+//
+//  WordsmithHomeViewController.swift
+//  RadioFreeAmerica
+//
+//  Created by Richard Melpignano on 7/3/17.
+//  Copyright © 2017 J2MFD. All rights reserved.
+//
+
+import UIKit
+
+class WordsmithHomeViewController: UIViewController {
+    
+    @IBOutlet weak var statView: UIScrollView!
+    @IBOutlet weak var userNameLabel: UILabel!
+    @IBOutlet weak var profilePicImageView: UIImageView!
+    
+    
+    
+    @IBOutlet weak var scrollViewHeightConstraint: NSLayoutConstraint!
+    
+    // Elements from PageViewController
+    var pageVC: WordsmithPageViewController!
+    var firstName: String!
+    var image: UIImage?
+    
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        userNameLabel.text = firstName
+        profilePicImageView.image = image
+        
+        
+        profilePicImageView.layer.borderWidth = 1
+        profilePicImageView.layer.masksToBounds = false
+        profilePicImageView.layer.borderColor = UIColor.black.cgColor
+        profilePicImageView.layer.cornerRadius = profilePicImageView.frame.height / 2
+        profilePicImageView.clipsToBounds = true
+        
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        for view in statView.subviews {
+            view.removeFromSuperview()
+        }
+        
+        statView.translatesAutoresizingMaskIntoConstraints = false
+        scrollViewHeightConstraint.constant = self.view.frame.height / 4
+        
+        let user = pageVC.signedInUser!
+        
+        var awards = [Stat]()
+        
+        awards.append(user.knowledge)
+        awards.append(user.crowns)
+        awards.append(user.stars)
+        awards.append(user.downloads)
+        
+        
+        for (index, award) in awards.enumerated() {
+            
+            
+            
+            let views = Bundle.main.loadNibNamed("StatView", owner: nil, options: nil)
+            let singleStatView = views?[0] as! StatView
+            
+            self.statView.addSubview(singleStatView)
+            
+            let vertSpaceInPoints: CGFloat = 10
+            let horizSpaceInPoints: CGFloat = 20
+            let size = CGSize(width: statView.bounds.width - horizSpaceInPoints, height: singleStatView.bounds.height)
+            let viewOrigin = CGPoint(x: horizSpaceInPoints / 2, y: CGFloat(size.height * CGFloat(index) + vertSpaceInPoints))
+            
+            
+            
+            singleStatView.frame = CGRect(origin: viewOrigin, size: size)
+            self.statView.contentSize = CGSize(width: self.statView.bounds.width, height: singleStatView.bounds.height * CGFloat(index) + 50.0)
+            
+            singleStatView.alpha = 0.95
+            singleStatView.layer.borderWidth = 1.5
+            singleStatView.layer.borderColor = UIColor.black.cgColor
+            singleStatView.layer.cornerRadius = 25.0
+            singleStatView.layer.masksToBounds = false
+            singleStatView.countLabel.text = String(award.value)
+            singleStatView.statLabel.text = award.description
+            
+        }
+        
+    }
+    
+}
