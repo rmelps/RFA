@@ -20,19 +20,34 @@ struct User {
     var downloads: Stat!
     let itemRef: FIRDatabaseReference?
     
-    init(userData: FIRUser, snapShot: FIRDataSnapshot, picURL: String) {
+    init(userData: FIRUser, snapShot: FIRDataSnapshot, picURL: String?, nameFromProvider: String?) {
         
         uid = userData.uid
         photoPath = picURL
+        name = nameFromProvider
         
         itemRef = snapShot.ref
         
         let snapShotValue = snapShot.value as? [String: AnyObject]
         
         if let name = snapShotValue?["name"] as? String {
-            self.name = name
+            if let providerName = nameFromProvider {
+                self.name = providerName
+            } else {
+                self.name = name
+            }
         } else {
             self.name = ""
+        }
+        
+        if let photoPath = snapShotValue?["photoPath"] as? String {
+            if let providerPic = picURL {
+                self.photoPath = providerPic
+            } else {
+                self.photoPath = photoPath
+            }
+        } else {
+            self.photoPath = ""
         }
         
         if let stars = snapShotValue?["stars"] as? Int {

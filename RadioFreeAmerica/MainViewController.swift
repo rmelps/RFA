@@ -156,6 +156,7 @@ class MainViewController: UIViewController, GIDSignInUIDelegate {
             activityIndicator.center = self.wordsmithPortalButton.center
             self.view.addSubview(activityIndicator)
             activityIndicator.startAnimating()
+            sender.isEnabled = false
             
             let credential = FIRFacebookAuthProvider.credential(withAccessToken: accessToken.authenticationToken)
             FIRAuth.auth()?.signIn(with: credential, completion: { (user:FIRUser?, error:Error?) in
@@ -185,7 +186,7 @@ class MainViewController: UIViewController, GIDSignInUIDelegate {
                                 let snap = snapShot.childSnapshot(forPath: firUser.uid)
                                 let snapVal = snap.value as? [String: Any]
                                 
-                                let userProf = User(userData: firUser, snapShot: snap, picURL: profPic)
+                                let userProf = User(userData: firUser, snapShot: snap, picURL: profPic, nameFromProvider: profile.displayName)
                                 appDelegate.signedInUser = userProf
                                 
                                 if let url = snapVal?["photoPath"] as? String {
@@ -202,8 +203,8 @@ class MainViewController: UIViewController, GIDSignInUIDelegate {
                                         thisProfPicStoreRef.data(withMaxSize: 5 * 1024 * 1024, completion: { (data, error) in
                                             print("finished grabbing data from storage...")
                                             
-                                            if error != nil {
-                                                print(error?.localizedDescription)
+                                            if let error = error {
+                                                print(error.localizedDescription)
                                             }
                                             
                                             if error == nil, data != nil {
@@ -484,6 +485,7 @@ class MainViewController: UIViewController, GIDSignInUIDelegate {
             button.setTitle(thisButtonTitle, for: .normal)
             
             self.isSignedIn = dirIn
+            button.isEnabled = true
             
             UIView.animate(withDuration: 0.3, animations: { 
                 button.titleLabel?.alpha = 1

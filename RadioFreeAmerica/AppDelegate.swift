@@ -75,6 +75,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
             activityIndicator.center = rootVC.wordsmithPortalButton.center
             rootVC.view.addSubview(activityIndicator)
             activityIndicator.startAnimating()
+            rootVC.logInWithGoogleButton.isEnabled = false
         }
         
         if let error = error {
@@ -120,7 +121,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
                             let snap = snapShot.childSnapshot(forPath: firUser.uid)
                             let snapVal = snap.value as? [String: Any]
                             
-                            let userProf = User(userData: firUser, snapShot: snap, picURL: profPic)
+                            let userProf = User(userData: firUser, snapShot: snap, picURL: profPic, nameFromProvider: profile.displayName)
                             self.signedInUser = userProf
                             
                             if let url = snapVal?["photoPath"] as? String {
@@ -137,8 +138,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
                                     thisProfPicStoreRef.data(withMaxSize: 5 * 1024 * 1024, completion: { (data, error) in
                                         print("finished grabbing data from storage...")
                                         
-                                        if error != nil {
-                                        print(error?.localizedDescription)
+                                        if let error = error {
+                                        print(error.localizedDescription)
                                         }
                                         
                                         if error == nil, data != nil {

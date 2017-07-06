@@ -26,6 +26,7 @@
 		951D22BA1F0AF97B005264A7 /* StatView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 951D22B91F0AF97B005264A7 /* StatView.xib */; };
 		951D22BC1F0AFC41005264A7 /* StatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951D22BB1F0AFC41005264A7 /* StatView.swift */; };
 		951D22BE1F0B10D6005264A7 /* Stat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951D22BD1F0B10D6005264A7 /* Stat.swift */; };
+		95265BAE1F0D88E700F44E05 /* WordsmithChoiceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95265BAD1F0D88E700F44E05 /* WordsmithChoiceViewController.swift */; };
 		EA25DE04343B6E4ADE610C92 /* Pods_RadioFreeAmerica.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B89A5A22515871740B93D705 /* Pods_RadioFreeAmerica.framework */; };
 /* End PBXBuildFile section */
 
@@ -52,6 +53,7 @@
 		951D22B91F0AF97B005264A7 /* StatView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = StatView.xib; sourceTree = "<group>"; };
 		951D22BB1F0AFC41005264A7 /* StatView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatView.swift; sourceTree = "<group>"; };
 		951D22BD1F0B10D6005264A7 /* Stat.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stat.swift; sourceTree = "<group>"; };
+		95265BAD1F0D88E700F44E05 /* WordsmithChoiceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordsmithChoiceViewController.swift; sourceTree = "<group>"; };
 		A2EA3C87DBE567095C362C21 /* Pods-RadioFreeAmerica.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RadioFreeAmerica.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RadioFreeAmerica/Pods-RadioFreeAmerica.debug.xcconfig"; sourceTree = "<group>"; };
 		B89A5A22515871740B93D705 /* Pods_RadioFreeAmerica.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RadioFreeAmerica.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -102,6 +104,7 @@
 				951D22871EEF3DA5005264A7 /* AppDelegate.swift */,
 				951D22891EEF3DA5005264A7 /* MainViewController.swift */,
 				951D228B1EEF3DA5005264A7 /* Main.storyboard */,
+				95265BAD1F0D88E700F44E05 /* WordsmithChoiceViewController.swift */,
 				951D22B71F0AE138005264A7 /* WordsmithHomeViewController.swift */,
 				951D22B11EFA0EC4005264A7 /* GenreCollectionViewController.swift */,
 				951D22A51EF9F016005264A7 /* GenreChoiceViewController.swift */,
@@ -282,6 +285,7 @@
 				951D22B21EFA0EC4005264A7 /* GenreCollectionViewController.swift in Sources */,
 				951D22AD1EFA09FB005264A7 /* User.swift in Sources */,
 				951D22AF1EFA0A24005264A7 /* Track.swift in Sources */,
+				95265BAE1F0D88E700F44E05 /* WordsmithChoiceViewController.swift in Sources */,
 				951D22881EEF3DA5005264A7 /* AppDelegate.swift in Sources */,
 				951D22B81F0AE138005264A7 /* WordsmithHomeViewController.swift in Sources */,
 				951D22A01EF492C5005264A7 /* MenuButton.swift in Sources */,
