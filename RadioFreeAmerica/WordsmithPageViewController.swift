@@ -12,6 +12,7 @@ class WordsmithPageViewController: UIPageViewController, UIPageViewControllerDat
     
     var orderedViewControllers: [UIViewController]!
     var signedInUser: User!
+    var genreChoice: GenreChoices!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,11 +30,14 @@ class WordsmithPageViewController: UIPageViewController, UIPageViewControllerDat
         dataSource = self
         
         if let firstViewController = orderedViewControllers.first as? WordsmithHomeViewController {
-            
             firstViewController.pageVC = self
             firstViewController.firstName = getFirstName(user: signedInUser)
             firstViewController.image = (UIApplication.shared.delegate as! AppDelegate).signedInProfileImage
             setViewControllers([firstViewController], direction: .forward, animated: true, completion: nil)
+        }
+        
+        if let secondViewController = orderedViewControllers[1] as? WordsmithChoiceViewController {
+            secondViewController.genre = self.genreChoice
         }
     }
     

@@ -195,7 +195,7 @@
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
                                 <connections>
-                                    <action selector="playPreview:" destination="b5D-hJ-CUm" eventType="touchUpInside" id="8cx-C0-uvn"/>
+                                    <action selector="playPreviewButtonDown:" destination="b5D-hJ-CUm" eventType="touchDown" id="7eB-6A-Bf5"/>
                                 </connections>
                             </button>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="0Uv-gl-EuL">

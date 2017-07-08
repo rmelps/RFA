@@ -9,8 +9,8 @@
 import UIKit
 import AVFoundation
 
-enum GenreChoices: Int {
-    case rap = 0, techno, trap
+enum GenreChoices: String {
+    case Rap, Techno, Trap
 }
 
 class GenreCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
@@ -19,6 +19,7 @@ class GenreCollectionViewController: UICollectionViewController, UICollectionVie
     let sectionInsets = UIEdgeInsets(top: 15.0, left: 15.0, bottom: 15.0, right: 15.0)
     let itemsPerRow: CGFloat = 1
     var genreCount: Int!
+    var genreChoice: GenreChoices!
     
     // AV Player Layer
     var playerLayer = AVPlayerLayer()
@@ -41,8 +42,7 @@ class GenreCollectionViewController: UICollectionViewController, UICollectionVie
         // The last element in the GenreChoices enum. If a genre is added after this value, will
         // need to update the below equation to include that value
         
-        genreCount = GenreChoices.trap.hashValue + 1
-        
+        genreCount = GenreChoices.Trap.hashValue + 1
         
     }
     
@@ -51,6 +51,7 @@ class GenreCollectionViewController: UICollectionViewController, UICollectionVie
         case "showWordsmithPagesSegue":
             
             let vc = segue.destination as! WordsmithPageViewController
+            vc.genreChoice = self.genreChoice
             
         default:
             break
@@ -72,16 +73,20 @@ class GenreCollectionViewController: UICollectionViewController, UICollectionVie
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! GenreCollectionViewCell
-        if let genre = GenreChoices(rawValue: indexPath.row) {
-            switch genre {
-            case .rap:
-                cell.genreLabel.text = "Rap"
-                setCellVideoLayer(cell: cell, resourceName: "rock")
-            case .techno:
-                cell.genreLabel.text = "Techno"
-            case .trap:
-                cell.genreLabel.text = "Trap"
-            }
+        
+        let genre = getGenreFromHash(hashValue: indexPath.row)
+        
+        switch genre {
+        case .Rap:
+            cell.genreLabel.text = GenreChoices.Rap.rawValue
+            cell.genre = .Rap
+            setCellVideoLayer(cell: cell, resourceName: "rock")
+        case .Techno:
+            cell.genreLabel.text = GenreChoices.Techno.rawValue
+            cell.genre = .Techno
+        case .Trap:
+            cell.genreLabel.text = GenreChoices.Trap.rawValue
+            cell.genre = .Trap
         }
         
         cell.backgroundColor = .yellow
@@ -96,11 +101,24 @@ class GenreCollectionViewController: UICollectionViewController, UICollectionVie
         return cell
     }
     
+    func getGenreFromHash(hashValue hash: Int) -> GenreChoices {
+        switch hash {
+        case 0:
+            return .Rap
+        case 1:
+            return .Techno
+        case 2:
+            return .Trap
+        default:
+            fatalError("Genre Choice Hash Value out of range: hash = \(hash)")
+        }
+    }
+    
     func setCellVideoLayer(cell: GenreCollectionViewCell, resourceName: String) {
         
         let playerLayer = AVPlayerLayer()
         playerLayer.frame = cell.avLayerView.bounds
-        playerLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
+        playerLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
         
         guard let url = Bundle.main.path(forResource: resourceName, ofType: "m4v") else {
             print("\(resourceName) not found!")
@@ -139,7 +157,8 @@ class GenreCollectionViewController: UICollectionViewController, UICollectionVie
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         print("selected a cell")
-        
+        let cell = collectionView.cellForItem(at: indexPath) as! GenreCollectionViewCell
+        self.genreChoice = cell.genre
         self.performSegue(withIdentifier: "showWordsmithPagesSegue", sender: self)
     }
 }

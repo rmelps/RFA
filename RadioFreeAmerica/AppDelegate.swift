@@ -75,17 +75,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
             activityIndicator.center = rootVC.wordsmithPortalButton.center
             rootVC.view.addSubview(activityIndicator)
             activityIndicator.startAnimating()
-            rootVC.logInWithGoogleButton.isEnabled = false
         }
         
         if let error = error {
             print(error.localizedDescription)
             activityIndicator.stopAnimating()
+            rootVC?.logInWithFacebookButton.isEnabled = true
+            rootVC?.logInWithGoogleButton.isEnabled = true
             return
         }
         
         guard let authentication = user.authentication else {
             activityIndicator.stopAnimating()
+            rootVC?.logInWithFacebookButton.isEnabled = true
+            rootVC?.logInWithGoogleButton.isEnabled = true
             return
         }
         
@@ -93,9 +96,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
         FIRAuth.auth()?.signIn(with: credential, completion: { (user:FIRUser?, error:Error?) in
             
             activityIndicator.stopAnimating()
+            rootVC?.logInWithFacebookButton.isEnabled = true
+            rootVC?.logInWithGoogleButton.isEnabled = true
             
             if let error = error {
                 print(error.localizedDescription)
+                
                 return
             }
             

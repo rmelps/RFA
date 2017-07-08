@@ -139,6 +139,8 @@ class MainViewController: UIViewController, GIDSignInUIDelegate {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
         activityIndicator.hidesWhenStopped = true
+        sender.isEnabled = false
+        logInWithGoogleButton.isEnabled = false
         
         let loginManager = LoginManager()
         
@@ -156,7 +158,6 @@ class MainViewController: UIViewController, GIDSignInUIDelegate {
             activityIndicator.center = self.wordsmithPortalButton.center
             self.view.addSubview(activityIndicator)
             activityIndicator.startAnimating()
-            sender.isEnabled = false
             
             let credential = FIRFacebookAuthProvider.credential(withAccessToken: accessToken.authenticationToken)
             FIRAuth.auth()?.signIn(with: credential, completion: { (user:FIRUser?, error:Error?) in
@@ -237,8 +238,12 @@ class MainViewController: UIViewController, GIDSignInUIDelegate {
                 switch result {
                 case .failed(let error):
                     print(error.localizedDescription)
+                    self.logInWithFacebookButton.isEnabled = true
+                    self.logInWithGoogleButton.isEnabled = true
                 case .cancelled:
                     print("cancelled")
+                    self.logInWithFacebookButton.isEnabled = true
+                    self.logInWithGoogleButton.isEnabled = true
                 case .success(let grantedPermissions, let declinedPermissions, let accessToken):
                     
                     print(grantedPermissions)
@@ -330,6 +335,9 @@ class MainViewController: UIViewController, GIDSignInUIDelegate {
         
     }
     @IBAction func logInWithGoogleButtonTapped(_ sender: UIButton) {
+        sender.isEnabled = false
+        logInWithFacebookButton.isEnabled = false
+        
         if isSignedIn {
             let firebaseAuth = FIRAuth.auth()
             do {
@@ -429,7 +437,7 @@ class MainViewController: UIViewController, GIDSignInUIDelegate {
                 self.logInButtonCenterYAlignment.constant = -self.view.bounds.height / 2 + button.bounds.height / 2 + 20
                 self.logInButtonWidthConstraint.constant = self.logInButtonWidthConstraint.constant / 2
             } else {
-                thisButtonTitle = "Sign In With Facebook"
+                thisButtonTitle = "Sign In with Facebook"
                 self.logInButtonCenterXAlignment.constant = self.facebookOrigXConst
                 self.logInButtonCenterYAlignment.constant = self.facebookOrigYConst
                 self.logInButtonWidthConstraint.constant = logInButtonWidthConstraint.constant * 2
@@ -443,7 +451,7 @@ class MainViewController: UIViewController, GIDSignInUIDelegate {
                 self.googleButtonCenterYAlignment.constant = -self.view.bounds.height / 2 + button.bounds.height / 2 + 20
                 self.logInButtonWidthConstraint.constant = self.logInButtonWidthConstraint.constant / 2
             } else {
-                thisButtonTitle = "Sign In With Google"
+                thisButtonTitle = "Sign In with Google"
                 self.googleButtonCenterXAlignment.constant = self.googleOrigXConst
                 self.googleButtonCenterYAlignment.constant = self.googleOrigYConst
                 self.logInButtonWidthConstraint.constant = self.logInButtonWidthConstraint.constant * 2
@@ -485,7 +493,9 @@ class MainViewController: UIViewController, GIDSignInUIDelegate {
             button.setTitle(thisButtonTitle, for: .normal)
             
             self.isSignedIn = dirIn
-            button.isEnabled = true
+            
+            self.logInWithFacebookButton.isEnabled = true
+            self.logInWithGoogleButton.isEnabled = true
             
             UIView.animate(withDuration: 0.3, animations: { 
                 button.titleLabel?.alpha = 1

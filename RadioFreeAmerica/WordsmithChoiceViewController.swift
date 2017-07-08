@@ -7,6 +7,11 @@
 //
 
 import UIKit
+import AVFoundation
+import FirebaseAuth
+import FirebaseCore
+import FirebaseStorage
+import FirebaseDatabase
 
 class WordsmithChoiceViewController: UIViewController, UIGestureRecognizerDelegate {
     @IBOutlet weak var playPreviewButton: MenuButton!
@@ -27,24 +32,95 @@ class WordsmithChoiceViewController: UIViewController, UIGestureRecognizerDelega
     @IBOutlet weak var enterStudioLabel: UILabel!
     @IBOutlet weak var voteLabel: UILabel!
     
+    // Firebase Storage reference
+    var trackStorageRef: FIRStorageReference!
+    private var downloadTask: FIRStorageDownloadTask?
+    
+    // Firebase Database Reference
+    var currentTrackRef: FIRDatabaseReference!
+    
+    // Chosen Genre
+    var genre: GenreChoices!
+    
+    // AVPlayer
+    var player: AVAudioPlayer?
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         
         // Add Pan Gesture Recognizer to view
         panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(WordsmithChoiceViewController.handlePan(_:)))
         panGestureRecognizer.delegate = self
         self.view.addGestureRecognizer(panGestureRecognizer)
-
-       
-    }
-    
-    @IBAction func playPreview(_ sender: MenuButton) {
+        
+        // Add additional control events for playPreviewButton touchUp
+        playPreviewButton.addTarget(self, action: #selector(WordsmithChoiceViewController.playPreviewButtonUp(_:)), for: [.touchUpInside, .touchUpOutside, .touchCancel, .touchDragExit])
+        
+        // Set the current day's database reference
+        let genreRaw = genre.rawValue.lowercased()
+        print(genreRaw)
+        //TODO: Will not use database reference "today", but the actual date
+        currentTrackRef = FIRDatabase.database().reference().child("tracks/\(genreRaw)/today")
+        
+        // Find current tracks storage URL
+        currentTrackRef.observe(.value) { (snapShot) in
+            let snapVal = snapShot.value as? [String: Any]
+            
+            if let fileURL = snapVal?["fileURL"] as? String {
+                self.trackStorageRef = FIRStorage.storage().reference(forURL: fileURL)
+            }
+        }
         
     }
     
-    func handlePan(_ sender: UIPanGestureRecognizer) {
+    @IBAction func playPreviewButtonDown(_ sender: MenuButton) {
+        print("button down")
+        
+        //TODO: Change test mp3 to daily mp3
+        if downloadTask == nil {
+            if let player = player {
+                player.play()
+            } else {
+                guard trackStorageRef != nil else {
+                    print("Found nil for test storage ref")
+                    return
+                }
+                downloadTask = trackStorageRef.data(withMaxSize: 15 * 1024 * 1024, completion: { (data, error) in
+                    self.downloadTask = nil
+                    if let error = error {
+                        print("downloadTask error occurred: \(error.localizedDescription)")
+                        return
+                    }
+                    
+                    if let data = data {
+                        do {
+                            try self.player = AVAudioPlayer(data: data, fileTypeHint: ".mp3")
+                            self.player?.numberOfLoops = -1
+                            self.player!.play()
+                        } catch let playerError {
+                            print("player error occurred: \(playerError.localizedDescription)")
+                        }
+                    }
+                })
+            }
+        } else {
+            downloadTask?.resume()
+        }
+        
+    }
+    
+    @objc func playPreviewButtonUp(_ sender: MenuButton) {
+        print("button up")
+        
+        player?.pause()
+        
+        if let downloadTask = downloadTask {
+            downloadTask.pause()
+        }
+    }
+    
+    @objc func handlePan(_ sender: UIPanGestureRecognizer) {
         var touch = CGPoint()
         var startPoint = CGPoint()
         let maxDistance: CGFloat = abs(bottomStack.bounds.minY - self.view.center.y)
