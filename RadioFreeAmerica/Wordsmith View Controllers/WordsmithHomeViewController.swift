@@ -8,18 +8,16 @@
 
 import UIKit
 
-class WordsmithHomeViewController: UIViewController {
+class WordsmithHomeViewController: WordsmithPageViewControllerChild {
     
     @IBOutlet weak var statView: UIScrollView!
     @IBOutlet weak var userNameLabel: UILabel!
     @IBOutlet weak var profilePicImageView: UIImageView!
     
-    
-    
     @IBOutlet weak var scrollViewHeightConstraint: NSLayoutConstraint!
     
     // Elements from PageViewController
-    var pageVC: WordsmithPageViewController!
+   // var pageVC: WordsmithPageViewController!
     var firstName: String!
     var image: UIImage?
     
@@ -49,7 +47,8 @@ class WordsmithHomeViewController: UIViewController {
         statView.translatesAutoresizingMaskIntoConstraints = false
         scrollViewHeightConstraint.constant = self.view.frame.height / 4
         
-        let user = pageVC.signedInUser!
+        let user = wordsmithPageVC!.signedInUser!
+        print(user)
         
         var awards = [Stat]()
         

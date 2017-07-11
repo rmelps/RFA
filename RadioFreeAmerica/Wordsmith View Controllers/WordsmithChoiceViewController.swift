@@ -13,7 +13,7 @@ import FirebaseCore
 import FirebaseStorage
 import FirebaseDatabase
 
-class WordsmithChoiceViewController: UIViewController, UIGestureRecognizerDelegate {
+class WordsmithChoiceViewController: WordsmithPageViewControllerChild, UIGestureRecognizerDelegate {
     @IBOutlet weak var playPreviewButton: MenuButton!
     @IBOutlet weak var topStack: UIStackView!
     @IBOutlet weak var bottomStack: UIStackView!
@@ -34,16 +34,21 @@ class WordsmithChoiceViewController: UIViewController, UIGestureRecognizerDelega
     
     // Firebase Storage reference
     var trackStorageRef: FIRStorageReference!
+    var userStorageRef: FIRStorageReference!
     private var downloadTask: FIRStorageDownloadTask?
     
     // Firebase Database Reference
     var currentTrackRef: FIRDatabaseReference!
+    var userDBRef: FIRDatabaseReference!
     
     // Chosen Genre
     var genre: GenreChoices!
     
     // AVPlayer
     var player: AVAudioPlayer?
+    
+    // Track Info View
+    var trackInfoView: TrackInfoView!
     
     
     override func viewDidLoad() {
@@ -62,6 +67,7 @@ class WordsmithChoiceViewController: UIViewController, UIGestureRecognizerDelega
         print(genreRaw)
         //TODO: Will not use database reference "today", but the actual date
         currentTrackRef = FIRDatabase.database().reference().child("tracks/\(genreRaw)/today")
+        userDBRef = FIRDatabase.database().reference().child("users")
         
         // Find current tracks storage URL
         currentTrackRef.observe(.value) { (snapShot) in
@@ -69,6 +75,43 @@ class WordsmithChoiceViewController: UIViewController, UIGestureRecognizerDelega
             
             if let fileURL = snapVal?["fileURL"] as? String {
                 self.trackStorageRef = FIRStorage.storage().reference(forURL: fileURL)
+                
+                // configure the track info view for when the audio preview is played
+                let views = Bundle.main.loadNibNamed("TrackInfoView", owner: nil, options: nil)
+                self.trackInfoView = views?[0] as! TrackInfoView
+                let infoWidth = self.view.bounds.width * 0.75
+                let infoHeight = infoWidth / 2
+                self.trackInfoView.frame = CGRect(origin: CGPoint.zero, size: CGSize(width: infoWidth, height: infoHeight))
+                
+                if let title = snapVal?["title"] as? String {
+                    self.trackInfoView.titleLabel.text = title
+                }
+                
+                if let uid = snapVal?["user"] as? String {
+                    let uidDBRef = self.userDBRef.child(uid)
+                    
+                    uidDBRef.observeSingleEvent(of: .value, with: { (snapShot) in
+                        let snapVal = snapShot.value as? [String:Any]
+                        
+                        if let user = snapVal?["name"] as? String {
+                            self.trackInfoView.userNameLabel.text = user
+                        }
+                        if let photoPath = snapVal?["photoPath"] as? String {
+                            print(photoPath)
+                            let ref = FIRStorage.storage().reference(withPath: "profilePics/\(uid)")
+                            ref.data(withMaxSize: 5 * 1024 * 1024, completion: { (data, error) in
+                                if let error = error {
+                                    print(error.localizedDescription)
+                                    return
+                                }
+                                if let data = data {
+                                    let imageView = self.trackInfoView.userProfPicImageView
+                                    imageView!.image = UIImage(data: data)
+                                }
+                            })
+                        }
+                    })
+                }
             }
         }
         
@@ -81,6 +124,7 @@ class WordsmithChoiceViewController: UIViewController, UIGestureRecognizerDelega
         if downloadTask == nil {
             if let player = player {
                 player.play()
+                self.addInfoViewtoSuperView()
             } else {
                 guard trackStorageRef != nil else {
                     print("Found nil for test storage ref")
@@ -98,6 +142,7 @@ class WordsmithChoiceViewController: UIViewController, UIGestureRecognizerDelega
                             try self.player = AVAudioPlayer(data: data, fileTypeHint: ".mp3")
                             self.player?.numberOfLoops = -1
                             self.player!.play()
+                            self.addInfoViewtoSuperView()
                         } catch let playerError {
                             print("player error occurred: \(playerError.localizedDescription)")
                         }
@@ -114,6 +159,12 @@ class WordsmithChoiceViewController: UIViewController, UIGestureRecognizerDelega
         print("button up")
         
         player?.pause()
+        
+        for view in self.view.subviews {
+            if view is TrackInfoView {
+                removeInfoViewFromSuperView()
+            }
+        }
         
         if let downloadTask = downloadTask {
             downloadTask.pause()
@@ -188,6 +239,37 @@ class WordsmithChoiceViewController: UIViewController, UIGestureRecognizerDelega
         
         self.view.layer.insertSublayer(currentShapeLayer!, at: 0)
         
+    }
+    
+    private func addInfoViewtoSuperView(){
+        trackInfoView.alpha = 0.0
+        self.view.addSubview(trackInfoView)
+        trackInfoView.translatesAutoresizingMaskIntoConstraints = false
+        
+        let width = self.view.bounds.width * 0.95
+        trackInfoView.widthAnchor.constraint(equalToConstant: width).isActive = true
+        trackInfoView.heightAnchor.constraint(equalToConstant: width / 2).isActive = true
+        trackInfoView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
+        trackInfoView.bottomAnchor.constraint(equalTo: playPreviewButton.topAnchor, constant: -20).isActive = true
+        
+        trackInfoView.layer.cornerRadius = 10.0
+        trackInfoView.layer.borderWidth = 3.0
+        trackInfoView.layer.borderColor = UIColor.white.cgColor
+        
+        UIView.animate(withDuration: 0.3) {
+            self.trackInfoView.alpha = 0.75
+        }
+    }
+    
+    private func removeInfoViewFromSuperView() {
+        UIView.animate(withDuration: 0.3, animations: {
+            self.trackInfoView.alpha = 0.0
+        }) { (success) in
+            if success {
+                print("removing trackInfoView from superview")
+                self.trackInfoView.removeFromSuperview()
+            }
+        }
     }
     
     

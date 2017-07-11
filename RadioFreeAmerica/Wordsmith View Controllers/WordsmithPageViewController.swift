@@ -29,8 +29,13 @@ class WordsmithPageViewController: UIPageViewController, UIPageViewControllerDat
 
         dataSource = self
         
+        for vc in orderedViewControllers {
+            let wsvc = vc as! WordsmithPageViewControllerChild
+            wsvc.wordsmithPageVC = self
+        }
+        
         if let firstViewController = orderedViewControllers.first as? WordsmithHomeViewController {
-            firstViewController.pageVC = self
+            //firstViewController.wordsmithPageVC = self
             firstViewController.firstName = getFirstName(user: signedInUser)
             firstViewController.image = (UIApplication.shared.delegate as! AppDelegate).signedInProfileImage
             setViewControllers([firstViewController], direction: .forward, animated: true, completion: nil)

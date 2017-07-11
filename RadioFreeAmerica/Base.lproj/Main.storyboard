@@ -401,10 +401,10 @@
             </objects>
             <point key="canvasLocation" x="844" y="884.70764617691157"/>
         </scene>
-        <!--View Controller-->
+        <!--Wordsmith Feed View Controller-->
         <scene sceneID="WWA-0n-cIy">
             <objects>
-                <viewController storyboardIdentifier="wordsmithThird" useStoryboardIdentifierAsRestorationIdentifier="YES" id="EYT-zw-WHu" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="wordsmithThird" useStoryboardIdentifierAsRestorationIdentifier="YES" id="EYT-zw-WHu" customClass="WordsmithFeedViewController" customModule="RadioFreeAmerica" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="C8Q-gi-wtY"/>
                         <viewControllerLayoutGuide type="bottom" id="nBL-B7-s71"/>
