@@ -23,6 +23,10 @@ class StudioViewController: UIViewController {
     private var player: AKAudioPlayer!
     private var passthroughPlayer: AKMixer!
     
+    // Node to record
+    var recorder: AKNodeRecorder!
+    var recordingNode: AKMixer!
+    
     // AKNodeOutputPlots
     var recordedAudioPlot: AKNodeOutputPlot!
     var beatPlot: AKNodeOutputPlot!
@@ -39,21 +43,35 @@ class StudioViewController: UIViewController {
         super.viewDidLoad()
         
         do {
-            try session.setCategory(AVAudioSessionCategoryPlayAndRecord)
+            try AKSettings.setSession(category: .playAndRecord, with: [.mixWithOthers, .defaultToSpeaker, .allowBluetoothA2DP])
+            AKSettings.bufferLength = .medium
             
             
-            
-            AKSettings.defaultToSpeaker = true
-            
-            try session.setActive(true)
             session.requestRecordPermission({ (allowed) in
                 if allowed {
                     print("allowed recording")
+ 
+                    let inputDevices = self.setAKInputDevices()
+                    print(inputDevices)
                     
-                    if let inputs = AudioKit.inputDevices {
+                    
+                    if let inputs = inputDevices {
                         do {
                             self.microphone = AKMicrophone()
-                            try self.microphone.setDevice(inputs[0])
+                            
+                            for input in inputs {
+                                if input.deviceID.contains("Front") {
+                                    try self.setAKMicrophoneDevice(input: input)
+                                }
+                            }
+                            
+                            self.micCopy = AKBooster(self.microphone)
+                            self.micCopy.gain = 2.0
+                            
+                            self.recordingNode = AKMixer([self.micCopy])
+                            
+                            self.configureNodes()
+                            
                         } catch let error {
                             print("could not access input devices: \(error.localizedDescription)")
                         }
@@ -70,11 +88,17 @@ class StudioViewController: UIViewController {
             print("recording session error: \(error.localizedDescription)")
         }
         
+    }
+    
+    func configureNodes() {
         
         do {
             let file = try AKAudioFile(forReading: beatURL)
             player = try AKAudioPlayer(file: file, looping: true, completionHandler: nil)
             passthroughPlayer = AKMixer(player)
+            
+            recordingNode.connect(player)
+            
         } catch let error {
             fatalError("Could not read beat URL at \(beatURL): \(error.localizedDescription)")
         }
@@ -93,17 +117,17 @@ class StudioViewController: UIViewController {
             beatPlot.color = .yellow
             
             
-           recordedAudioPlot = AKNodeOutputPlot(passthroughPlayer, frame: CGRect(origin: recordedAudioPlotView.frame.origin, size: waveformWindowSize))
+            recordedAudioPlot = AKNodeOutputPlot(passthroughPlayer, frame: CGRect(origin: recordedAudioPlotView.frame.origin, size: waveformWindowSize))
             recordedAudioPlot.plotType = .rolling
             recordedAudioPlot.shouldFill = true
             recordedAudioPlot.backgroundColor = .clear
             recordedAudioPlot.shouldMirror = true
             recordedAudioPlot.color = .red
             
-            if let microphone = microphone {
+            if let micCopy = micCopy {
                 
                 
-                let micPlot = AKNodeOutputPlot(microphone, frame: CGRect(origin: beatBufferView.frame.origin, size: waveformWindowSize))
+                let micPlot = AKNodeOutputPlot(micCopy, frame: CGRect(origin: beatBufferView.frame.origin, size: waveformWindowSize))
                 micPlot.plotType = .buffer
                 micPlot.shouldFill = true
                 micPlot.backgroundColor = .clear
@@ -118,6 +142,8 @@ class StudioViewController: UIViewController {
             
         }
         
+        
+        print(AudioKit.outputDevices)
         AudioKit.output = passthroughPlayer
         AudioKit.start()
         player.play()
@@ -137,6 +163,54 @@ class StudioViewController: UIViewController {
         micPlot.color = .yellow
         
        self.view.addSubview(micPlot)
+    }
+    
+    func setAKInputDevices() -> [AKDevice]? {
+        
+        
+        var returnDevices = [AKDevice]()
+        if let devices = session.availableInputs {
+            for device in devices {
+                
+                if device.dataSources == nil {
+                    returnDevices.append(AKDevice(name: device.portName, deviceID: device.uid))
+                } else {
+                    for dataSource in device.dataSources! {
+                        returnDevices.append(AKDevice(name: device.portName,
+                                                      deviceID: "\(device.uid) \(dataSource.dataSourceName)"))
+                    }
+                }
+            }
+            return returnDevices
+        }
+        return nil
+        
+    }
+    
+    func setAKMicrophoneDevice(input: AKDevice) throws {
+        if let devices = AVAudioSession.sharedInstance().availableInputs {
+            for device in devices {
+                if device.dataSources == nil {
+                    if device.uid == input.deviceID {
+                        do {
+                            try AVAudioSession.sharedInstance().setPreferredInput(device)
+                        } catch {
+                            AKLog("Could not set the preferred input to \(input)")
+                        }
+                    }
+                } else {
+                    for dataSource in device.dataSources! {
+                        if input.deviceID == "\(device.uid) \(dataSource.dataSourceName)" {
+                            do {
+                                try AVAudioSession.sharedInstance().setInputDataSource(dataSource)
+                            } catch {
+                                AKLog("Could not set the preferred input to \(input)")
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
 }
