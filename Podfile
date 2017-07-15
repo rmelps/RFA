@@ -14,5 +14,8 @@ target 'RadioFreeAmerica' do
   pod 'FacebookCore'
   pod 'FacebookLogin'
   pod 'GoogleSignIn'
+  pod 'FacebookShare'
+  
+  pod 'AudioKit'
 
 end

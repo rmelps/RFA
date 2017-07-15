@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13122.19" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13156.6" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13104.16"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13137.5"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -265,11 +265,65 @@
                         <outlet property="topSecondLabel" destination="LIu-CI-0fs" id="UqV-hs-UMs"/>
                         <outlet property="topStack" destination="0Uv-gl-EuL" id="vxi-1k-ojv"/>
                         <outlet property="voteLabel" destination="Sbx-08-WSK" id="WjI-nx-kLv"/>
+                        <segue destination="mW1-8O-n1L" kind="show" identifier="showStudio" id="Ow8-is-ae9"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="VO8-2G-GLU" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2301.5999999999999" y="884.70764617691157"/>
+        </scene>
+        <!--Studio View Controller-->
+        <scene sceneID="hay-VV-VhR">
+            <objects>
+                <viewController id="mW1-8O-n1L" customClass="StudioViewController" customModule="RadioFreeAmerica" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="6ef-UG-Jz8"/>
+                        <viewControllerLayoutGuide type="bottom" id="bs0-0Q-2Up"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="5sP-ws-hUC">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qZc-gK-NGv" customClass="AKNodeOutputPlot" customModule="AudioKit">
+                                <rect key="frame" x="0.0" y="166" width="375" height="90"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            </view>
+                            <view contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fCd-M9-Pya">
+                                <rect key="frame" x="0.0" y="60" width="375" height="90"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="90" id="o0F-07-sXe"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Y4I-NB-TI3" customClass="AKNodeOutputPlot" customModule="AudioKit">
+                                <rect key="frame" x="0.0" y="272" width="375" height="90.5"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" red="0.30886844629999999" green="0.77870556189999995" blue="0.44214075450000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="Y4I-NB-TI3" firstAttribute="top" secondItem="qZc-gK-NGv" secondAttribute="bottom" constant="16" id="75a-nT-0xw"/>
+                            <constraint firstItem="qZc-gK-NGv" firstAttribute="height" secondItem="Y4I-NB-TI3" secondAttribute="height" id="A5t-gi-M2t"/>
+                            <constraint firstAttribute="trailing" secondItem="fCd-M9-Pya" secondAttribute="trailing" id="DfL-7n-mtY"/>
+                            <constraint firstAttribute="trailing" secondItem="qZc-gK-NGv" secondAttribute="trailing" id="HSa-g7-gU2"/>
+                            <constraint firstItem="fCd-M9-Pya" firstAttribute="top" secondItem="6ef-UG-Jz8" secondAttribute="bottom" constant="40" id="MLA-cL-ho7"/>
+                            <constraint firstItem="Y4I-NB-TI3" firstAttribute="leading" secondItem="5sP-ws-hUC" secondAttribute="leading" id="RZ3-xs-DIQ"/>
+                            <constraint firstItem="fCd-M9-Pya" firstAttribute="leading" secondItem="5sP-ws-hUC" secondAttribute="leading" id="XLH-0Z-cS9"/>
+                            <constraint firstAttribute="trailing" secondItem="Y4I-NB-TI3" secondAttribute="trailing" id="aCg-SI-eqJ"/>
+                            <constraint firstItem="qZc-gK-NGv" firstAttribute="leading" secondItem="5sP-ws-hUC" secondAttribute="leading" id="fdE-lV-SOh"/>
+                            <constraint firstItem="qZc-gK-NGv" firstAttribute="height" secondItem="fCd-M9-Pya" secondAttribute="height" id="qsS-h0-qSb"/>
+                            <constraint firstItem="qZc-gK-NGv" firstAttribute="top" secondItem="fCd-M9-Pya" secondAttribute="bottom" constant="16" id="v7T-6p-133"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="beatBufferView" destination="fCd-M9-Pya" id="q7B-Ga-vol"/>
+                        <outlet property="beatPlotView" destination="qZc-gK-NGv" id="Eq6-qt-aGK"/>
+                        <outlet property="recordedAudioPlotView" destination="Y4I-NB-TI3" id="oyX-or-HSO"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="sS9-zL-c8e" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3124" y="884.70764617691157"/>
         </scene>
         <!--Wordsmith Home View Controller-->
         <scene sceneID="EcW-Mz-OBh">

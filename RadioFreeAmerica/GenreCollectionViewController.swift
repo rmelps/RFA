@@ -118,7 +118,7 @@ class GenreCollectionViewController: UICollectionViewController, UICollectionVie
         
         let playerLayer = AVPlayerLayer()
         playerLayer.frame = cell.avLayerView.bounds
-        playerLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
+        playerLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
         
         guard let url = Bundle.main.path(forResource: resourceName, ofType: "m4v") else {
             print("\(resourceName) not found!")

@@ -46,9 +46,13 @@ class WordsmithChoiceViewController: WordsmithPageViewControllerChild, UIGesture
     
     // AVPlayer
     var player: AVAudioPlayer?
+    var player2: AVAudioPlayer?
     
     // Track Info View
     var trackInfoView: TrackInfoView!
+    
+    // URL to temporarily stored beat of the day
+    var beatURL: URL?
     
     
     override func viewDidLoad() {
@@ -70,7 +74,7 @@ class WordsmithChoiceViewController: WordsmithPageViewControllerChild, UIGesture
         userDBRef = FIRDatabase.database().reference().child("users")
         
         // Find current tracks storage URL
-        currentTrackRef.observe(.value) { (snapShot) in
+        self.currentTrackRef.observe(.value) { (snapShot: FIRDataSnapshot) in
             let snapVal = snapShot.value as? [String: Any]
             
             if let fileURL = snapVal?["fileURL"] as? String {
@@ -114,7 +118,6 @@ class WordsmithChoiceViewController: WordsmithPageViewControllerChild, UIGesture
                 }
             }
         }
-        
     }
     
     @IBAction func playPreviewButtonDown(_ sender: MenuButton) {
@@ -201,22 +204,58 @@ class WordsmithChoiceViewController: WordsmithPageViewControllerChild, UIGesture
             UIView.animate(withDuration: 0.5, animations: {
                 self.currentShapeLayer?.strokeColor = UIColor.clear.cgColor
                 
-                
                 if abs(self.yOffset) > minDistance {
                     if self.yOffset > 0 {
                         self.topFirstLabel.isHidden = true
                         self.topSecondLabel.isHidden = true
                         self.bottomStack.isHidden = true
+                        self.saveMusicFileLocallyAndSegue(dirUp: true)
                     } else {
                         self.bottomFirstLabel.isHidden = true
                         self.bottomSecondLabel.isHidden = true
                         self.topStack.isHidden = true
+                        self.saveMusicFileLocallyAndSegue(dirUp: true)
                     }
                 }
                 
             })
             print(sender.location(in: self.view))
         case .failed, .cancelled:
+            break
+        }
+    }
+    
+    func saveMusicFileLocallyAndSegue(dirUp: Bool) {
+        guard trackStorageRef != nil else {
+            print("found nil for track Storage ref")
+            return
+        }
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        let documentsDirectory = paths[0]
+        let localURL = documentsDirectory.appendingPathComponent("RFATempAudio.mp3")
+        
+        
+        trackStorageRef.write(toFile: localURL) { (url, error) in
+            if let error = error {
+                print(error.localizedDescription)
+                return
+            }
+            
+            if let url = url {
+                self.beatURL = url
+                self.performSegue(withIdentifier: "showStudio", sender: self)
+                
+            }
+        }
+        
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        switch segue.identifier! {
+        case "showStudio":
+            let vc = segue.destination as! StudioViewController
+            vc.beatURL = self.beatURL
+        default:
             break
         }
     }

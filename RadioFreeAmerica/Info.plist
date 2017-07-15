@@ -39,6 +39,8 @@
 	<string>307416703035035</string>
 	<key>FacebookDisplayName</key>
 	<string>RFA</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>RFA wants to access your microphone so that you may record your own freestyles</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>fbapi</string>

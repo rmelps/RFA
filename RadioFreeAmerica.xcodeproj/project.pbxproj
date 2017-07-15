@@ -31,8 +31,23 @@
 		9535E3A71F14598D0025531E /* WordsmithFeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9535E3A61F14598D0025531E /* WordsmithFeedViewController.swift */; };
 		9535E3AA1F145BFC0025531E /* TrackInfoView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9535E3A91F145BFC0025531E /* TrackInfoView.xib */; };
 		9535E3AC1F145DA30025531E /* TrackInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9535E3AB1F145DA30025531E /* TrackInfoView.swift */; };
+		9535E3AE1F15B0770025531E /* StudioViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9535E3AD1F15B0770025531E /* StudioViewController.swift */; };
+		9535E3B11F16BBEB0025531E /* CustomShowSegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9535E3B01F16BBEB0025531E /* CustomShowSegue.swift */; };
 		EA25DE04343B6E4ADE610C92 /* Pods_RadioFreeAmerica.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B89A5A22515871740B93D705 /* Pods_RadioFreeAmerica.framework */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		955BE49D1F186534008B28C7 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		7E41EC5B91D9721D985ABB90 /* Pods-RadioFreeAmerica.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RadioFreeAmerica.release.xcconfig"; path = "Pods/Target Support Files/Pods-RadioFreeAmerica/Pods-RadioFreeAmerica.release.xcconfig"; sourceTree = "<group>"; };
@@ -62,6 +77,9 @@
 		9535E3A61F14598D0025531E /* WordsmithFeedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordsmithFeedViewController.swift; sourceTree = "<group>"; };
 		9535E3A91F145BFC0025531E /* TrackInfoView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TrackInfoView.xib; sourceTree = "<group>"; };
 		9535E3AB1F145DA30025531E /* TrackInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackInfoView.swift; sourceTree = "<group>"; };
+		9535E3AD1F15B0770025531E /* StudioViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioViewController.swift; sourceTree = "<group>"; };
+		9535E3B01F16BBEB0025531E /* CustomShowSegue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomShowSegue.swift; sourceTree = "<group>"; };
+		95BA8C8B1F16F431008F60C5 /* AudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioKit.framework; path = ../../../Downloads/AudioKit/iOS/AudioKit.framework; sourceTree = "<group>"; };
 		A2EA3C87DBE567095C362C21 /* Pods-RadioFreeAmerica.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RadioFreeAmerica.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RadioFreeAmerica/Pods-RadioFreeAmerica.debug.xcconfig"; sourceTree = "<group>"; };
 		B89A5A22515871740B93D705 /* Pods_RadioFreeAmerica.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RadioFreeAmerica.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -81,6 +99,7 @@
 		2A62155AA92293C8BD98501E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				95BA8C8B1F16F431008F60C5 /* AudioKit.framework */,
 				B89A5A22515871740B93D705 /* Pods_RadioFreeAmerica.framework */,
 			);
 			name = Frameworks;
@@ -145,6 +164,7 @@
 				951D22BB1F0AFC41005264A7 /* StatView.swift */,
 				9535E3A91F145BFC0025531E /* TrackInfoView.xib */,
 				9535E3AB1F145DA30025531E /* TrackInfoView.swift */,
+				9535E3B01F16BBEB0025531E /* CustomShowSegue.swift */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -152,6 +172,7 @@
 		9535E3A81F14599D0025531E /* Wordsmith View Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				9535E3AD1F15B0770025531E /* StudioViewController.swift */,
 				9535E3A61F14598D0025531E /* WordsmithFeedViewController.swift */,
 				95265BAD1F0D88E700F44E05 /* WordsmithChoiceViewController.swift */,
 				951D22B71F0AE138005264A7 /* WordsmithHomeViewController.swift */,
@@ -182,6 +203,7 @@
 				951D22821EEF3DA5005264A7 /* Resources */,
 				213977D41971C655251F9D1A /* [CP] Embed Pods Frameworks */,
 				9D7BA3BA59456F1F4B70B01B /* [CP] Copy Pods Resources */,
+				955BE49D1F186534008B28C7 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -302,6 +324,8 @@
 				951D22BE1F0B10D6005264A7 /* Stat.swift in Sources */,
 				951D22BC1F0AFC41005264A7 /* StatView.swift in Sources */,
 				951D22AB1EFA08CE005264A7 /* GenreCollectionViewCell.swift in Sources */,
+				9535E3B11F16BBEB0025531E /* CustomShowSegue.swift in Sources */,
+				9535E3AE1F15B0770025531E /* StudioViewController.swift in Sources */,
 				951D228A1EEF3DA5005264A7 /* MainViewController.swift in Sources */,
 				951D22B61EFD8E31005264A7 /* VideoContainerView.swift in Sources */,
 				951D22A61EF9F016005264A7 /* GenreChoiceViewController.swift in Sources */,
@@ -387,6 +411,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -430,6 +455,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -439,6 +465,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A2EA3C87DBE567095C362C21 /* Pods-RadioFreeAmerica.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = A5EQQRPM7V;
 				INFOPLIST_FILE = RadioFreeAmerica/Info.plist;
@@ -446,7 +473,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.j2mfd.RadioFreeAmerica;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = On;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -454,6 +481,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7E41EC5B91D9721D985ABB90 /* Pods-RadioFreeAmerica.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = A5EQQRPM7V;
 				INFOPLIST_FILE = RadioFreeAmerica/Info.plist;
@@ -461,7 +489,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.j2mfd.RadioFreeAmerica;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = On;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};

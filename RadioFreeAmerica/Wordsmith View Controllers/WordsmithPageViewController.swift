@@ -8,16 +8,18 @@
 
 import UIKit
 
-class WordsmithPageViewController: UIPageViewController, UIPageViewControllerDataSource {
+class WordsmithPageViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     
     var orderedViewControllers: [UIViewController]!
     var signedInUser: User!
     var genreChoice: GenreChoices!
+    
+    // Index tracking
+    var currentIndex = 0
+    private var tempIndex = 0
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        
         
         signedInUser = (UIApplication.shared.delegate as! AppDelegate).signedInUser!
         
@@ -88,6 +90,9 @@ class WordsmithPageViewController: UIPageViewController, UIPageViewControllerDat
             return nil
         }
         
+        print("current index is: \(viewControllerIndex)")
+        self.currentIndex = Int(viewControllerIndex)
+        
         let previousIndex = viewControllerIndex - 1
         
         guard previousIndex >= 0 else {
@@ -107,6 +112,9 @@ class WordsmithPageViewController: UIPageViewController, UIPageViewControllerDat
             print("returning nil")
             return nil
         }
+        
+        print("current index is: \(viewControllerIndex)")
+        self.currentIndex = Int(viewControllerIndex)
         
         let nextIndex = viewControllerIndex + 1
         
