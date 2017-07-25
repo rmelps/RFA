@@ -54,6 +54,9 @@ class WordsmithChoiceViewController: WordsmithPageViewControllerChild, UIGesture
     // URL to temporarily stored beat of the day
     var beatURL: URL?
     
+    // Color gradient
+    var gradient: CAGradientLayer!
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()

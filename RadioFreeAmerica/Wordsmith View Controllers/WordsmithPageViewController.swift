@@ -48,6 +48,18 @@ class WordsmithPageViewController: UIPageViewController, UIPageViewControllerDat
         }
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        // Insert background color gradient
+        let gradientColor = UIColor(displayP3Red: 218/255, green: 205/255, blue: 112/255, alpha: 1.0)
+        let gradient = AppDelegate.gradient!
+        gradient.colors?[gradient.colors!.endIndex - 1] = gradientColor
+        self.view.layer.insertSublayer(gradient, at: 0)
+        
+        self.view.backgroundColor = gradientColor
+    }
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         

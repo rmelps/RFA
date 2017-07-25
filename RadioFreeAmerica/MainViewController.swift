@@ -70,6 +70,8 @@ class MainViewController: UIViewController, GIDSignInUIDelegate {
         gradient.colors = [UIColor.white.cgColor, gradientColor]
         
         self.view.layer.insertSublayer(gradient, at: 0)
+    
+        AppDelegate.gradient = gradient
         
         createMusicNoteParticles()
         
