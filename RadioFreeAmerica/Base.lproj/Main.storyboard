@@ -371,6 +371,7 @@
                         <outlet property="beatPlotView" destination="qZc-gK-NGv" id="Eq6-qt-aGK"/>
                         <outlet property="blurEffectView" destination="VWs-vY-xAy" id="aNx-BN-0Q8"/>
                         <outlet property="finalSongContainerView" destination="gXz-0U-Eaz" id="1I0-bl-ilu"/>
+                        <outlet property="finalSongCreateView" destination="uIf-Oo-NaU" id="qIu-jK-XbW"/>
                         <outlet property="finalSongWaveformView" destination="AOD-Qq-UOC" id="ZrD-Sm-a5Q"/>
                         <outlet property="playButton" destination="X4l-y9-kxe" id="JbI-lE-5tg"/>
                         <outlet property="recordButton" destination="yfj-YC-IXu" id="ice-Xl-JvN"/>
@@ -380,6 +381,11 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sS9-zL-c8e" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <view contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="YES" id="uIf-Oo-NaU">
+                    <rect key="frame" x="0.0" y="0.0" width="265" height="401"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                    <color key="backgroundColor" red="0.92114552019999996" green="0.93352207570000001" blue="0.60003244690000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                </view>
                 <view contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="YES" id="gXz-0U-Eaz">
                     <rect key="frame" x="0.0" y="0.0" width="298" height="405"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>

@@ -15,7 +15,12 @@ class StudioViewController: UIViewController {
     @IBOutlet weak var blurEffectView: UIVisualEffectView!
     @IBOutlet weak var playButton: MenuButton!
     @IBOutlet weak var recordButton: MenuButton!
+    
+    // Popup views
     @IBOutlet var finalSongContainerView: UIView!
+    @IBOutlet var finalSongCreateView: UIView!
+    
+    
     @IBOutlet weak var finalSongWaveformView: AKOutputWaveformPlot!
     @IBOutlet weak var beatBufferView: UIView!
     @IBOutlet weak var beatPlotView: AKNodeOutputPlot!
@@ -72,6 +77,10 @@ class StudioViewController: UIViewController {
     private var recordingButtonColor: UIColor!
     private var playButtonColor: UIColor!
     
+    // File Destination URL
+    var fileDestinationURL: URL!
+    var finalPlayer: AVAudioPlayer!
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -82,10 +91,8 @@ class StudioViewController: UIViewController {
         playButtonColor = playButton.buttonColor
         
         do {
-            //try AKSettings.setSession(category: .playAndRecord, with: [.defaultToSpeaker, .allowBluetoothA2DP])
             try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayAndRecord, mode: AVAudioSessionModeDefault, options: .defaultToSpeaker)
             AKSettings.bufferLength = .medium
-            
             
             session.requestRecordPermission({ (allowed) in
                 if allowed {
@@ -273,6 +280,11 @@ class StudioViewController: UIViewController {
             self.finalSongContainerView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
             self.finalSongContainerView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
             
+            // Add the final song create view hidden behind the final song container view
+            finalSongCreateView.frame = finalSongContainerView.frame
+            finalSongCreateView.isHidden = true
+            self.view.addSubview(finalSongCreateView)
+            
             UIView.animate(withDuration: 0.2, animations: {
                 self.finalSongContainerView.transform = CGAffineTransform.identity
                 self.finalSongContainerView.alpha = 1
@@ -287,6 +299,7 @@ class StudioViewController: UIViewController {
                 }
                 
                 if self.beatPlaybackPlayer.audioFile.duration > 0.0, self.playbackPlayer.audioFile.duration > 0.0 {
+                    print("playback player sample count: \(self.playbackPlayer.audioFile.samplesCount)")
                     
                     let outputPlot = AKOutputWaveformPlot(frame: CGRect(origin: self.finalSongWaveformView.frame.origin, size: CGSize(width: self.finalSongWaveformView.bounds.width, height: self.finalSongWaveformView.bounds.height)))
                     outputPlot.setupPlot()
@@ -389,20 +402,163 @@ class StudioViewController: UIViewController {
     @IBAction func finalPlayButtonTapped(_ sender: UIButton) {
     }
     @IBAction func finalConfirmButtonTapped(_ sender: UIButton) {
+        
+        let playbackVolume = playbackPlayer.volume
+        let beatVolume = beatPlaybackPlayer.volume
+        
+        print("playback player sample count before stop: \(playbackPlayer.audioFile.samplesCount)")
+        print("current recording file sample count: \(currentRecordingFile.samplesCount)")
+        playbackPlayer.stop()
+        beatPlaybackPlayer.stop()
+        
+        //TODO: Normalize the combined audio files
+        
+            let file1 = playbackPlayer.audioFile
+            let file2 = beatPlaybackPlayer.audioFile
+            /*
+            let file1Normal = try file1.normalized(baseDir: .temp, name: UUID().uuidString, newMaxLevel: Float(playbackVolume)) as AVAudioFile
+            let file2Normal = try file2.normalized(baseDir: .temp, name: UUID().uuidString, newMaxLevel: Float(beatVolume)) as AVAudioFile
+            */
+            
+            combineTracksAndPlay(first: file1.url, second: file2.url)
+        
+       
+        if isExpanded {
+            heightCon.constant = heightCon.constant / 2
+            UIView.animate(withDuration: 0.3, animations: {
+                self.songScrubber.alpha = 0
+                self.soundBalanceSlider.alpha = 0
+                self.view.layoutIfNeeded()
+            }, completion: { (success) in
+                self.flipViews(first: self.finalSongContainerView, second: self.finalSongCreateView)
+            })
+        } else {
+            self.flipViews(first: self.finalSongContainerView, second: self.finalSongCreateView)
+        }
+    }
+    
+    func flipViews(first:UIView, second: UIView) {
+        let transitionOptions: UIViewAnimationOptions = [.transitionFlipFromRight, .showHideTransitionViews]
+        
+        UIView.transition(with: first, duration: 0.5, options: transitionOptions, animations: {
+            first.isHidden = true
+        }, completion: nil)
+        
+        UIView.transition(with: second, duration: 0.5, options: transitionOptions, animations: {
+            second.isHidden = false
+        }, completion: nil)
     }
     
     //MARK: Final UISlider Actions
     
     @IBAction func scrubberValueChanged(_ sender: UISlider) {
+        //TODO: figure out how to create playback scrubber
         print(sender.value)
     }
     @IBAction func volumeBalanceSliderChanged(_ sender: UISlider) {
-        let maxVol: Double = 7.0
+        let maxVol: Double = 2.0
         let recordingVol: Double = Double(sender.value)
         let beatVol: Double = 1.0 - recordingVol
         
         playbackPlayer.volume = maxVol * recordingVol
         beatPlaybackPlayer.volume = maxVol * beatVol
+    }
+    
+    func combineTracksAndPlay(first: URL, second: URL) {
+        let composition = AVMutableComposition()
+        let compositionAudioTrack1:AVMutableCompositionTrack = composition.addMutableTrack(withMediaType: AVMediaTypeAudio, preferredTrackID: CMPersistentTrackID())
+        let compositionAudioTrack2:AVMutableCompositionTrack = composition.addMutableTrack(withMediaType: AVMediaTypeAudio, preferredTrackID: CMPersistentTrackID())
+        
+        let documentDirectoryURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first! as NSURL
+        self.fileDestinationURL = documentDirectoryURL.appendingPathComponent("resultmerge.m4a")! as URL
+        
+        let filemanager = FileManager.default
+        if (!filemanager.fileExists(atPath: self.fileDestinationURL.path))
+        {
+            do
+            {
+                try filemanager.removeItem(at: self.fileDestinationURL)
+            }
+            catch let error
+            {
+                print(error.localizedDescription)
+            }
+        }
+        else
+        {
+            do
+            {
+                try filemanager.removeItem(at: self.fileDestinationURL)
+            }
+            catch let error
+            {
+                print(error.localizedDescription)
+            }
+        }
+        let url1 = first
+        let url2 = second
+        
+        let avAsset1 = AVURLAsset(url: url1 as URL, options: nil)
+        let avAsset2 = AVURLAsset(url: url2 as URL, options: nil)
+        
+        var tracks1 = avAsset1.tracks(withMediaType: AVMediaTypeAudio)
+        var tracks2 = avAsset2.tracks(withMediaType: AVMediaTypeAudio)
+        
+        let assetTrack1:AVAssetTrack = tracks1[0]
+        let assetTrack2:AVAssetTrack = tracks2[0]
+        
+        let duration1: CMTime = assetTrack1.timeRange.duration
+        let duration2: CMTime = assetTrack2.timeRange.duration
+        
+        let timeRange1 = CMTimeRangeMake(kCMTimeZero, duration1)
+        let timeRange2 = CMTimeRangeMake(kCMTimeZero, duration2)
+        do
+        {
+            try compositionAudioTrack1.insertTimeRange(timeRange1, of: assetTrack1, at: kCMTimeZero)
+            try compositionAudioTrack2.insertTimeRange(timeRange2, of: assetTrack2, at: kCMTimeZero)
+        }
+        catch
+        {
+            print(error)
+        }
+        
+        let assetExport = AVAssetExportSession(asset: composition, presetName: AVAssetExportPresetAppleM4A)
+        assetExport?.outputFileType = AVFileTypeAppleM4A
+        assetExport?.outputURL = fileDestinationURL
+        assetExport?.exportAsynchronously(completionHandler:
+            {
+                switch assetExport!.status
+                {
+                case AVAssetExportSessionStatus.failed:
+                    print("failed \(assetExport!.error)")
+                case AVAssetExportSessionStatus.cancelled:
+                    print("cancelled \(assetExport!.error)")
+                case AVAssetExportSessionStatus.unknown:
+                    print("unknown\(assetExport!.error)")
+                case AVAssetExportSessionStatus.waiting:
+                    print("waiting\(assetExport!.error)")
+                case AVAssetExportSessionStatus.exporting:
+                    print("exporting\(assetExport!.error)")
+                default:
+                    print("complete")
+                }
+                
+                do
+                {
+                    self.finalPlayer = try AVAudioPlayer(contentsOf: self.fileDestinationURL)
+                    self.finalPlayer?.numberOfLoops = -1
+                    self.finalPlayer?.prepareToPlay()
+                    self.finalPlayer?.volume = 1.0
+                    self.finalPlayer?.play()
+                }
+                catch let error as NSError
+                {
+                    print(error)
+                }
+        })
+        
+        
+        
     }
     
     //TODO: Add key value (or other type) of observing on playbackPlayer to track the duration of the track
