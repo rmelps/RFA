@@ -411,17 +411,27 @@ class StudioViewController: UIViewController {
         playbackPlayer.stop()
         beatPlaybackPlayer.stop()
         
-        //TODO: Normalize the combined audio files
-        
-            let file1 = playbackPlayer.audioFile
-            let file2 = beatPlaybackPlayer.audioFile
-            /*
-            let file1Normal = try file1.normalized(baseDir: .temp, name: UUID().uuidString, newMaxLevel: Float(playbackVolume)) as AVAudioFile
-            let file2Normal = try file2.normalized(baseDir: .temp, name: UUID().uuidString, newMaxLevel: Float(beatVolume)) as AVAudioFile
-            */
+        //TODO: Configure the maxVolume for normalized tracks to match current volume
+        do {
+            let file1 = playbackPlayer.audioFile as AVAudioFile
+            let file2 = beatPlaybackPlayer.audioFile as AVAudioFile
             
-            combineTracksAndPlay(first: file1.url, second: file2.url)
+            let convFile1 = try AKAudioFile(forReading: file1.url)
+            let convFile2 = try AKAudioFile(forReading: file2.url)
         
+            print("playback player sample count before stop: \(playbackPlayer.audioFile.samplesCount)")
+            print("playback player sample count before stop: \(beatPlaybackPlayer.audioFile.samplesCount)")
+            print(convFile1.samplesCount)
+            print(convFile2.samplesCount)
+        
+            let file1Normal = try convFile1.normalized(baseDir: .temp, name: UUID().uuidString, newMaxLevel: Float(playbackVolume)) as AVAudioFile
+            let file2Normal = try convFile2.normalized(baseDir: .temp, name: UUID().uuidString, newMaxLevel: Float(playbackVolume)) as AVAudioFile
+ 
+            
+            combineTracksAndPlay(first: file1Normal.url, second: file2Normal.url)
+        } catch {
+            print(error.localizedDescription)
+        }
        
         if isExpanded {
             heightCon.constant = heightCon.constant / 2
