@@ -17,5 +17,7 @@ target 'RadioFreeAmerica' do
   pod 'FacebookShare'
   
   pod 'AudioKit'
+  
+  pod 'WARangeSlider'
 
 end

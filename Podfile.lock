@@ -76,6 +76,7 @@ PODS:
   - GTMSessionFetcher/Core (1.1.9)
   - GTMSessionFetcher/Full (1.1.9):
     - GTMSessionFetcher/Core (= 1.1.9)
+  - WARangeSlider (1.1.1)
 
 DEPENDENCIES:
   - AudioKit
@@ -87,6 +88,7 @@ DEPENDENCIES:
   - Firebase/Database
   - Firebase/Storage
   - GoogleSignIn
+  - WARangeSlider
 
 SPEC CHECKSUMS:
   AudioKit: 7823de92f3c9570178d2347042867b6a93be1464
@@ -108,7 +110,8 @@ SPEC CHECKSUMS:
   GoogleToolboxForMac: 8e329f1b599f2512c6b10676d45736bcc2cbbeb0
   GTMOAuth2: 7fc9c10f5c745f4d9850419ea88889fe3baa6b7d
   GTMSessionFetcher: 5c046c76a1f859bc9c187e918f18e4fc7bb57b5e
+  WARangeSlider: 54b3e0853b8d16c444fd539005901aecee86837d
 
-PODFILE CHECKSUM: a9c54fe76089b13a5f2b74a4056d03408ca4da97
+PODFILE CHECKSUM: c639498df11fa2b119a3dadceab9da2030a2df71
 
 COCOAPODS: 1.2.1

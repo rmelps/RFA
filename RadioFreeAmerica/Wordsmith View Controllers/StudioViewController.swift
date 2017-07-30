@@ -9,6 +9,7 @@
 import UIKit
 import AudioKit
 import AVFoundation
+import WARangeSlider
 
 class StudioViewController: UIViewController {
     
@@ -20,15 +21,34 @@ class StudioViewController: UIViewController {
     @IBOutlet var finalSongContainerView: UIView!
     @IBOutlet var finalSongCreateView: UIView!
     
+    // Final Song Create View fields
+    @IBOutlet weak var saveButton: UIButton!
+    @IBOutlet weak var goBackButton: UIButton!
+    @IBOutlet weak var enterTitleTextField: UITextField!
+    @IBOutlet weak var descriptionTextView: UITextView!
     
+    // Final Song Container View fields
+    @IBOutlet weak var playOrPauseButton: UIButton!
+
+    // Waveform views
     @IBOutlet weak var finalSongWaveformView: AKOutputWaveformPlot!
     @IBOutlet weak var beatBufferView: UIView!
     @IBOutlet weak var beatPlotView: AKNodeOutputPlot!
     @IBOutlet weak var recordedAudioPlotView: AKNodeOutputPlot!
     
     // Sliders for normalizing final beat and recording volumes
-    @IBOutlet weak var songScrubber: UISlider!
     @IBOutlet weak var soundBalanceSlider: UISlider!
+    @IBOutlet weak var songRangeScrubber: RangeSlider!
+    
+    // Fading Labels
+    @IBOutlet weak var fadeInTimeLabel: UILabel!
+    @IBOutlet weak var fadeOutTimeLabel: UILabel!
+    @IBOutlet weak var fadingStackView: UIStackView!
+    @IBOutlet weak var fadeOutApplyButton: UIButton!
+    @IBOutlet weak var fadeInApplyButton: UIButton!
+    @IBOutlet weak var fadeInStepper: UIStepper!
+    @IBOutlet weak var fadeOutStepper: UIStepper!
+    
     
     // Final Container View editable constraints
     var heightCon: NSLayoutConstraint!
@@ -161,8 +181,13 @@ class StudioViewController: UIViewController {
             // Now set up playback recorder for audio playback after recording
             currentRecordingFile = try AKAudioFile()
             currentBeatRecordingFile = try AKAudioFile()
-            playbackPlayer = try AKAudioPlayer(file: currentRecordingFile, looping: true, completionHandler: nil)
-            beatPlaybackPlayer = try AKAudioPlayer(file: currentBeatRecordingFile, looping: true, completionHandler: nil)
+            
+            playbackPlayer = try AKAudioPlayer(file: currentRecordingFile, looping: true, completionHandler: {
+                print("playback player has reached completion")
+            })
+            beatPlaybackPlayer = try AKAudioPlayer(file: currentBeatRecordingFile, looping: true, completionHandler: {
+                print("beat player has reached completion")
+            })
             
             finalMixer = AKMixer([playbackPlayer, beatPlaybackPlayer])
             
@@ -231,8 +256,6 @@ class StudioViewController: UIViewController {
         }
     }
     @IBAction func recordButtonTapped(_ sender: MenuButton) {
-        
-        //TODO: Make far more sophisticated playback mechanism
         
         if !isRecording {
             do {
@@ -311,19 +334,17 @@ class StudioViewController: UIViewController {
                     self.playbackPlayer.play()
                     self.beatPlaybackPlayer.play()
                     
-                    // Configure UISlider properties
-                    self.songScrubber.maximumTrackTintColor = .red
-                    self.songScrubber.minimumTrackTintColor = .green
-                    self.soundBalanceSlider.maximumTrackTintColor = .red
-                    self.soundBalanceSlider.minimumTrackTintColor = .green
+                    // Configure UISlider/Range Slider properties
                     
-                    self.songScrubber.maximumValue = Float(self.playbackPlayer.duration)
-                    print("duration is \(self.playbackPlayer.duration)")
-                    self.songScrubber.minimumValue = 0.0
-                    self.songScrubber.value = 0.0
+                    self.songRangeScrubber.maximumValue = self.playbackPlayer.duration
+                    print("duration is \(self.playbackPlayer.duration) seconds")
+                    self.songRangeScrubber.minimumValue = 0.0
+                    self.songRangeScrubber.lowerValue = 0.0
+                    self.songRangeScrubber.upperValue = self.songRangeScrubber.maximumValue
                     self.soundBalanceSlider.maximumValue = 1.0
                     self.soundBalanceSlider.minimumValue = 0.0
                     self.soundBalanceSlider.value = 0.5
+                    
                 }
             })
             
@@ -364,6 +385,7 @@ class StudioViewController: UIViewController {
         
        self.view.addSubview(micPlot)
     }
+    
     //MARK: Final Audio Bar Button Actions
     
     @IBAction func finalCancelButtonTapped(_ sender: UIButton) {
@@ -373,19 +395,21 @@ class StudioViewController: UIViewController {
     @IBAction func finalEditButtonTapped(_ sender: UIButton) {
         
         if isExpanded {
-            heightCon.constant = heightCon.constant / 2
+            heightCon.constant = heightCon.constant / 2.5
         } else {
-            heightCon.constant = heightCon.constant * 2
+            heightCon.constant = heightCon.constant * 2.5
         }
         
         UIView.animate(withDuration: 0.3, animations: {
             
             if self.isExpanded {
-                self.songScrubber.alpha = 0
+                self.songRangeScrubber.alpha = 0
                 self.soundBalanceSlider.alpha = 0
+                self.fadingStackView.alpha = 0
             } else {
-                self.songScrubber.alpha = 1
+                self.songRangeScrubber.alpha = 1
                 self.soundBalanceSlider.alpha = 1
+                self.fadingStackView.alpha = 1
             }
             
             self.view.layoutIfNeeded()
@@ -425,7 +449,7 @@ class StudioViewController: UIViewController {
             print(convFile2.samplesCount)
         
             let file1Normal = try convFile1.normalized(baseDir: .temp, name: UUID().uuidString, newMaxLevel: Float(playbackVolume)) as AVAudioFile
-            let file2Normal = try convFile2.normalized(baseDir: .temp, name: UUID().uuidString, newMaxLevel: Float(playbackVolume)) as AVAudioFile
+            let file2Normal = try convFile2.normalized(baseDir: .temp, name: UUID().uuidString, newMaxLevel: Float(beatVolume)) as AVAudioFile
  
             
             combineTracksAndPlay(first: file1Normal.url, second: file2Normal.url)
@@ -436,8 +460,9 @@ class StudioViewController: UIViewController {
         if isExpanded {
             heightCon.constant = heightCon.constant / 2
             UIView.animate(withDuration: 0.3, animations: {
-                self.songScrubber.alpha = 0
+                self.songRangeScrubber.alpha = 0
                 self.soundBalanceSlider.alpha = 0
+                self.fadingStackView.alpha = 0
                 self.view.layoutIfNeeded()
             }, completion: { (success) in
                 self.flipViews(first: self.finalSongContainerView, second: self.finalSongCreateView)
@@ -446,6 +471,9 @@ class StudioViewController: UIViewController {
             self.flipViews(first: self.finalSongContainerView, second: self.finalSongCreateView)
         }
     }
+    
+    //MARK: Final Create Audio Window Bar Buttons
+    
     
     func flipViews(first:UIView, second: UIView) {
         let transitionOptions: UIViewAnimationOptions = [.transitionFlipFromRight, .showHideTransitionViews]
@@ -461,10 +489,6 @@ class StudioViewController: UIViewController {
     
     //MARK: Final UISlider Actions
     
-    @IBAction func scrubberValueChanged(_ sender: UISlider) {
-        //TODO: figure out how to create playback scrubber
-        print(sender.value)
-    }
     @IBAction func volumeBalanceSliderChanged(_ sender: UISlider) {
         let maxVol: Double = 2.0
         let recordingVol: Double = Double(sender.value)
@@ -473,6 +497,76 @@ class StudioViewController: UIViewController {
         playbackPlayer.volume = maxVol * recordingVol
         beatPlaybackPlayer.volume = maxVol * beatVol
     }
+    
+    @IBAction func scrubberValueChanged(_ sender: RangeSlider) {
+        
+        playbackPlayer.stop()
+        beatPlaybackPlayer.stop()
+        
+        playbackPlayer.startTime = sender.lowerValue
+        playbackPlayer.endTime = sender.upperValue
+        
+        beatPlaybackPlayer.startTime = sender.lowerValue
+        beatPlaybackPlayer.endTime = sender.upperValue
+        
+        playbackPlayer.start()
+        beatPlaybackPlayer.start()
+ 
+    }
+    
+    //MARK: Final Stepper Actions
+    
+    @IBAction func fadeInStepperValueChanged(_ sender: UIStepper) {
+        
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.minimumFractionDigits = 1
+        formatter.maximumFractionDigits = 1
+        let value = formatter.string(from: NSNumber(value: sender.value))
+        
+        fadeInTimeLabel.text = value! + " sec"
+        
+        fadeInApplyButton.isHidden = false
+    }
+    
+    @IBAction func fadeOutStepperValueChanged(_ sender: UIStepper) {
+        
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.minimumFractionDigits = 1
+        formatter.maximumFractionDigits = 1
+        let value = formatter.string(from: NSNumber(value: sender.value))
+        
+        fadeOutTimeLabel.text = value! + " sec"
+        
+        fadeOutApplyButton.isHidden = false
+    }
+    @IBAction func applyFadeIn(_ sender: UIButton) {
+        playbackPlayer.stop()
+        beatPlaybackPlayer.stop()
+        
+        playbackPlayer.fadeInTime = fadeInStepper.value
+        beatPlaybackPlayer.fadeInTime = fadeInStepper.value
+        
+        playbackPlayer.start()
+        beatPlaybackPlayer.start()
+        sender.isHidden = true
+    }
+    
+    @IBAction func applyFadeOut(_ sender: UIButton) {
+        playbackPlayer.stop()
+        beatPlaybackPlayer.stop()
+        
+        playbackPlayer.fadeOutTime = fadeOutStepper.value
+        beatPlaybackPlayer.fadeOutTime = fadeOutStepper.value
+        
+        
+        playbackPlayer.start()
+        beatPlaybackPlayer.start()
+        sender.isHidden = true
+    }
+    
+    //MARK: Combine Tracks
     
     func combineTracksAndPlay(first: URL, second: URL) {
         let composition = AVMutableComposition()
@@ -555,6 +649,7 @@ class StudioViewController: UIViewController {
                 
                 do
                 {
+                    //TODO: Switch to AKAudioPlayer to allow for fading
                     self.finalPlayer = try AVAudioPlayer(contentsOf: self.fileDestinationURL)
                     self.finalPlayer?.numberOfLoops = -1
                     self.finalPlayer?.prepareToPlay()
@@ -570,8 +665,6 @@ class StudioViewController: UIViewController {
         
         
     }
-    
-    //TODO: Add key value (or other type) of observing on playbackPlayer to track the duration of the track
     
     //MARK: Custom functions derived from broken AudioKit functions
     
