@@ -511,7 +511,7 @@
                                 <constraint firstItem="fbZ-Br-AUI" firstAttribute="width" secondItem="u7y-3j-fGE" secondAttribute="width" id="Qqw-Jj-fGN"/>
                             </constraints>
                         </stackView>
-                        <slider opaque="NO" alpha="0.0" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="GHu-XT-kjh">
+                        <slider opaque="NO" alpha="0.0" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" minimumValueImage="cassetteIcon" maximumValueImage="microphoneIcon" translatesAutoresizingMaskIntoConstraints="NO" id="GHu-XT-kjh">
                             <rect key="frame" x="14" y="284.5" width="270" height="31"/>
                             <connections>
                                 <action selector="volumeBalanceSliderChanged:" destination="mW1-8O-n1L" eventType="valueChanged" id="EVH-QQ-Zgy"/>
@@ -551,7 +551,7 @@
                                 </userDefinedRuntimeAttribute>
                             </userDefinedRuntimeAttributes>
                             <connections>
-                                <action selector="scrubberValueChanged:" destination="mW1-8O-n1L" eventType="valueChanged" id="2Cs-5u-y1H"/>
+                                <action selector="scrubberDidTouchUp:" destination="mW1-8O-n1L" eventType="touchUpInside" id="U3Q-0j-fsw"/>
                             </connections>
                         </view>
                         <stackView opaque="NO" alpha="0.0" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="YES" spacing="50" translatesAutoresizingMaskIntoConstraints="NO" id="vYu-QC-6nN">
@@ -805,9 +805,11 @@
         <image name="back" width="50" height="50"/>
         <image name="cancel" width="50" height="50"/>
         <image name="cassette" width="112" height="112"/>
+        <image name="cassetteIcon" width="25" height="25"/>
         <image name="checkmark" width="50" height="50"/>
         <image name="edit" width="50" height="50"/>
         <image name="microphone" width="100" height="100"/>
+        <image name="microphoneIcon" width="25" height="25"/>
         <image name="record" width="50" height="50"/>
         <image name="right" width="50" height="50"/>
         <image name="save" width="50" height="50"/>

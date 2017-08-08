@@ -33,6 +33,8 @@
 		9535E3AC1F145DA30025531E /* TrackInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9535E3AB1F145DA30025531E /* TrackInfoView.swift */; };
 		9535E3AE1F15B0770025531E /* StudioViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9535E3AD1F15B0770025531E /* StudioViewController.swift */; };
 		9535E3B11F16BBEB0025531E /* CustomShowSegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9535E3B01F16BBEB0025531E /* CustomShowSegue.swift */; };
+		95A200971F3933D900FDB910 /* StudioTextFieldDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A200961F3933D900FDB910 /* StudioTextFieldDelegate.swift */; };
+		95A200991F39340400FDB910 /* StudioTextViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A200981F39340400FDB910 /* StudioTextViewDelegate.swift */; };
 		EA25DE04343B6E4ADE610C92 /* Pods_RadioFreeAmerica.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B89A5A22515871740B93D705 /* Pods_RadioFreeAmerica.framework */; };
 /* End PBXBuildFile section */
 
@@ -79,6 +81,8 @@
 		9535E3AB1F145DA30025531E /* TrackInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackInfoView.swift; sourceTree = "<group>"; };
 		9535E3AD1F15B0770025531E /* StudioViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioViewController.swift; sourceTree = "<group>"; };
 		9535E3B01F16BBEB0025531E /* CustomShowSegue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomShowSegue.swift; sourceTree = "<group>"; };
+		95A200961F3933D900FDB910 /* StudioTextFieldDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioTextFieldDelegate.swift; sourceTree = "<group>"; };
+		95A200981F39340400FDB910 /* StudioTextViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioTextViewDelegate.swift; sourceTree = "<group>"; };
 		95BA8C8B1F16F431008F60C5 /* AudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioKit.framework; path = ../../../Downloads/AudioKit/iOS/AudioKit.framework; sourceTree = "<group>"; };
 		A2EA3C87DBE567095C362C21 /* Pods-RadioFreeAmerica.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RadioFreeAmerica.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RadioFreeAmerica/Pods-RadioFreeAmerica.debug.xcconfig"; sourceTree = "<group>"; };
 		B89A5A22515871740B93D705 /* Pods_RadioFreeAmerica.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RadioFreeAmerica.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -174,11 +178,21 @@
 			children = (
 				9535E3AD1F15B0770025531E /* StudioViewController.swift */,
 				9535E3A61F14598D0025531E /* WordsmithFeedViewController.swift */,
+				95A2009A1F39362B00FDB910 /* Studio Delegates */,
 				95265BAD1F0D88E700F44E05 /* WordsmithChoiceViewController.swift */,
 				951D22B71F0AE138005264A7 /* WordsmithHomeViewController.swift */,
 				951D22A31EF9E442005264A7 /* WordsmithPageViewController.swift */,
 			);
 			path = "Wordsmith View Controllers";
+			sourceTree = "<group>";
+		};
+		95A2009A1F39362B00FDB910 /* Studio Delegates */ = {
+			isa = PBXGroup;
+			children = (
+				95A200961F3933D900FDB910 /* StudioTextFieldDelegate.swift */,
+				95A200981F39340400FDB910 /* StudioTextViewDelegate.swift */,
+			);
+			path = "Studio Delegates";
 			sourceTree = "<group>";
 		};
 		C88D44B825F6E43FD6CD0B15 /* Pods */ = {
@@ -335,9 +349,11 @@
 				951D22AF1EFA0A24005264A7 /* Track.swift in Sources */,
 				95265BAE1F0D88E700F44E05 /* WordsmithChoiceViewController.swift in Sources */,
 				951D22881EEF3DA5005264A7 /* AppDelegate.swift in Sources */,
+				95A200991F39340400FDB910 /* StudioTextViewDelegate.swift in Sources */,
 				951D22B81F0AE138005264A7 /* WordsmithHomeViewController.swift in Sources */,
 				951D22A01EF492C5005264A7 /* MenuButton.swift in Sources */,
 				951D22A41EF9E442005264A7 /* WordsmithPageViewController.swift in Sources */,
+				95A200971F3933D900FDB910 /* StudioTextFieldDelegate.swift in Sources */,
 				9535E3A51F14581B0025531E /* WordsmithPageViewControllerChild.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

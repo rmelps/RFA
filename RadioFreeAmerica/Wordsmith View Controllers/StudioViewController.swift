@@ -11,6 +11,11 @@ import AudioKit
 import AVFoundation
 import WARangeSlider
 
+enum ViewFlipType {
+    case toCreate
+    case toContainer
+}
+
 class StudioViewController: UIViewController {
     
     @IBOutlet weak var blurEffectView: UIVisualEffectView!
@@ -26,6 +31,8 @@ class StudioViewController: UIViewController {
     @IBOutlet weak var goBackButton: UIButton!
     @IBOutlet weak var enterTitleTextField: UITextField!
     @IBOutlet weak var descriptionTextView: UITextView!
+    var textViewDelegate = StudioTextViewDelegate()
+    var textFieldDelegate = StudioTextFieldDelegate()
     
     // Final Song Container View fields
     @IBOutlet weak var playOrPauseButton: UIButton!
@@ -39,6 +46,7 @@ class StudioViewController: UIViewController {
     // Sliders for normalizing final beat and recording volumes
     @IBOutlet weak var soundBalanceSlider: UISlider!
     @IBOutlet weak var songRangeScrubber: RangeSlider!
+    let maxVol: Double = 2.0
     
     // Fading Labels
     @IBOutlet weak var fadeInTimeLabel: UILabel!
@@ -130,7 +138,7 @@ class StudioViewController: UIViewController {
                             }
                             
                             self.micCopy = AKBooster(self.microphone)
-                            self.micCopy.gain = 2.0
+                            //self.micCopy.gain = 2.0
                             
                             self.recordingNode = AKMixer([self.micCopy])
                             
@@ -159,6 +167,14 @@ class StudioViewController: UIViewController {
         finalSongContainerView.alpha = 0
         finalSongContainerView.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
         
+        // Format the final song create view and subcomponents
+        descriptionTextView.layer.borderColor = UIColor.white.cgColor
+        descriptionTextView.layer.borderWidth = 3.0
+        descriptionTextView.layer.cornerRadius = 10.0
+        
+        // Set Final song Create view text field delegates
+        descriptionTextView.delegate = textViewDelegate
+        enterTitleTextField.delegate = textFieldDelegate
     }
     
     func configureNodes() {
@@ -427,9 +443,6 @@ class StudioViewController: UIViewController {
     }
     @IBAction func finalConfirmButtonTapped(_ sender: UIButton) {
         
-        let playbackVolume = playbackPlayer.volume
-        let beatVolume = beatPlaybackPlayer.volume
-        
         print("playback player sample count before stop: \(playbackPlayer.audioFile.samplesCount)")
         print("current recording file sample count: \(currentRecordingFile.samplesCount)")
         playbackPlayer.stop()
@@ -447,35 +460,51 @@ class StudioViewController: UIViewController {
             print("playback player sample count before stop: \(beatPlaybackPlayer.audioFile.samplesCount)")
             print(convFile1.samplesCount)
             print(convFile2.samplesCount)
-        
-            let file1Normal = try convFile1.normalized(baseDir: .temp, name: UUID().uuidString, newMaxLevel: Float(playbackVolume)) as AVAudioFile
-            let file2Normal = try convFile2.normalized(baseDir: .temp, name: UUID().uuidString, newMaxLevel: Float(beatVolume)) as AVAudioFile
- 
             
+            // We need to figure out the maximum amount of gain we want for a given file, and then grab the ratio of gain between files based on current volume choice. The scale factor should be adjusted based on empirical evidence, if things don't appear correct after normalization, change the factor
+            let scaleFactor: Double = 1.5
+            let voiceToBeatDiff = Float((playbackPlayer.volume - beatPlaybackPlayer.volume) * scaleFactor)
+            
+            
+            let file1Normal = try convFile1.normalized(baseDir: .temp, name: UUID().uuidString, newMaxLevel: voiceToBeatDiff) as AVAudioFile
+            let file2Normal = try convFile2.normalized(baseDir: .temp, name: UUID().uuidString, newMaxLevel: -voiceToBeatDiff) as AVAudioFile
+ 
             combineTracksAndPlay(first: file1Normal.url, second: file2Normal.url)
         } catch {
             print(error.localizedDescription)
         }
        
         if isExpanded {
-            heightCon.constant = heightCon.constant / 2
+            heightCon.constant = heightCon.constant / 2.5
             UIView.animate(withDuration: 0.3, animations: {
                 self.songRangeScrubber.alpha = 0
                 self.soundBalanceSlider.alpha = 0
                 self.fadingStackView.alpha = 0
                 self.view.layoutIfNeeded()
             }, completion: { (success) in
-                self.flipViews(first: self.finalSongContainerView, second: self.finalSongCreateView)
+                self.flipViews(type: .toCreate)
             })
         } else {
-            self.flipViews(first: self.finalSongContainerView, second: self.finalSongCreateView)
+            self.flipViews(type: .toCreate)
         }
     }
     
     //MARK: Final Create Audio Window Bar Buttons
     
     
-    func flipViews(first:UIView, second: UIView) {
+    func flipViews(type: ViewFlipType) {
+        var first = UIView()
+        var second = UIView()
+        
+        switch type {
+        case .toCreate:
+            first = self.finalSongContainerView
+            second = self.finalSongCreateView
+        case .toContainer:
+            first = self.finalSongCreateView
+            second = self.finalSongContainerView
+        }
+        
         let transitionOptions: UIViewAnimationOptions = [.transitionFlipFromRight, .showHideTransitionViews]
         
         UIView.transition(with: first, duration: 0.5, options: transitionOptions, animations: {
@@ -485,20 +514,40 @@ class StudioViewController: UIViewController {
         UIView.transition(with: second, duration: 0.5, options: transitionOptions, animations: {
             second.isHidden = false
         }, completion: nil)
+        
+        UIView.transition(with: second, duration: 0.5, options: transitionOptions, animations: {
+            second.isHidden = false
+        }) { (success) in
+            if success, type == .toCreate {
+                // Configure AutoLayout constraints for createview
+                second.translatesAutoresizingMaskIntoConstraints = false
+                //second.removeConstraints(second.constraints)
+                
+                let heightConstraint = second.heightAnchor.constraint(equalToConstant: self.heightCon.constant * 2.5)
+                
+                second.widthAnchor.constraint(equalToConstant: first.frame.width).isActive = true
+                heightConstraint.isActive = true
+                second.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
+               second.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
+               
+                UIView.animate(withDuration: 0.3, animations: {
+                   self.view.layoutIfNeeded()
+                })
+            }
+        }
     }
     
     //MARK: Final UISlider Actions
     
     @IBAction func volumeBalanceSliderChanged(_ sender: UISlider) {
-        let maxVol: Double = 2.0
         let recordingVol: Double = Double(sender.value)
         let beatVol: Double = 1.0 - recordingVol
         
-        playbackPlayer.volume = maxVol * recordingVol
-        beatPlaybackPlayer.volume = maxVol * beatVol
+        playbackPlayer.volume = self.maxVol * recordingVol
+        beatPlaybackPlayer.volume = self.maxVol * beatVol
     }
-    
-    @IBAction func scrubberValueChanged(_ sender: RangeSlider) {
+   
+    @IBAction func scrubberDidTouchUp(_ sender: RangeSlider) {
         
         playbackPlayer.stop()
         beatPlaybackPlayer.stop()
@@ -511,7 +560,6 @@ class StudioViewController: UIViewController {
         
         playbackPlayer.start()
         beatPlaybackPlayer.start()
- 
     }
     
     //MARK: Final Stepper Actions
