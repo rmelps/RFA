@@ -25,6 +25,8 @@ class StudioViewController: UIViewController {
     // Popup views
     @IBOutlet var finalSongContainerView: UIView!
     @IBOutlet var finalSongCreateView: UIView!
+    var finalOutputPlot: AKOutputWaveformPlot!
+    let popUpViewTransformScale: CGFloat = 1.5
     
     // Final Song Create View fields
     @IBOutlet weak var saveButton: UIButton!
@@ -107,7 +109,7 @@ class StudioViewController: UIViewController {
     
     // File Destination URL
     var fileDestinationURL: URL!
-    var finalPlayer: AVAudioPlayer!
+    var finalPlayer: AKAudioPlayer!
     
     
     override func viewDidLoad() {
@@ -165,7 +167,7 @@ class StudioViewController: UIViewController {
         finalSongContainerView.layer.borderColor = UIColor.white.cgColor
         finalSongContainerView.layer.borderWidth = 3.0
         finalSongContainerView.alpha = 0
-        finalSongContainerView.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
+        
         
         // Format the final song create view and subcomponents
         descriptionTextView.layer.borderColor = UIColor.white.cgColor
@@ -206,6 +208,10 @@ class StudioViewController: UIViewController {
             })
             
             finalMixer = AKMixer([playbackPlayer, beatPlaybackPlayer])
+            
+            // Moving configuration of recorders
+            recorder = try AKNodeRecorder(node: recordingNode, file: currentRecordingFile)
+            beatRecorder = try AKNodeRecorder(node: passthroughPlayer, file: currentBeatRecordingFile)
             
         } catch let error {
             fatalError("Could not read beat URL at \(beatURL): \(error.localizedDescription)")
@@ -250,6 +256,14 @@ class StudioViewController: UIViewController {
             
         }
         
+        // Setup final output plot for final song container view
+        
+        self.finalOutputPlot = AKOutputWaveformPlot(frame: CGRect(origin: self.finalSongWaveformView.frame.origin, size: CGSize(width: self.finalSongWaveformView.bounds.width, height: self.finalSongWaveformView.bounds.height)))
+        self.finalOutputPlot.setupPlot()
+        self.finalOutputPlot.color = .white
+        self.finalOutputPlot.layer.cornerRadius = 20.0
+        self.finalSongContainerView.addSubview(self.finalOutputPlot)
+        
         
         AudioKit.output = passthroughPlayer
         AudioKit.start()
@@ -276,10 +290,10 @@ class StudioViewController: UIViewController {
         if !isRecording {
             do {
                 player.play()
-                recorder = try AKNodeRecorder(node: recordingNode, file: currentRecordingFile)
-                beatRecorder = try AKNodeRecorder(node: passthroughPlayer, file: currentBeatRecordingFile)
+                
                 try recorder.record()
                 try beatRecorder.record()
+                
                 isRecording = true
                 playButton.isEnabled = false
                 playButton.buttonColor = .lightGray
@@ -297,17 +311,23 @@ class StudioViewController: UIViewController {
             playButton.isEnabled = true
             isRecording = false
             
+            self.view.bringSubview(toFront: blurEffectView)
+            
             let height = self.view.bounds.height / 3
             let width = self.view.bounds.width * 0.9
             let origin = CGPoint(x: 15, y: -(height + 50))
             let containerFrame = CGRect(origin: origin, size: CGSize(width: width, height: height))
+            
             finalSongContainerView.frame = containerFrame
             finalSongContainerView.center = self.view.center
             
-            self.view.bringSubview(toFront: blurEffectView)
             self.view.addSubview(finalSongContainerView)
             finalSongContainerView.clipsToBounds = true
             finalSongContainerView.layer.masksToBounds = true
+            
+            
+            finalSongContainerView.transform = CGAffineTransform(scaleX: popUpViewTransformScale, y: popUpViewTransformScale)
+            
             
             // Configure AutoLayout constraints for containerview
             finalSongContainerView.translatesAutoresizingMaskIntoConstraints = false
@@ -323,6 +343,7 @@ class StudioViewController: UIViewController {
             finalSongCreateView.frame = finalSongContainerView.frame
             finalSongCreateView.isHidden = true
             self.view.addSubview(finalSongCreateView)
+            print("FINAL SONG CONTAINER VIEW CONSTRAINT COUNT: \(finalSongContainerView.constraints.count)")
             
             UIView.animate(withDuration: 0.2, animations: {
                 self.finalSongContainerView.transform = CGAffineTransform.identity
@@ -340,11 +361,9 @@ class StudioViewController: UIViewController {
                 if self.beatPlaybackPlayer.audioFile.duration > 0.0, self.playbackPlayer.audioFile.duration > 0.0 {
                     print("playback player sample count: \(self.playbackPlayer.audioFile.samplesCount)")
                     
-                    let outputPlot = AKOutputWaveformPlot(frame: CGRect(origin: self.finalSongWaveformView.frame.origin, size: CGSize(width: self.finalSongWaveformView.bounds.width, height: self.finalSongWaveformView.bounds.height)))
-                    outputPlot.setupPlot()
-                    outputPlot.color = .white
-                    outputPlot.layer.cornerRadius = 20.0
-                    self.finalSongContainerView.addSubview(outputPlot)
+                    //TODO: Figure out issue with setting up plot tap
+                    
+                    
                     
                     AudioKit.output = self.finalMixer
                     self.playbackPlayer.play()
@@ -405,6 +424,48 @@ class StudioViewController: UIViewController {
     //MARK: Final Audio Bar Button Actions
     
     @IBAction func finalCancelButtonTapped(_ sender: UIButton) {
+        //TODO: Figure out why sound gets louder after cancelling once
+        
+        if playbackPlayer.isPlaying {
+            self.playbackPlayer.stop()
+            self.beatPlaybackPlayer.stop()
+        }
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            self.finalSongContainerView.transform = CGAffineTransform(scaleX: self.popUpViewTransformScale, y: self.popUpViewTransformScale)
+            self.blurEffectView.alpha = 0
+            self.finalSongContainerView.alpha = 0
+        }) { (success) in
+            do {
+                self.finalSongContainerView.removeFromSuperview()
+                
+                // When removing the final Song Containter View from the superview, the height and width constraints on this view remain. Ifi I do not remove them manually (like below) they will remain when the view is readded to the superview, and I will not be able to expanded or retract the view.
+                
+                for constraint in self.finalSongContainerView.constraints {
+                    if let con = constraint.firstItem as? UIView, let id = con.accessibilityIdentifier {
+                        if id == "fscontview", constraint.secondItem == nil {
+                            self.finalSongContainerView.removeConstraint(constraint)
+                        }
+                    }
+                }
+                if self.isExpanded {
+                    self.songRangeScrubber.alpha = 0
+                    self.soundBalanceSlider.alpha = 0
+                    self.fadingStackView.alpha = 0
+                    self.isExpanded = false
+                }
+                
+                try self.recorder.reset()
+                try self.beatRecorder.reset()
+                AudioKit.output = self.passthroughPlayer
+                AudioKit.engine.inputNode!.removeTap(onBus: 0)
+            } catch {
+                print("Error reseting recordings:\(error.localizedDescription)")
+            }
+            
+            
+        }
+        
     }
     @IBAction func finalSaveButtonTapped(_ sender: UIButton) {
     }
@@ -440,6 +501,15 @@ class StudioViewController: UIViewController {
         
     }
     @IBAction func finalPlayButtonTapped(_ sender: UIButton) {
+        if playbackPlayer.isPlaying {
+            playbackPlayer.stop()
+            beatPlaybackPlayer.stop()
+            sender.setImage(UIImage(named: "right"), for: .normal)
+        } else {
+            playbackPlayer.start()
+            beatPlaybackPlayer.start()
+            sender.setImage(UIImage(named: "stop"), for: .normal)
+        }
     }
     @IBAction func finalConfirmButtonTapped(_ sender: UIButton) {
         
@@ -448,7 +518,7 @@ class StudioViewController: UIViewController {
         playbackPlayer.stop()
         beatPlaybackPlayer.stop()
         
-        //TODO: Configure the maxVolume for normalized tracks to match current volume
+        //TODO: Configure the maxVolume for normalized tracks to match current volume better
         do {
             let file1 = playbackPlayer.audioFile as AVAudioFile
             let file2 = beatPlaybackPlayer.audioFile as AVAudioFile
@@ -560,6 +630,8 @@ class StudioViewController: UIViewController {
         
         playbackPlayer.start()
         beatPlaybackPlayer.start()
+        
+        playOrPauseButton.setImage(UIImage(named: "stop"), for: .normal)
     }
     
     //MARK: Final Stepper Actions
@@ -599,6 +671,8 @@ class StudioViewController: UIViewController {
         playbackPlayer.start()
         beatPlaybackPlayer.start()
         sender.isHidden = true
+        
+        playOrPauseButton.setImage(UIImage(named: "stop"), for: .normal)
     }
     
     @IBAction func applyFadeOut(_ sender: UIButton) {
@@ -612,6 +686,8 @@ class StudioViewController: UIViewController {
         playbackPlayer.start()
         beatPlaybackPlayer.start()
         sender.isHidden = true
+        
+        playOrPauseButton.setImage(UIImage(named: "stop"), for: .normal)
     }
     
     //MARK: Combine Tracks
@@ -693,15 +769,22 @@ class StudioViewController: UIViewController {
                     print("exporting\(assetExport!.error)")
                 default:
                     print("complete")
+                    do {
+                        try filemanager.removeItem(at: url1)
+                        try filemanager.removeItem(at: url2)
+                    } catch {
+                        print("Error removing files from url: \(error.localizedDescription)")
+                    }
                 }
                 
                 do
                 {
                     //TODO: Switch to AKAudioPlayer to allow for fading
-                    self.finalPlayer = try AVAudioPlayer(contentsOf: self.fileDestinationURL)
-                    self.finalPlayer?.numberOfLoops = -1
-                    self.finalPlayer?.prepareToPlay()
-                    self.finalPlayer?.volume = 1.0
+                    let file = try AKAudioFile(forReading: self.fileDestinationURL)
+                    self.finalPlayer = try AKAudioPlayer(file: file, looping: true, completionHandler: nil)
+                    AudioKit.output = self.finalPlayer
+                    self.finalPlayer.fadeInTime = self.fadeInStepper.value
+                    self.finalPlayer.fadeOutTime = self.fadeOutStepper.value
                     self.finalPlayer?.play()
                 }
                 catch let error as NSError

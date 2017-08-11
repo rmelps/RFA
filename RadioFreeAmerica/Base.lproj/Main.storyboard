@@ -489,7 +489,7 @@
                                     <constraints>
                                         <constraint firstAttribute="width" secondItem="u7y-3j-fGE" secondAttribute="height" multiplier="1:1" id="FrA-ID-vLr"/>
                                     </constraints>
-                                    <state key="normal" image="right"/>
+                                    <state key="normal" image="stop"/>
                                     <connections>
                                         <action selector="finalPlayButtonTapped:" destination="mW1-8O-n1L" eventType="touchUpInside" id="Ja9-5w-FB9"/>
                                     </connections>
@@ -627,6 +627,9 @@
                         </button>
                     </subviews>
                     <color key="backgroundColor" red="0.1647058824" green="0.72941176470000002" blue="0.87843137250000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <accessibility key="accessibilityConfiguration" identifier="fscontview">
+                        <bool key="isElement" value="YES"/>
+                    </accessibility>
                     <constraints>
                         <constraint firstItem="iFp-an-dW4" firstAttribute="top" secondItem="AOD-Qq-UOC" secondAttribute="bottom" constant="8" id="1a4-c4-Ooq"/>
                         <constraint firstAttribute="trailing" secondItem="ZNU-vw-AlR" secondAttribute="trailing" id="341-eS-mNG"/>
@@ -813,5 +816,6 @@
         <image name="record" width="50" height="50"/>
         <image name="right" width="50" height="50"/>
         <image name="save" width="50" height="50"/>
+        <image name="stop" width="50" height="50"/>
     </resources>
 </document>
