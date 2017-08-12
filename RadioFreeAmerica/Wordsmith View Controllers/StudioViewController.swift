@@ -468,6 +468,29 @@ class StudioViewController: UIViewController {
         
     }
     @IBAction func finalSaveButtonTapped(_ sender: UIButton) {
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        let user = appDelegate.signedInUser!
+        
+        finalPlayer.stop()
+        
+        //TODO: Improve text field checks before saving track. Also add ability to save track description. Need to update filePath on successful save
+        
+        guard enterTitleTextField.text != nil else {
+            print("Enter a valid title")
+            return
+        }
+        
+        let newTrack = Track(user: user.uid, title: enterTitleTextField.text!, uploadTime: String(describing: Date()), fileURL: fileDestinationURL.path, fadeInTime: String(fadeInStepper.value), fadeOutTime: String(fadeOutStepper.value))
+        
+        if SavedTrackManager.saveNewTrack(newTrack: newTrack) {
+            print("Saved successfully!")
+            let infoData = FileManager.default.contents(atPath: SavedTrackManager.trackArchiveInfoURL.path)
+            let audioData = try! FileManager.default.contentsOfDirectory(atPath: SavedTrackManager.trackArchiveAudioDirectoryURL.path)
+            print("info path: \(infoData!)")
+            print("audio data:\(audioData)")
+            print(FileManager.default.subpaths(atPath: SavedTrackManager.trackArchiveAudioDirectoryURL.path))
+            
+        }
     }
     @IBAction func finalEditButtonTapped(_ sender: UIButton) {
         
@@ -698,7 +721,7 @@ class StudioViewController: UIViewController {
         let compositionAudioTrack2:AVMutableCompositionTrack = composition.addMutableTrack(withMediaType: AVMediaTypeAudio, preferredTrackID: CMPersistentTrackID())
         
         let documentDirectoryURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first! as NSURL
-        self.fileDestinationURL = documentDirectoryURL.appendingPathComponent("resultmerge.m4a")! as URL
+        self.fileDestinationURL = documentDirectoryURL.appendingPathComponent("\(UUID().uuidString).m4a")! as URL
         
         let filemanager = FileManager.default
         if (!filemanager.fileExists(atPath: self.fileDestinationURL.path))

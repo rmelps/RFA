@@ -35,6 +35,7 @@
 		9535E3B11F16BBEB0025531E /* CustomShowSegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9535E3B01F16BBEB0025531E /* CustomShowSegue.swift */; };
 		95A200971F3933D900FDB910 /* StudioTextFieldDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A200961F3933D900FDB910 /* StudioTextFieldDelegate.swift */; };
 		95A200991F39340400FDB910 /* StudioTextViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A200981F39340400FDB910 /* StudioTextViewDelegate.swift */; };
+		95EF0DD21F3F494600EC6DDC /* SavedTrackManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95EF0DD11F3F494600EC6DDC /* SavedTrackManager.swift */; };
 		EA25DE04343B6E4ADE610C92 /* Pods_RadioFreeAmerica.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B89A5A22515871740B93D705 /* Pods_RadioFreeAmerica.framework */; };
 /* End PBXBuildFile section */
 
@@ -84,6 +85,7 @@
 		95A200961F3933D900FDB910 /* StudioTextFieldDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioTextFieldDelegate.swift; sourceTree = "<group>"; };
 		95A200981F39340400FDB910 /* StudioTextViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioTextViewDelegate.swift; sourceTree = "<group>"; };
 		95BA8C8B1F16F431008F60C5 /* AudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioKit.framework; path = ../../../Downloads/AudioKit/iOS/AudioKit.framework; sourceTree = "<group>"; };
+		95EF0DD11F3F494600EC6DDC /* SavedTrackManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedTrackManager.swift; sourceTree = "<group>"; };
 		A2EA3C87DBE567095C362C21 /* Pods-RadioFreeAmerica.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RadioFreeAmerica.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RadioFreeAmerica/Pods-RadioFreeAmerica.debug.xcconfig"; sourceTree = "<group>"; };
 		B89A5A22515871740B93D705 /* Pods_RadioFreeAmerica.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RadioFreeAmerica.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -134,6 +136,7 @@
 				951D22A91EFA081F005264A7 /* Model */,
 				951D22871EEF3DA5005264A7 /* AppDelegate.swift */,
 				951D22891EEF3DA5005264A7 /* MainViewController.swift */,
+				95EF0DD11F3F494600EC6DDC /* SavedTrackManager.swift */,
 				951D228B1EEF3DA5005264A7 /* Main.storyboard */,
 				9535E3A81F14599D0025531E /* Wordsmith View Controllers */,
 				951D22B11EFA0EC4005264A7 /* GenreCollectionViewController.swift */,
@@ -345,6 +348,7 @@
 				951D22A61EF9F016005264A7 /* GenreChoiceViewController.swift in Sources */,
 				9535E3AC1F145DA30025531E /* TrackInfoView.swift in Sources */,
 				951D22B21EFA0EC4005264A7 /* GenreCollectionViewController.swift in Sources */,
+				95EF0DD21F3F494600EC6DDC /* SavedTrackManager.swift in Sources */,
 				951D22AD1EFA09FB005264A7 /* User.swift in Sources */,
 				951D22AF1EFA0A24005264A7 /* Track.swift in Sources */,
 				95265BAE1F0D88E700F44E05 /* WordsmithChoiceViewController.swift in Sources */,
