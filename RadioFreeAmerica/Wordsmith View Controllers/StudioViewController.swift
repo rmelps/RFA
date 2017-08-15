@@ -475,20 +475,43 @@ class StudioViewController: UIViewController {
         
         //TODO: Improve text field checks before saving track. Also add ability to save track description. Need to update filePath on successful save
         
-        guard enterTitleTextField.text != nil else {
-            print("Enter a valid title")
+        let saveLocation = SavedTrackManager.trackArchiveAudioDirectoryURL
+        
+        guard let text = enterTitleTextField.text, !text.isEmpty else {
+            let alert = UIAlertController(title: "Error!", message: "Enter a Title", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+            self.present(alert, animated: true, completion: nil)
             return
         }
         
-        let newTrack = Track(user: user.uid, title: enterTitleTextField.text!, uploadTime: String(describing: Date()), fileURL: fileDestinationURL.path, fadeInTime: String(fadeInStepper.value), fadeOutTime: String(fadeOutStepper.value))
+        guard !FileManager.default.fileExists(atPath: saveLocation.appendingPathComponent(fileDestinationURL.lastPathComponent).path) else {
+            let alert = UIAlertController(title: "Error!", message: "This track is already saved!", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+            return
+        }
         
-        if SavedTrackManager.saveNewTrack(newTrack: newTrack) {
+        let newTrack = Track(user: user.uid,
+                             title: enterTitleTextField.text!,
+                             details: descriptionTextView.text,
+                             uploadTime: String(describing: Date()),
+                             fileURL: fileDestinationURL.lastPathComponent,
+                             fadeInTime: String(fadeInStepper.value),
+                             fadeOutTime: String(fadeOutStepper.value))
+        
+        if SavedTrackManager.saveNewTrack(newTrack: newTrack, tempLocation: fileDestinationURL) {
             print("Saved successfully!")
             let infoData = FileManager.default.contents(atPath: SavedTrackManager.trackArchiveInfoURL.path)
             let audioData = try! FileManager.default.contentsOfDirectory(atPath: SavedTrackManager.trackArchiveAudioDirectoryURL.path)
             print("info path: \(infoData!)")
             print("audio data:\(audioData)")
-            print(FileManager.default.subpaths(atPath: SavedTrackManager.trackArchiveAudioDirectoryURL.path))
+            
+            let alert = UIAlertController(title: "Saved!", message: "\"\(newTrack.title)\" has been saved!", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Nice", style: .cancel, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+            
+            
+        } else {
             
         }
     }
@@ -593,9 +616,11 @@ class StudioViewController: UIViewController {
         case .toCreate:
             first = self.finalSongContainerView
             second = self.finalSongCreateView
+            second.frame = first.frame
         case .toContainer:
             first = self.finalSongCreateView
             second = self.finalSongContainerView
+            first.frame = second.frame
         }
         
         let transitionOptions: UIViewAnimationOptions = [.transitionFlipFromRight, .showHideTransitionViews]
@@ -603,11 +628,7 @@ class StudioViewController: UIViewController {
         UIView.transition(with: first, duration: 0.5, options: transitionOptions, animations: {
             first.isHidden = true
         }, completion: nil)
-        
-        UIView.transition(with: second, duration: 0.5, options: transitionOptions, animations: {
-            second.isHidden = false
-        }, completion: nil)
-        
+    
         UIView.transition(with: second, duration: 0.5, options: transitionOptions, animations: {
             second.isHidden = false
         }) { (success) in
@@ -618,8 +639,8 @@ class StudioViewController: UIViewController {
                 
                 let heightConstraint = second.heightAnchor.constraint(equalToConstant: self.heightCon.constant * 2.5)
                 
-                second.widthAnchor.constraint(equalToConstant: first.frame.width).isActive = true
                 heightConstraint.isActive = true
+                second.widthAnchor.constraint(equalToConstant: first.frame.width).isActive = true
                 second.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
                second.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
                

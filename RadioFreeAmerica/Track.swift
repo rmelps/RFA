@@ -9,18 +9,20 @@
 import Foundation
 import FirebaseDatabase
 
-struct Track {
+class Track: NSObject, NSCoding {
     var user: String
     var title: String
+    var details: String
     var uploadTime: String
     var fileURL: String
     var fadeInTime: String
     var fadeOutTime: String
     let errorMessage = "Error"
     
-    init(user: String, title: String, uploadTime: String, fileURL: String, fadeInTime: String, fadeOutTime: String){
+    init(user: String, title: String, details: String, uploadTime: String, fileURL: String, fadeInTime: String, fadeOutTime: String){
         self.user = user
         self.title = title
+        self.details = details
         self.uploadTime = uploadTime
         self.fileURL = fileURL
         self.fadeInTime = fadeInTime
@@ -41,6 +43,12 @@ struct Track {
             self.title = title
         } else {
             self.title = errorMessage
+        }
+        
+        if let details = snapShotValue?["details"] as? String {
+            self.details = details
+        } else {
+            self.details = errorMessage
         }
         
         if let uploadTime = snapShotValue?["uploadTime"] as? String {
@@ -69,7 +77,31 @@ struct Track {
     }
     
     func toAny() -> Any {
-        return ["user": self.user, "title": self.title, "uploadTime": self.uploadTime, "fileURL": self.fileURL, "fadeInTime": self.fadeInTime, "fadeOutTime":self.fadeOutTime]
+        return ["user": self.user, "title": self.title, "details": self.details, "uploadTime": self.uploadTime, "fileURL": self.fileURL, "fadeInTime": self.fadeInTime, "fadeOutTime":self.fadeOutTime]
+    }
+    
+    //MARK: NSCoding
+    
+    required init(coder aDecoder: NSCoder) {
+        user = aDecoder.decodeObject(forKey: "user") as! String
+        title = aDecoder.decodeObject(forKey: "title") as! String
+        details = aDecoder.decodeObject(forKey: "details") as! String
+        uploadTime = aDecoder.decodeObject(forKey: "uploadTime") as! String
+        fileURL = aDecoder.decodeObject(forKey: "fileURL") as! String
+        fadeInTime = aDecoder.decodeObject(forKey: "fadeInTime") as! String
+        fadeOutTime = aDecoder.decodeObject(forKey: "fadeOutTime") as! String
+        
+        super.init()
+    }
+    
+    func encode(with aCoder: NSCoder) {
+        aCoder.encode(user, forKey: "user")
+        aCoder.encode(title, forKey: "title")
+        aCoder.encode(details, forKey: "details")
+        aCoder.encode(uploadTime, forKey: "uploadTime")
+        aCoder.encode(fileURL, forKey: "fileURL")
+        aCoder.encode(fadeInTime, forKey: "fadeInTime")
+        aCoder.encode(fadeOutTime, forKey: "fadeOutTime")
     }
     
 }
