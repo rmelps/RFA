@@ -406,6 +406,9 @@
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gzu-Q7-GUZ">
                                     <rect key="frame" x="0.0" y="0.0" width="88.5" height="88.5"/>
                                     <state key="normal" image="back"/>
+                                    <connections>
+                                        <action selector="finalGoBackButtonTapped:" destination="mW1-8O-n1L" eventType="touchUpInside" id="l81-xF-pEj"/>
+                                    </connections>
                                 </button>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ihx-fF-aEh">
                                     <rect key="frame" x="88.5" y="0.0" width="88" height="88.5"/>
@@ -442,6 +445,7 @@
                         </textView>
                     </subviews>
                     <color key="backgroundColor" red="0.92114552019999996" green="0.93352207570000001" blue="0.60003244690000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <accessibility key="accessibilityConfiguration" identifier="fsCreateView"/>
                     <constraints>
                         <constraint firstAttribute="trailing" secondItem="btP-0B-8ZA" secondAttribute="trailing" constant="8" id="7hd-iZ-Ox3"/>
                         <constraint firstItem="nBc-K4-Yz3" firstAttribute="leading" secondItem="uIf-Oo-NaU" secondAttribute="leading" constant="8" id="AvQ-6e-ODH"/>

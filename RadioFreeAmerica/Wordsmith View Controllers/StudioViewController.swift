@@ -361,10 +361,6 @@ class StudioViewController: UIViewController {
                 if self.beatPlaybackPlayer.audioFile.duration > 0.0, self.playbackPlayer.audioFile.duration > 0.0 {
                     print("playback player sample count: \(self.playbackPlayer.audioFile.samplesCount)")
                     
-                    //TODO: Figure out issue with setting up plot tap
-                    
-                    
-                    
                     AudioKit.output = self.finalMixer
                     self.playbackPlayer.play()
                     self.beatPlaybackPlayer.play()
@@ -462,11 +458,28 @@ class StudioViewController: UIViewController {
             } catch {
                 print("Error reseting recordings:\(error.localizedDescription)")
             }
-            
-            
+        }
+    }
+    
+    @IBAction func finalGoBackButtonTapped(_ sender: UIButton) {
+        // Stop the final compiled song from playing, delete the compiled song saved in the documents directory, and return to the finalSongContainerView
+        if finalPlayer != nil {
+            finalPlayer.stop()
+        }
+        if fileDestinationURL != nil {
+            do {
+                try FileManager.default.removeItem(at: fileDestinationURL)
+            } catch {
+                print("could not remove compiled song: \(error.localizedDescription)")
+            }
         }
         
+        playbackPlayer.play()
+        beatPlaybackPlayer.play()
+        
+        flipViews(type: .toContainer)
     }
+    
     @IBAction func finalSaveButtonTapped(_ sender: UIButton) {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let user = appDelegate.signedInUser!
@@ -581,27 +594,50 @@ class StudioViewController: UIViewController {
             let scaleFactor: Double = 1.5
             let voiceToBeatDiff = Float((playbackPlayer.volume - beatPlaybackPlayer.volume) * scaleFactor)
             
+            // Add activity indicator to show that song is loading. disable the view from user interaction until this has completed
+            let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+            let activityIndicatorBox = UIView(frame: CGRect(origin: CGPoint.zero, size: CGSize(width: activityIndicator.bounds.width * 2.5, height: activityIndicator.bounds.height * 2.5)))
+            activityIndicatorBox.backgroundColor = UIColor(white: 0.0, alpha: 0.6)
             
-            let file1Normal = try convFile1.normalized(baseDir: .temp, name: UUID().uuidString, newMaxLevel: voiceToBeatDiff) as AVAudioFile
-            let file2Normal = try convFile2.normalized(baseDir: .temp, name: UUID().uuidString, newMaxLevel: -voiceToBeatDiff) as AVAudioFile
- 
-            combineTracksAndPlay(first: file1Normal.url, second: file2Normal.url)
+            self.view.addSubview(activityIndicatorBox)
+            activityIndicatorBox.addSubview(activityIndicator)
+            
+            activityIndicator.center = activityIndicatorBox.center
+            activityIndicatorBox.center = self.view.center
+            
+            activityIndicatorBox.layer.cornerRadius = 7.0
+            activityIndicator.startAnimating()
+            
+            // Adding asynchronous normalization so that program does not freeze
+            DispatchQueue.global(qos: .userInitiated).async {
+                do {
+                    let file1Normal = try convFile1.normalized(baseDir: .temp, name: UUID().uuidString, newMaxLevel: voiceToBeatDiff) as AVAudioFile
+                    let file2Normal = try convFile2.normalized(baseDir: .temp, name: UUID().uuidString, newMaxLevel: -voiceToBeatDiff) as AVAudioFile
+                    DispatchQueue.main.async {
+                        self.combineTracksAndPlay(first: file1Normal.url, second: file2Normal.url)
+                        activityIndicatorBox.removeFromSuperview()
+                        if self.isExpanded {
+                            self.heightCon.constant = self.heightCon.constant / 2.5
+                            UIView.animate(withDuration: 0.3, animations: {
+                                self.songRangeScrubber.alpha = 0
+                                self.soundBalanceSlider.alpha = 0
+                                self.fadingStackView.alpha = 0
+                                self.view.layoutIfNeeded()
+                            }, completion: { (success) in
+                                self.flipViews(type: .toCreate)
+                            })
+                        } else {
+                            self.flipViews(type: .toCreate)
+                        }
+                    }
+                } catch {
+                    activityIndicatorBox.removeFromSuperview()
+                    print("error in async process: \(error.localizedDescription)")
+                }
+                
+            }
         } catch {
             print(error.localizedDescription)
-        }
-       
-        if isExpanded {
-            heightCon.constant = heightCon.constant / 2.5
-            UIView.animate(withDuration: 0.3, animations: {
-                self.songRangeScrubber.alpha = 0
-                self.soundBalanceSlider.alpha = 0
-                self.fadingStackView.alpha = 0
-                self.view.layoutIfNeeded()
-            }, completion: { (success) in
-                self.flipViews(type: .toCreate)
-            })
-        } else {
-            self.flipViews(type: .toCreate)
         }
     }
     
@@ -611,19 +647,22 @@ class StudioViewController: UIViewController {
     func flipViews(type: ViewFlipType) {
         var first = UIView()
         var second = UIView()
+        var direction = UIViewAnimationOptions()
         
         switch type {
         case .toCreate:
             first = self.finalSongContainerView
             second = self.finalSongCreateView
             second.frame = first.frame
+            direction = .transitionFlipFromRight
         case .toContainer:
             first = self.finalSongCreateView
             second = self.finalSongContainerView
             first.frame = second.frame
+            direction = .transitionFlipFromLeft
         }
         
-        let transitionOptions: UIViewAnimationOptions = [.transitionFlipFromRight, .showHideTransitionViews]
+        let transitionOptions: UIViewAnimationOptions = [direction, .showHideTransitionViews]
         
         UIView.transition(with: first, duration: 0.5, options: transitionOptions, animations: {
             first.isHidden = true
@@ -632,21 +671,45 @@ class StudioViewController: UIViewController {
         UIView.transition(with: second, duration: 0.5, options: transitionOptions, animations: {
             second.isHidden = false
         }) { (success) in
+            
+            let identifiers: [String] = ["height", "width", "centerY", "centerX"]
+            
             if success, type == .toCreate {
+                
                 // Configure AutoLayout constraints for createview
                 second.translatesAutoresizingMaskIntoConstraints = false
                 //second.removeConstraints(second.constraints)
                 
                 let heightConstraint = second.heightAnchor.constraint(equalToConstant: self.heightCon.constant * 2.5)
+                let widthContraint = second.widthAnchor.constraint(equalToConstant: first.frame.width)
+                let centerYConstraint = second.centerYAnchor.constraint(equalTo: self.view.centerYAnchor)
+                let centerXConstraint = second.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
                 
-                heightConstraint.isActive = true
-                second.widthAnchor.constraint(equalToConstant: first.frame.width).isActive = true
-                second.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
-               second.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
-               
+                let constraints: [NSLayoutConstraint] = [heightConstraint, widthContraint, centerYConstraint, centerXConstraint]
+                
+                if identifiers.count == constraints.count {
+                    for (index, constraint) in constraints.enumerated() {
+                        
+                        constraint.identifier = identifiers[index]
+                        constraint.isActive = true
+                    }
+                }
+                
                 UIView.animate(withDuration: 0.3, animations: {
-                   self.view.layoutIfNeeded()
+                    self.view.layoutIfNeeded()
+                }, completion: { (success) in
+                    self.isExpanded = true
                 })
+            }
+            if success, type == .toContainer {
+                self.isExpanded = false
+                
+                for constraint in self.finalSongCreateView.constraints {
+                    if let id = constraint.identifier, identifiers.contains(id) {
+                        self.finalSongCreateView.removeConstraint(constraint)
+                    }
+                }
+                first.frame = second.frame
             }
         }
     }
@@ -737,6 +800,9 @@ class StudioViewController: UIViewController {
     //MARK: Combine Tracks
     
     func combineTracksAndPlay(first: URL, second: URL) {
+        
+        //TODO: Add cropping of tracks to final compilation (reflective of WARangeSlider positions)
+        
         let composition = AVMutableComposition()
         let compositionAudioTrack1:AVMutableCompositionTrack = composition.addMutableTrack(withMediaType: AVMediaTypeAudio, preferredTrackID: CMPersistentTrackID())
         let compositionAudioTrack2:AVMutableCompositionTrack = composition.addMutableTrack(withMediaType: AVMediaTypeAudio, preferredTrackID: CMPersistentTrackID())
@@ -823,7 +889,6 @@ class StudioViewController: UIViewController {
                 
                 do
                 {
-                    //TODO: Switch to AKAudioPlayer to allow for fading
                     let file = try AKAudioFile(forReading: self.fileDestinationURL)
                     self.finalPlayer = try AKAudioPlayer(file: file, looping: true, completionHandler: nil)
                     AudioKit.output = self.finalPlayer
