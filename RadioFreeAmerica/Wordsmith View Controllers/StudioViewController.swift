@@ -290,9 +290,16 @@ class StudioViewController: UIViewController {
         if !isRecording {
             do {
                 player.play()
+                let date0 = Date()
                 
                 try recorder.record()
+                let date1 = Date()
+                print("recording started at: \(date1)")
                 try beatRecorder.record()
+                let date2 = Date()
+                print("beat recording started at: \(date2)")
+                let difference = DateInterval(start: date0, end: date2)
+                print(difference.duration)
                 
                 isRecording = true
                 playButton.isEnabled = false
@@ -362,8 +369,8 @@ class StudioViewController: UIViewController {
                     print("playback player sample count: \(self.playbackPlayer.audioFile.samplesCount)")
                     
                     AudioKit.output = self.finalMixer
-                    self.playbackPlayer.play()
-                    self.beatPlaybackPlayer.play()
+                    self.playbackPlayer.play(from: 0.0, to: self.playbackPlayer.audioFile.duration)
+                    self.beatPlaybackPlayer.play(from: 0.0, to: self.playbackPlayer.audioFile.duration)
                     
                     // Configure UISlider/Range Slider properties
                     
@@ -451,9 +458,23 @@ class StudioViewController: UIViewController {
                     self.isExpanded = false
                 }
                 
+                // Reset Technician Screen parameters to default values
+                self.fadeInStepper.value = 0.0
+                self.fadeOutStepper.value = 0.0
+                self.fadeInStepperValueChanged(self.fadeInStepper)
+                self.fadeOutStepperValueChanged(self.fadeOutStepper)
+                self.playbackPlayer.fadeInTime = self.fadeInStepper.value
+                self.beatPlaybackPlayer.fadeInTime = self.fadeInStepper.value
+                self.playbackPlayer.fadeOutTime = self.fadeOutStepper.value
+                self.beatPlaybackPlayer.fadeOutTime = self.fadeOutStepper.value
+                self.fadeInApplyButton.isHidden = true
+                self.fadeOutApplyButton.isHidden = true
+                
+                // Remove fading
+                
                 try self.recorder.reset()
                 try self.beatRecorder.reset()
-                AudioKit.output = self.passthroughPlayer
+                AudioKit.output = self.playbackPlayer
                 AudioKit.engine.inputNode!.removeTap(onBus: 0)
             } catch {
                 print("Error reseting recordings:\(error.localizedDescription)")
@@ -463,6 +484,9 @@ class StudioViewController: UIViewController {
     
     @IBAction func finalGoBackButtonTapped(_ sender: UIButton) {
         // Stop the final compiled song from playing, delete the compiled song saved in the documents directory, and return to the finalSongContainerView
+        
+        //TODO: Find out why sometimes the beat and recording starting times are offset
+        
         if finalPlayer != nil {
             finalPlayer.stop()
         }
@@ -474,10 +498,22 @@ class StudioViewController: UIViewController {
             }
         }
         
-        playbackPlayer.play()
-        beatPlaybackPlayer.play()
+        playbackPlayer.play(from: songRangeScrubber.lowerValue, to: songRangeScrubber.upperValue)
+        beatPlaybackPlayer.play(from: songRangeScrubber.lowerValue, to: songRangeScrubber.upperValue)
         
-        flipViews(type: .toContainer)
+        for constraint in finalSongCreateView.constraints {
+            if let id = constraint.identifier, id == "height" {
+                constraint.constant = heightCon.constant
+                UIView.animate(withDuration: 0.3, animations: {
+                    self.view.layoutIfNeeded()
+                }, completion: { (success) in
+                    self.flipViews(type: .toContainer)
+                })
+                break
+            }
+        }
+        
+        
     }
     
     @IBAction func finalSaveButtonTapped(_ sender: UIButton) {
@@ -680,20 +716,38 @@ class StudioViewController: UIViewController {
                 second.translatesAutoresizingMaskIntoConstraints = false
                 //second.removeConstraints(second.constraints)
                 
+                var alreadyConstrained = false
+                for constraint in self.finalSongCreateView.constraints {
+                    if let id = constraint.identifier {
+                        if identifiers.contains(id) {
+                            alreadyConstrained = true
+                            break
+                        }
+                    }
+                }
+                
+                var constraints = [NSLayoutConstraint]()
+                
                 let heightConstraint = second.heightAnchor.constraint(equalToConstant: self.heightCon.constant * 2.5)
                 let widthContraint = second.widthAnchor.constraint(equalToConstant: first.frame.width)
                 let centerYConstraint = second.centerYAnchor.constraint(equalTo: self.view.centerYAnchor)
                 let centerXConstraint = second.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
                 
-                let constraints: [NSLayoutConstraint] = [heightConstraint, widthContraint, centerYConstraint, centerXConstraint]
-                
-                if identifiers.count == constraints.count {
-                    for (index, constraint) in constraints.enumerated() {
-                        
-                        constraint.identifier = identifiers[index]
-                        constraint.isActive = true
+                if !alreadyConstrained {
+                    constraints = [heightConstraint, widthContraint, centerYConstraint, centerXConstraint]
+                    if identifiers.count == constraints.count {
+                        for (index, constraint) in constraints.enumerated() {
+                            
+                            constraint.identifier = identifiers[index]
+                            constraint.isActive = true
+                        }
                     }
+                } else {
+                    heightConstraint.identifier = identifiers[0]
+                    heightConstraint.isActive = true
                 }
+                
+                
                 
                 UIView.animate(withDuration: 0.3, animations: {
                     self.view.layoutIfNeeded()
@@ -705,7 +759,7 @@ class StudioViewController: UIViewController {
                 self.isExpanded = false
                 
                 for constraint in self.finalSongCreateView.constraints {
-                    if let id = constraint.identifier, identifiers.contains(id) {
+                    if let id = constraint.identifier, id == identifiers[0] {
                         self.finalSongCreateView.removeConstraint(constraint)
                     }
                 }
@@ -801,8 +855,6 @@ class StudioViewController: UIViewController {
     
     func combineTracksAndPlay(first: URL, second: URL) {
         
-        //TODO: Add cropping of tracks to final compilation (reflective of WARangeSlider positions)
-        
         let composition = AVMutableComposition()
         let compositionAudioTrack1:AVMutableCompositionTrack = composition.addMutableTrack(withMediaType: AVMediaTypeAudio, preferredTrackID: CMPersistentTrackID())
         let compositionAudioTrack2:AVMutableCompositionTrack = composition.addMutableTrack(withMediaType: AVMediaTypeAudio, preferredTrackID: CMPersistentTrackID())
@@ -845,11 +897,23 @@ class StudioViewController: UIViewController {
         let assetTrack1:AVAssetTrack = tracks1[0]
         let assetTrack2:AVAssetTrack = tracks2[0]
         
+        
         let duration1: CMTime = assetTrack1.timeRange.duration
         let duration2: CMTime = assetTrack2.timeRange.duration
+ 
+        //TODO: Improve cropping accuracy
+        let sampleRate: Double = 44100
+        let diff = Int64((songRangeScrubber.upperValue - songRangeScrubber.lowerValue) * sampleRate)
         
-        let timeRange1 = CMTimeRangeMake(kCMTimeZero, duration1)
-        let timeRange2 = CMTimeRangeMake(kCMTimeZero, duration2)
+        let value = CMTimeValue.init(songRangeScrubber.lowerValue)
+        let startTime: CMTime = CMTimeMake(value * Int64(sampleRate), Int32(sampleRate))
+        let dur1: CMTime = CMTimeMake(diff, Int32(sampleRate))
+        let dur2: CMTime = CMTimeMake(diff, Int32(sampleRate))
+        
+        print("start time: \(startTime), dur1: \(dur1)")
+        
+        let timeRange1 = CMTimeRangeMake(startTime, dur1)
+        let timeRange2 = CMTimeRangeMake(startTime, dur2)
         do
         {
             try compositionAudioTrack1.insertTimeRange(timeRange1, of: assetTrack1, at: kCMTimeZero)
@@ -857,7 +921,7 @@ class StudioViewController: UIViewController {
         }
         catch
         {
-            print(error)
+            print("Could not insert time range: \(error.localizedDescription)")
         }
         
         let assetExport = AVAssetExportSession(asset: composition, presetName: AVAssetExportPresetAppleM4A)

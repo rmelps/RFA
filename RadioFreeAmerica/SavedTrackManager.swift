@@ -44,7 +44,6 @@ class SavedTrackManager {
     static func saveNewTrack(newTrack track: Track, tempLocation: URL) -> Bool {
         var archivedTracks = [Track]()
         
-        
         if let savedTracks = NSKeyedUnarchiver.unarchiveObject(withFile: trackArchiveInfoURL.path) as? [Track] {
             archivedTracks = savedTracks
             print("Archived Tracks found")
@@ -56,8 +55,6 @@ class SavedTrackManager {
         
         print("saving tracks to \(trackArchiveInfoURL.path)")
         print("achived tracks \(archivedTracks)")
-        
-        //TODO: Why is it throwing an exception anytime I try to encode??
         
         let infoSuccess = NSKeyedArchiver.archiveRootObject(archivedTracks, toFile: trackArchiveInfoURL.path)
 
