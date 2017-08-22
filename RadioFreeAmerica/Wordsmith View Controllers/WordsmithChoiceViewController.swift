@@ -258,6 +258,7 @@ class WordsmithChoiceViewController: WordsmithPageViewControllerChild, UIGesture
         case "showStudio":
             let vc = segue.destination as! StudioViewController
             vc.beatURL = self.beatURL
+            vc.genre = self.genre
         default:
             break
         }

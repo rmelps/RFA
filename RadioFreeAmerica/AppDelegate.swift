@@ -192,5 +192,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
         }
         task.resume()
     }
+    
+    static func presentErrorAlert(withMessage message: String, fromViewController cont: UIViewController) {
+        let alert = UIAlertController(title: "Error!", message: message, preferredStyle: .alert)
+        let confirm = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+        alert.addAction(confirm)
+        cont.present(alert, animated: true, completion: nil)
+    }
 }
 

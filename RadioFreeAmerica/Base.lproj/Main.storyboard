@@ -373,6 +373,7 @@
                         <outlet property="beatBufferView" destination="fCd-M9-Pya" id="q7B-Ga-vol"/>
                         <outlet property="beatPlotView" destination="qZc-gK-NGv" id="Eq6-qt-aGK"/>
                         <outlet property="blurEffectView" destination="VWs-vY-xAy" id="aNx-BN-0Q8"/>
+                        <outlet property="confirmAndUploadButton" destination="Ihx-fF-aEh" id="Vhu-dB-HHg"/>
                         <outlet property="descriptionTextView" destination="btP-0B-8ZA" id="2YY-am-D7G"/>
                         <outlet property="enterTitleTextField" destination="nBc-K4-Yz3" id="BIt-Aq-7mZ"/>
                         <outlet property="fadeInApplyButton" destination="OCd-Hb-rBR" id="U9B-tp-5db"/>
@@ -413,6 +414,9 @@
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ihx-fF-aEh">
                                     <rect key="frame" x="88.5" y="0.0" width="88" height="88.5"/>
                                     <state key="normal" image="checkmark"/>
+                                    <connections>
+                                        <action selector="confirmAndUploadTrackButtonTapped:" destination="mW1-8O-n1L" eventType="touchUpInside" id="jrC-Si-q4g"/>
+                                    </connections>
                                 </button>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="l7D-G7-NbY">
                                     <rect key="frame" x="176.5" y="0.0" width="88.5" height="88.5"/>

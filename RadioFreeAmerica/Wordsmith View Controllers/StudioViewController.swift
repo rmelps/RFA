@@ -10,6 +10,8 @@ import UIKit
 import AudioKit
 import AVFoundation
 import WARangeSlider
+import FirebaseDatabase
+import FirebaseStorage
 
 enum ViewFlipType {
     case toCreate
@@ -31,6 +33,7 @@ class StudioViewController: UIViewController {
     // Final Song Create View fields
     @IBOutlet weak var saveButton: UIButton!
     @IBOutlet weak var goBackButton: UIButton!
+    @IBOutlet weak var confirmAndUploadButton: UIButton!
     @IBOutlet weak var enterTitleTextField: UITextField!
     @IBOutlet weak var descriptionTextView: UITextView!
     var textViewDelegate = StudioTextViewDelegate()
@@ -68,6 +71,9 @@ class StudioViewController: UIViewController {
     
     // Beat of the day Local URL
     var beatURL: URL!
+    
+    // Chosen genre for upload
+    var genre: GenreChoices!
     
     // AKAudioPlayer with beat
     private var player: AKAudioPlayer!
@@ -527,16 +533,12 @@ class StudioViewController: UIViewController {
         let saveLocation = SavedTrackManager.trackArchiveAudioDirectoryURL
         
         guard let text = enterTitleTextField.text, !text.isEmpty else {
-            let alert = UIAlertController(title: "Error!", message: "Enter a Title", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
-            self.present(alert, animated: true, completion: nil)
+            AppDelegate.presentErrorAlert(withMessage: "Enter a Title", fromViewController: self)
             return
         }
         
         guard !FileManager.default.fileExists(atPath: saveLocation.appendingPathComponent(fileDestinationURL.lastPathComponent).path) else {
-            let alert = UIAlertController(title: "Error!", message: "This track is already saved!", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
-            self.present(alert, animated: true, completion: nil)
+            AppDelegate.presentErrorAlert(withMessage: "This track is already saved", fromViewController: self)
             return
         }
         
@@ -679,6 +681,74 @@ class StudioViewController: UIViewController {
     
     //MARK: Final Create Audio Window Bar Buttons
     
+    @IBAction func confirmAndUploadTrackButtonTapped(_ sender: UIButton) {
+        
+        guard let title = enterTitleTextField.text, !title.isEmpty else {
+            print("Enter a title before uploading!")
+            return
+        }
+        
+        let user = (UIApplication.shared.delegate as! AppDelegate).signedInUser!
+        
+        // Point to the destination where did upload will be stored in the database
+        let uploadDBRef = FIRDatabase.database().reference(withPath: "feed/\(genre.rawValue.lowercased())").childByAutoId()
+        
+        // Point to the destination where the audio file will be stored in FIRStorage
+        let uploadStorageRef = FIRStorage.storage().reference(withPath: "uploads/\(user.uid!)/\(uploadDBRef.key).m4a")
+        
+        // First, we need to grab the final combined track as a data object to prepare for upload
+        var data = Data()
+        
+        do {
+            data = try Data(contentsOf: self.fileDestinationURL)
+        } catch let error {
+            print("Could not cast audio track as data: \(error.localizedDescription)")
+            return
+        }
+        
+        // Then, we will upload this data to FIRStorage, and upon completion, grab the download URL, and write data to the database pointing to this uploaded audio track
+        let uploadTask = uploadStorageRef.put(data, metadata: nil) { (meta, error) in
+            guard let meta = meta else {
+                let message = "Could not retrieve metadata...aborting upload task"
+                print(message)
+                AppDelegate.presentErrorAlert(withMessage: message, fromViewController: self)
+                return
+            }
+            if let error = error {
+                let message = "uploadError: \(error.localizedDescription)"
+                print(message)
+                AppDelegate.presentErrorAlert(withMessage: message, fromViewController: self)
+                return
+            }
+            
+            if let downloadURL = meta.downloadURL() {
+                let track = Track(user: user.uid,
+                                  title: title,
+                                  details: self.descriptionTextView.text,
+                                  uploadTime: String(describing: Date()),
+                                  fileURL: String(describing: downloadURL),
+                                  fadeInTime: String(self.fadeInStepper.value),
+                                  fadeOutTime: String(self.fadeOutStepper.value))
+                uploadDBRef.setValue(track.toAny(), withCompletionBlock: { (error, reference) in
+                    if let error = error {
+                        let message = "error uploading track to database: \(error.localizedDescription)"
+                        print(message)
+                        AppDelegate.presentErrorAlert(withMessage: message, fromViewController: self)
+                        return
+                    }
+                })
+            } else {
+                let message = "Could not access download URL: \(error?.localizedDescription)"
+                print(message)
+                AppDelegate.presentErrorAlert(withMessage: message, fromViewController: self)
+                return
+            }
+        }
+        
+        uploadTask.observe(.progress) { (taskSnapshot) in
+            print("upload progress:\(taskSnapshot.progress)")
+        }
+    }
     
     func flipViews(type: ViewFlipType) {
         var first = UIView()
