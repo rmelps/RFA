@@ -52,12 +52,11 @@ class WordsmithPageViewController: UIPageViewController, UIPageViewControllerDat
         super.viewWillAppear(animated)
         
         // Insert background color gradient
-        let gradientColor = UIColor(displayP3Red: 218/255, green: 205/255, blue: 112/255, alpha: 1.0)
         let gradient = AppDelegate.gradient!
-        gradient.colors?[gradient.colors!.endIndex - 1] = gradientColor
+        print(gradient)
         self.view.layer.insertSublayer(gradient, at: 0)
         
-        self.view.backgroundColor = gradientColor
+        self.view.backgroundColor = .clear
     }
     
     override func viewDidLayoutSubviews() {
@@ -66,8 +65,9 @@ class WordsmithPageViewController: UIPageViewController, UIPageViewControllerDat
         for view in self.view.subviews {
             if view is UIScrollView {
                 view.frame = UIScreen.main.bounds
-            } else if view is UIPageControl {
-                view.backgroundColor = .clear
+            } else if let controlView = view as? UIPageControl {
+                controlView.backgroundColor = .clear
+                controlView.currentPageIndicatorTintColor = UIColor(displayP3Red: 152/255, green: 255/255, blue: 246/255, alpha: 0.85)
             }
         }
     }

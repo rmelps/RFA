@@ -61,6 +61,20 @@ class WordsmithChoiceViewController: WordsmithPageViewControllerChild, UIGesture
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        for view in topStack.arrangedSubviews {
+            view.layer.shadowOffset = CGSize(width: 0, height: 0)
+            view.layer.shadowOpacity = 1.0
+            view.layer.shadowRadius = 3.0
+            view.layer.shadowColor = UIColor.white.cgColor
+        }
+        
+        for view in bottomStack.arrangedSubviews {
+            view.layer.shadowOffset = CGSize(width: 0, height: 0)
+            view.layer.shadowOpacity = 1.0
+            view.layer.shadowRadius = 3.0
+            view.layer.shadowColor = UIColor.white.cgColor
+        }
+        
         // Add Pan Gesture Recognizer to view
         panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(WordsmithChoiceViewController.handlePan(_:)))
         panGestureRecognizer.delegate = self
@@ -120,6 +134,18 @@ class WordsmithChoiceViewController: WordsmithPageViewControllerChild, UIGesture
                     })
                 }
             }
+        }
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        topStack.isHidden = false
+        bottomStack.isHidden = false
+        
+        for label in topStack.arrangedSubviews {
+            label.isHidden = false
+        }
+        for label in bottomStack.arrangedSubviews {
+            label.isHidden = false
         }
     }
     

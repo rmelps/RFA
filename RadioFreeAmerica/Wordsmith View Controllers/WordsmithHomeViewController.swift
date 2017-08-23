@@ -10,6 +10,7 @@ import UIKit
 
 class WordsmithHomeViewController: WordsmithPageViewControllerChild {
     
+    @IBOutlet weak var welcomeStackView: UIStackView!
     @IBOutlet weak var statView: UIScrollView!
     @IBOutlet weak var userNameLabel: UILabel!
     @IBOutlet weak var profilePicImageView: UIImageView!
@@ -28,7 +29,13 @@ class WordsmithHomeViewController: WordsmithPageViewControllerChild {
         userNameLabel.text = firstName
         profilePicImageView.image = image
         
-        
+        for view in welcomeStackView.arrangedSubviews {
+            view.layer.shadowOffset = CGSize(width: 0, height: 0)
+            view.layer.shadowOpacity = 1.0
+            view.layer.shadowRadius = 10.0
+            view.layer.shadowColor = statView.backgroundColor?.cgColor
+        }
+    
         profilePicImageView.layer.borderWidth = 1
         profilePicImageView.layer.masksToBounds = false
         profilePicImageView.layer.borderColor = UIColor.black.cgColor

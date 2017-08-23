@@ -33,6 +33,7 @@
 		9535E3AC1F145DA30025531E /* TrackInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9535E3AB1F145DA30025531E /* TrackInfoView.swift */; };
 		9535E3AE1F15B0770025531E /* StudioViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9535E3AD1F15B0770025531E /* StudioViewController.swift */; };
 		9535E3B11F16BBEB0025531E /* CustomShowSegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9535E3B01F16BBEB0025531E /* CustomShowSegue.swift */; };
+		953A2E791F4E101E00D88C52 /* ActivityIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953A2E781F4E101E00D88C52 /* ActivityIndicatorView.swift */; };
 		95A200971F3933D900FDB910 /* StudioTextFieldDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A200961F3933D900FDB910 /* StudioTextFieldDelegate.swift */; };
 		95A200991F39340400FDB910 /* StudioTextViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A200981F39340400FDB910 /* StudioTextViewDelegate.swift */; };
 		95EF0DD21F3F494600EC6DDC /* SavedTrackManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95EF0DD11F3F494600EC6DDC /* SavedTrackManager.swift */; };
@@ -82,6 +83,7 @@
 		9535E3AB1F145DA30025531E /* TrackInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackInfoView.swift; sourceTree = "<group>"; };
 		9535E3AD1F15B0770025531E /* StudioViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioViewController.swift; sourceTree = "<group>"; };
 		9535E3B01F16BBEB0025531E /* CustomShowSegue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomShowSegue.swift; sourceTree = "<group>"; };
+		953A2E781F4E101E00D88C52 /* ActivityIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityIndicatorView.swift; sourceTree = "<group>"; };
 		95A200961F3933D900FDB910 /* StudioTextFieldDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioTextFieldDelegate.swift; sourceTree = "<group>"; };
 		95A200981F39340400FDB910 /* StudioTextViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioTextViewDelegate.swift; sourceTree = "<group>"; };
 		95BA8C8B1F16F431008F60C5 /* AudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioKit.framework; path = ../../../Downloads/AudioKit/iOS/AudioKit.framework; sourceTree = "<group>"; };
@@ -172,6 +174,7 @@
 				9535E3A91F145BFC0025531E /* TrackInfoView.xib */,
 				9535E3AB1F145DA30025531E /* TrackInfoView.swift */,
 				9535E3B01F16BBEB0025531E /* CustomShowSegue.swift */,
+				953A2E781F4E101E00D88C52 /* ActivityIndicatorView.swift */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -354,6 +357,7 @@
 				95265BAE1F0D88E700F44E05 /* WordsmithChoiceViewController.swift in Sources */,
 				951D22881EEF3DA5005264A7 /* AppDelegate.swift in Sources */,
 				95A200991F39340400FDB910 /* StudioTextViewDelegate.swift in Sources */,
+				953A2E791F4E101E00D88C52 /* ActivityIndicatorView.swift in Sources */,
 				951D22B81F0AE138005264A7 /* WordsmithHomeViewController.swift in Sources */,
 				951D22A01EF492C5005264A7 /* MenuButton.swift in Sources */,
 				951D22A41EF9E442005264A7 /* WordsmithPageViewController.swift in Sources */,

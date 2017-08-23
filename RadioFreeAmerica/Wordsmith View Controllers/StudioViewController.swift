@@ -341,7 +341,6 @@ class StudioViewController: UIViewController {
             
             finalSongContainerView.transform = CGAffineTransform(scaleX: popUpViewTransformScale, y: popUpViewTransformScale)
             
-            
             // Configure AutoLayout constraints for containerview
             finalSongContainerView.translatesAutoresizingMaskIntoConstraints = false
             
@@ -363,6 +362,8 @@ class StudioViewController: UIViewController {
                 self.finalSongContainerView.alpha = 1
                 self.blurEffectView.alpha = 0.7
             }, completion: { (success) in
+                let activityView = ActivityIndicatorView(withProgress: false)
+                self.view.addSubview(activityView)
                 
                 do {
                     try self.playbackPlayer.reloadFile()
@@ -388,8 +389,8 @@ class StudioViewController: UIViewController {
                     self.soundBalanceSlider.maximumValue = 1.0
                     self.soundBalanceSlider.minimumValue = 0.0
                     self.soundBalanceSlider.value = 0.5
-                    
                 }
+                activityView.removeFromSuperview()
             })
             
             let recordImage = UIImage(named: "record")
@@ -633,18 +634,8 @@ class StudioViewController: UIViewController {
             let voiceToBeatDiff = Float((playbackPlayer.volume - beatPlaybackPlayer.volume) * scaleFactor)
             
             // Add activity indicator to show that song is loading. disable the view from user interaction until this has completed
-            let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
-            let activityIndicatorBox = UIView(frame: CGRect(origin: CGPoint.zero, size: CGSize(width: activityIndicator.bounds.width * 2.5, height: activityIndicator.bounds.height * 2.5)))
-            activityIndicatorBox.backgroundColor = UIColor(white: 0.0, alpha: 0.6)
-            
-            self.view.addSubview(activityIndicatorBox)
-            activityIndicatorBox.addSubview(activityIndicator)
-            
-            activityIndicator.center = activityIndicatorBox.center
-            activityIndicatorBox.center = self.view.center
-            
-            activityIndicatorBox.layer.cornerRadius = 7.0
-            activityIndicator.startAnimating()
+            let activityIndicatorView = ActivityIndicatorView(withProgress: false)
+            self.view.addSubview(activityIndicatorView)
             
             // Adding asynchronous normalization so that program does not freeze
             DispatchQueue.global(qos: .userInitiated).async {
@@ -653,7 +644,7 @@ class StudioViewController: UIViewController {
                     let file2Normal = try convFile2.normalized(baseDir: .temp, name: UUID().uuidString, newMaxLevel: -voiceToBeatDiff) as AVAudioFile
                     DispatchQueue.main.async {
                         self.combineTracksAndPlay(first: file1Normal.url, second: file2Normal.url)
-                        activityIndicatorBox.removeFromSuperview()
+                        activityIndicatorView.removeFromSuperview()
                         if self.isExpanded {
                             self.heightCon.constant = self.heightCon.constant / 2.5
                             UIView.animate(withDuration: 0.3, animations: {
@@ -669,7 +660,7 @@ class StudioViewController: UIViewController {
                         }
                     }
                 } catch {
-                    activityIndicatorBox.removeFromSuperview()
+                    activityIndicatorView.removeFromSuperview()
                     print("error in async process: \(error.localizedDescription)")
                 }
                 
@@ -684,9 +675,13 @@ class StudioViewController: UIViewController {
     @IBAction func confirmAndUploadTrackButtonTapped(_ sender: UIButton) {
         
         guard let title = enterTitleTextField.text, !title.isEmpty else {
-            print("Enter a title before uploading!")
+            let message = "Enter a title before uploading!"
+            print(message)
+            AppDelegate.presentErrorAlert(withMessage: message, fromViewController: self)
             return
         }
+        let activityIndicatorView = ActivityIndicatorView(withProgress: true)
+        self.view.addSubview(activityIndicatorView)
         
         let user = (UIApplication.shared.delegate as! AppDelegate).signedInUser!
         
@@ -703,6 +698,7 @@ class StudioViewController: UIViewController {
             data = try Data(contentsOf: self.fileDestinationURL)
         } catch let error {
             print("Could not cast audio track as data: \(error.localizedDescription)")
+            activityIndicatorView.removeFromSuperview()
             return
         }
         
@@ -712,12 +708,14 @@ class StudioViewController: UIViewController {
                 let message = "Could not retrieve metadata...aborting upload task"
                 print(message)
                 AppDelegate.presentErrorAlert(withMessage: message, fromViewController: self)
+                activityIndicatorView.removeFromSuperview()
                 return
             }
             if let error = error {
                 let message = "uploadError: \(error.localizedDescription)"
                 print(message)
                 AppDelegate.presentErrorAlert(withMessage: message, fromViewController: self)
+                activityIndicatorView.removeFromSuperview()
                 return
             }
             
@@ -734,19 +732,42 @@ class StudioViewController: UIViewController {
                         let message = "error uploading track to database: \(error.localizedDescription)"
                         print(message)
                         AppDelegate.presentErrorAlert(withMessage: message, fromViewController: self)
+                        activityIndicatorView.removeFromSuperview()
                         return
                     }
+                    if let rootVC = self.presentingViewController as? WordsmithPageViewController {
+                        rootVC.setViewControllers([rootVC.orderedViewControllers[2]], direction: .forward, animated: false, completion: nil)
+                    }
+                    activityIndicatorView.removeFromSuperview()
+                    self.finalPlayer.stop()
+
+                    self.dismiss(animated: true, completion: nil)
                 })
             } else {
                 let message = "Could not access download URL: \(error?.localizedDescription)"
                 print(message)
                 AppDelegate.presentErrorAlert(withMessage: message, fromViewController: self)
+                activityIndicatorView.removeFromSuperview()
                 return
             }
         }
         
         uploadTask.observe(.progress) { (taskSnapshot) in
-            print("upload progress:\(taskSnapshot.progress)")
+            
+            let formatter = NumberFormatter()
+            formatter.maximumFractionDigits = 1
+            formatter.minimumIntegerDigits = 1
+            formatter.numberStyle = .percent
+            if let progress = taskSnapshot.progress {
+                let fraction = progress.fractionCompleted
+                print("fraction completed: \(progress.fractionCompleted)")
+                
+                if let string = formatter.string(from: NSNumber(value: fraction)) {
+                    activityIndicatorView.progressLabel!.text = string
+                }
+            }
+            
+            
         }
     }
     
