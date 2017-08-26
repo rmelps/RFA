@@ -13,7 +13,10 @@ import FirebaseCore
 import FirebaseStorage
 import FirebaseDatabase
 
-class WordsmithChoiceViewController: WordsmithPageViewControllerChild, UIGestureRecognizerDelegate {
+class WordsmithChoiceViewController: UIViewController, WordsmithPageViewControllerChild, UIGestureRecognizerDelegate {
+    
+    var wordsmithPageVC: WordsmithPageViewController!
+    
     @IBOutlet weak var playPreviewButton: MenuButton!
     @IBOutlet weak var topStack: UIStackView!
     @IBOutlet weak var bottomStack: UIStackView!

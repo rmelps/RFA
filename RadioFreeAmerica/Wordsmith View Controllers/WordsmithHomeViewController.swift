@@ -8,7 +8,9 @@
 
 import UIKit
 
-class WordsmithHomeViewController: WordsmithPageViewControllerChild {
+class WordsmithHomeViewController: UIViewController, WordsmithPageViewControllerChild {
+    var wordsmithPageVC: WordsmithPageViewController!
+    
     
     @IBOutlet weak var welcomeStackView: UIStackView!
     @IBOutlet weak var statView: UIScrollView!

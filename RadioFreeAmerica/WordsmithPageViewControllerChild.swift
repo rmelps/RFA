@@ -8,8 +8,6 @@
 
 import UIKit
 
-class WordsmithPageViewControllerChild: UIViewController {
-    
-    var wordsmithPageVC: WordsmithPageViewController?
-
+protocol WordsmithPageViewControllerChild {
+    var wordsmithPageVC: WordsmithPageViewController! { get set }
 }

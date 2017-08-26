@@ -146,7 +146,6 @@ class StudioViewController: UIViewController {
                             }
                             
                             self.micCopy = AKBooster(self.microphone)
-                            //self.micCopy.gain = 2.0
                             
                             self.recordingNode = AKMixer([self.micCopy])
                             

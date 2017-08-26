@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import FirebaseDatabase
 
 class WordsmithPageViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     
@@ -32,7 +33,7 @@ class WordsmithPageViewController: UIPageViewController, UIPageViewControllerDat
         dataSource = self
         
         for vc in orderedViewControllers {
-            let wsvc = vc as! WordsmithPageViewControllerChild
+            var wsvc = vc as! WordsmithPageViewControllerChild
             wsvc.wordsmithPageVC = self
         }
         
