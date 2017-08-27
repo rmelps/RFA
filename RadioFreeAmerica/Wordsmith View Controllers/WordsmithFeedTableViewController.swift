@@ -9,7 +9,7 @@
 import UIKit
 import FirebaseDatabase
 import FirebaseStorage
-import AudioKit
+import AVFoundation
 
 class WordsmithFeedTableViewController: UITableViewController {
     
@@ -19,11 +19,11 @@ class WordsmithFeedTableViewController: UITableViewController {
     var parentVC: WordsmithFeedViewController!
     var uploadStorageRef: FIRStorageReference!
     
-    var audioPlayer: AKAudioPlayer!
+    var audioPlayer: AVAudioPlayer!
     
     var tracks = [Track]()
     var users = [String:String]()
-    var quickLoadFiles = [(key:String, file: AKAudioFile)]()
+    var quickLoadFiles = [(key:String, file: AVAudioFile)]()
     
     var compressedHeight: CGFloat!
     var expandedHeight: CGFloat {
@@ -34,13 +34,9 @@ class WordsmithFeedTableViewController: UITableViewController {
     }
     var selectedRow: Int?
     
-    var fromStudio: Bool!
-   
-
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.delegate = self
-        
         
         compressedHeight = self.tableView.frame.height / 6
         
@@ -49,9 +45,8 @@ class WordsmithFeedTableViewController: UITableViewController {
         userDBRef = FIRDatabase.database().reference().child("users")
         uploadStorageRef = FIRStorage.storage().reference().child("uploads")
         
-        if !parentVC.fromStudio {
-            loadFullTrackSuite()
-        }
+        loadFullTrackSuite()
+        
         
   
     }
@@ -225,6 +220,8 @@ class WordsmithFeedTableViewController: UITableViewController {
     }
     
     func loadAndStoreAudioFile(forTrack track: Track) {
+        //TODO: Need to create custom fadeIn and fadeOut on audioplayers (since I'm scrapping audiokit for this view controller)
+        
         guard let key = track.key else {
             print("Can not find key for track")
             return
@@ -232,10 +229,8 @@ class WordsmithFeedTableViewController: UITableViewController {
         for (name, file) in quickLoadFiles {
             if name == key {
                 do {
-                    print(file.url)
-                   audioPlayer = try AKAudioPlayer(file: file, looping: true, completionHandler: nil)
-                    AudioKit.output = audioPlayer
-                    AudioKit.start()
+                    audioPlayer = try AVAudioPlayer(contentsOf: file.url, fileTypeHint: ".m4a")
+                    audioPlayer.numberOfLoops = -1
                     audioPlayer.play()
                     return
                 } catch {
@@ -258,8 +253,8 @@ class WordsmithFeedTableViewController: UITableViewController {
                 ref.write(toFile: localURL, completion: { (url: URL?, error: Error?) in
                     if let url = url {
                         do {
-                            let file = try AKAudioFile(forReading: url)
-                            self.audioPlayer = try AKAudioPlayer(file: file, looping: true, completionHandler: nil)
+                            let file = try AVAudioFile(forReading: url)
+                            self.audioPlayer = try AVAudioPlayer(contentsOf: url, fileTypeHint: ".m4a")
                             self.quickLoadFiles.append((key: key, file: file))
                             
                             if self.quickLoadFiles.count > 5 {
@@ -272,8 +267,7 @@ class WordsmithFeedTableViewController: UITableViewController {
                                 }
                             }
  
-                            AudioKit.output = self.audioPlayer
-                            AudioKit.start()
+                            self.audioPlayer.numberOfLoops = -1
                             self.audioPlayer.play()
                         } catch {
                             print("error in creating ak audio file: \(error.localizedDescription)")

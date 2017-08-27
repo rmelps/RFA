@@ -139,7 +139,7 @@ class StudioViewController: UIViewController {
                     
                     if let inputs = inputDevices {
                         do {
-                            //TODO: Figure out why microphone fails after playing a track off of the feed.
+                            //TODO: Figure out why microphone fails after playing a track off of the feed (seems to only happen before recording a track)
                             self.microphone = AKMicrophone()
                             
                             for input in inputs {
