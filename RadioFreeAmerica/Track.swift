@@ -18,6 +18,7 @@ class Track: NSObject, NSCoding {
     var fadeInTime: String
     var fadeOutTime: String
     let errorMessage = "Error"
+    var key: String?
     
     init(user: String, title: String, details: String, uploadTime: String, fileURL: String, fadeInTime: String, fadeOutTime: String){
         self.user = user
@@ -27,9 +28,12 @@ class Track: NSObject, NSCoding {
         self.fileURL = fileURL
         self.fadeInTime = fadeInTime
         self.fadeOutTime = fadeOutTime
+        self.key = nil
     }
     
     init(snapShot: FIRDataSnapshot) {
+        
+        self.key = snapShot.key
         
         let snapShotValue = snapShot.value as? [String:Any]
         
@@ -74,6 +78,7 @@ class Track: NSObject, NSCoding {
         } else {
             self.fadeOutTime = errorMessage
         }
+        
     }
     
     func toAny() -> Any {

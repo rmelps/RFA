@@ -20,6 +20,11 @@
         <array key="EuphemiaCAS.ttc">
             <string>EuphemiaUCAS</string>
         </array>
+        <array key="GillSans.ttc">
+            <string>GillSans-Bold</string>
+            <string>GillSans-LightItalic</string>
+            <string>GillSans-SemiBoldItalic</string>
+        </array>
         <array key="Kailasa.ttc">
             <string>Kailasa-Bold</string>
         </array>
@@ -858,55 +863,90 @@
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="230.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Bi4-eD-zrV">
-                                            <rect key="frame" x="8" y="8" width="75" height="75"/>
-                                            <constraints>
-                                                <constraint firstAttribute="width" constant="75" id="RtZ-HN-Ro5"/>
-                                                <constraint firstAttribute="width" secondItem="Bi4-eD-zrV" secondAttribute="height" multiplier="1:1" id="drC-3S-fXP"/>
-                                            </constraints>
-                                        </imageView>
-                                        <stackView opaque="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="YES" axis="vertical" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="1v8-ei-h9A">
-                                            <rect key="frame" x="91" y="11" width="276" height="40"/>
+                                        <stackView opaque="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="YES" alignment="top" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="IzU-nI-wd7">
+                                            <rect key="frame" x="8" y="11" width="359" height="75"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LT3-co-LtY">
-                                                    <rect key="frame" x="114" y="0.0" width="48" height="24"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dsv-M9-YJq">
-                                                    <rect key="frame" x="121.5" y="24" width="33" height="16"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Bi4-eD-zrV">
+                                                    <rect key="frame" x="0.0" y="0.0" width="75" height="75"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="75" id="RtZ-HN-Ro5"/>
+                                                        <constraint firstAttribute="width" secondItem="Bi4-eD-zrV" secondAttribute="height" multiplier="1:1" id="drC-3S-fXP"/>
+                                                    </constraints>
+                                                </imageView>
+                                                <stackView opaque="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="YES" axis="vertical" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="1v8-ei-h9A">
+                                                    <rect key="frame" x="83" y="0.0" width="276" height="53"/>
+                                                    <subviews>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="asdfasdfasdf" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.25" translatesAutoresizingMaskIntoConstraints="NO" id="LT3-co-LtY">
+                                                            <rect key="frame" x="60" y="0.0" width="156" height="30"/>
+                                                            <fontDescription key="fontDescription" name="GillSans-Bold" family="Gill Sans" pointSize="25"/>
+                                                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                            <nil key="highlightedColor"/>
+                                                            <color key="shadowColor" red="0.34194612369999999" green="1" blue="0.43837685529999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        </label>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.34999999999999998" translatesAutoresizingMaskIntoConstraints="NO" id="dsv-M9-YJq">
+                                                            <rect key="frame" x="118" y="30" width="40" height="23"/>
+                                                            <fontDescription key="fontDescription" name="GillSans-LightItalic" family="Gill Sans" pointSize="20"/>
+                                                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                    </subviews>
+                                                </stackView>
                                             </subviews>
                                         </stackView>
-                                        <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jES-sH-n0q">
-                                            <rect key="frame" x="91" y="91" width="276" height="95"/>
-                                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="center" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jES-sH-n0q">
+                                            <rect key="frame" x="91" y="94" width="276" height="95"/>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="95" id="uxd-vA-VQ9"/>
                                             </constraints>
                                             <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
-                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            <fontDescription key="fontDescription" name="GillSans-SemiBoldItalic" family="Gill Sans" pointSize="17"/>
                                             <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                         </textView>
+                                        <stackView opaque="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="YES" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="k2e-ku-tXY">
+                                            <rect key="frame" x="8" y="194" width="359" height="30"/>
+                                            <subviews>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TSN-st-4ea">
+                                                    <rect key="frame" x="0.0" y="0.0" width="90" height="30"/>
+                                                    <state key="normal" title="Like"/>
+                                                </button>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VyS-SW-0In">
+                                                    <rect key="frame" x="90" y="0.0" width="89.5" height="30"/>
+                                                    <state key="normal" title="Save"/>
+                                                </button>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fne-bA-dOX">
+                                                    <rect key="frame" x="179.5" y="0.0" width="90" height="30"/>
+                                                    <state key="normal" title="Crown"/>
+                                                </button>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YrE-e5-oeU">
+                                                    <rect key="frame" x="269.5" y="0.0" width="89.5" height="30"/>
+                                                    <state key="normal" title="Flag"/>
+                                                </button>
+                                            </subviews>
+                                        </stackView>
                                     </subviews>
                                     <constraints>
+                                        <constraint firstItem="IzU-nI-wd7" firstAttribute="leading" secondItem="8IB-8y-2ev" secondAttribute="leadingMargin" id="6g2-E1-JYL"/>
                                         <constraint firstItem="jES-sH-n0q" firstAttribute="leading" secondItem="8IB-8y-2ev" secondAttribute="leadingMargin" constant="83" id="7tl-0S-dqf"/>
-                                        <constraint firstItem="1v8-ei-h9A" firstAttribute="leading" secondItem="Bi4-eD-zrV" secondAttribute="trailing" constant="8" id="8XO-b0-v2C"/>
-                                        <constraint firstAttribute="trailingMargin" secondItem="1v8-ei-h9A" secondAttribute="trailing" id="Mly-Jx-dAd"/>
-                                        <constraint firstItem="Bi4-eD-zrV" firstAttribute="leading" secondItem="8IB-8y-2ev" secondAttribute="leadingMargin" id="Ovi-xp-Tno"/>
-                                        <constraint firstItem="Bi4-eD-zrV" firstAttribute="top" secondItem="8IB-8y-2ev" secondAttribute="topMargin" id="b0N-Ag-cil"/>
-                                        <constraint firstItem="jES-sH-n0q" firstAttribute="top" secondItem="1v8-ei-h9A" secondAttribute="bottom" constant="40" id="kbC-ka-sO3"/>
-                                        <constraint firstItem="1v8-ei-h9A" firstAttribute="top" secondItem="8IB-8y-2ev" secondAttribute="topMargin" constant="3" id="tb4-h9-8KG"/>
+                                        <constraint firstItem="IzU-nI-wd7" firstAttribute="top" secondItem="8IB-8y-2ev" secondAttribute="topMargin" constant="3" id="BYz-fI-u9i"/>
+                                        <constraint firstItem="k2e-ku-tXY" firstAttribute="top" secondItem="jES-sH-n0q" secondAttribute="bottom" constant="5" id="Mhg-k8-Gen"/>
+                                        <constraint firstItem="jES-sH-n0q" firstAttribute="top" secondItem="IzU-nI-wd7" secondAttribute="bottom" constant="8" id="UeR-Q2-bDc"/>
+                                        <constraint firstAttribute="trailingMargin" secondItem="IzU-nI-wd7" secondAttribute="trailing" id="WXa-wM-KQ1"/>
+                                        <constraint firstItem="k2e-ku-tXY" firstAttribute="leading" secondItem="8IB-8y-2ev" secondAttribute="leadingMargin" id="epk-3d-gbn"/>
+                                        <constraint firstAttribute="trailingMargin" secondItem="k2e-ku-tXY" secondAttribute="trailing" id="tPM-Ce-Ukm"/>
                                         <constraint firstItem="jES-sH-n0q" firstAttribute="trailing" secondItem="8IB-8y-2ev" secondAttribute="trailingMargin" id="z4w-52-Bh3"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <color key="backgroundColor" red="0.16470588235294117" green="0.827352105609091" blue="0.87843137250000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <connections>
+                                    <outlet property="buttonStackView" destination="k2e-ku-tXY" id="Jf0-vG-0WI"/>
+                                    <outlet property="crownButton" destination="fne-bA-dOX" id="M82-xN-df4"/>
+                                    <outlet property="flagButton" destination="YrE-e5-oeU" id="Ooc-L8-RoE"/>
+                                    <outlet property="likeButton" destination="TSN-st-4ea" id="hLI-Gn-Jr8"/>
+                                    <outlet property="profileImageWidthConstraint" destination="RtZ-HN-Ro5" id="5ZU-hu-G6Z"/>
                                     <outlet property="profilePic" destination="Bi4-eD-zrV" id="Ixk-sD-9iG"/>
+                                    <outlet property="saveButton" destination="VyS-SW-0In" id="tAG-b9-aBq"/>
                                     <outlet property="trackDescriptionTextView" destination="jES-sH-n0q" id="V7Z-V8-niB"/>
                                     <outlet property="trackNameLabel" destination="LT3-co-LtY" id="yM7-Ka-UeS"/>
                                     <outlet property="userNameLabel" destination="dsv-M9-YJq" id="kcV-Cj-3CF"/>

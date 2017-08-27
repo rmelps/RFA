@@ -121,6 +121,8 @@ class StudioViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        AudioKit.disconnectAllInputs()
+        
         recordButton.isHidden = true
         recordingButtonColor = recordButton.buttonColor
         playButton.isEnabled = false
@@ -137,6 +139,7 @@ class StudioViewController: UIViewController {
                     
                     if let inputs = inputDevices {
                         do {
+                            //TODO: Figure out why microphone fails after playing a track off of the feed.
                             self.microphone = AKMicrophone()
                             
                             for input in inputs {
@@ -735,6 +738,8 @@ class StudioViewController: UIViewController {
                         return
                     }
                     if let rootVC = self.presentingViewController as? WordsmithPageViewController {
+                        let feedVC = rootVC.orderedViewControllers[2] as! WordsmithFeedViewController
+                        feedVC.fromStudio = true
                         rootVC.setViewControllers([rootVC.orderedViewControllers[2]], direction: .forward, animated: false, completion: nil)
                     }
                     activityIndicatorView.removeFromSuperview()

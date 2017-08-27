@@ -11,12 +11,21 @@ import UIKit
 class WordsmithFeedViewController: UIViewController, WordsmithPageViewControllerChild {
     
     var wordsmithPageVC: WordsmithPageViewController!
+    var fromStudio: Bool!
     
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if fromStudio == nil {
+            fromStudio = false
+        }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
