@@ -20,7 +20,6 @@ class WordsmithHomeViewController: UIViewController, WordsmithPageViewController
     @IBOutlet weak var scrollViewHeightConstraint: NSLayoutConstraint!
     
     // Elements from PageViewController
-   // var pageVC: WordsmithPageViewController!
     var firstName: String!
     var image: UIImage?
     

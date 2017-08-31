@@ -9,14 +9,25 @@
 import UIKit
 
 class WordsmithFeedViewController: UIViewController, WordsmithPageViewControllerChild {
+    @IBOutlet weak var libraryBarButton: UIBarButtonItem!
+    @IBOutlet weak var tableContainerView: UIView!
     
     var wordsmithPageVC: WordsmithPageViewController!
     var fromStudio: Bool!
+    var tableContainerController: WordsmithFeedTableViewController!
+    
+    var mode: TableDisplayMode = .web {
+        didSet{
+            if let container = tableContainerController {
+                container.currentMode = mode
+            }
+        }
+    }
     
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         // Do any additional setup after loading the view.
     }
     
@@ -27,12 +38,25 @@ class WordsmithFeedViewController: UIViewController, WordsmithPageViewController
             fromStudio = false
         }
     }
+    @IBAction func libraryButtonTapped(_ sender: UIBarButtonItem) {
+        switch mode {
+        case .web:
+            mode = .local
+            let savedTracks = SavedTrackManager.savedTracks
+            tableContainerController.tracks = savedTracks
+            tableContainerController.tableView.reloadData()
+        case .local:
+            mode = .web
+            tableContainerController.loadFullTrackSuite()
+        }
+    }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         switch segue.identifier! {
         case "embeddFeedTableSegue":
             let vc = segue.destination as! WordsmithFeedTableViewController
             vc.parentVC = self
+            tableContainerController = vc
         default:
             break
         }

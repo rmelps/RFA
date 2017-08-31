@@ -28,17 +28,16 @@ class SavedTrackManager {
     static var savedTracks: [Track] {
         get {
             if let archivedTracks = NSKeyedUnarchiver.unarchiveObject(withFile: trackArchiveInfoURL.path) as? [Track] {
-                print("Archived Tracks found")
-                print(archivedTracks)
                 return archivedTracks
             } else {
                 print("Could not unarchive tracks...")
                 return [Track]()
             }
         }
-        set {
-            print("New Track Saved, Total Tracks:\(savedTracks.count)")
-        }
+    }
+    
+    static func getLocalURL(forTrack track: Track) -> URL {
+        return trackArchiveAudioDirectoryURL.appendingPathComponent(track.fileURL)
     }
     
     static func saveNewTrack(newTrack track: Track, tempLocation: URL) -> Bool {
@@ -46,15 +45,10 @@ class SavedTrackManager {
         
         if let savedTracks = NSKeyedUnarchiver.unarchiveObject(withFile: trackArchiveInfoURL.path) as? [Track] {
             archivedTracks = savedTracks
-            print("Archived Tracks found")
-            print(archivedTracks)
         } else {
             print("Could not unarchive tracks...")
         }
         archivedTracks.append(track)
-        
-        print("saving tracks to \(trackArchiveInfoURL.path)")
-        print("achived tracks \(archivedTracks)")
         
         let infoSuccess = NSKeyedArchiver.archiveRootObject(archivedTracks, toFile: trackArchiveInfoURL.path)
 
@@ -73,6 +67,30 @@ class SavedTrackManager {
             }
         } else {
             print("could not archive track info")
+            return false
+        }
+    }
+    
+    static func removeTrack(atIndex index: Int) -> Bool {
+        var tracks = self.savedTracks
+        let track = self.savedTracks[index]
+        
+        tracks.remove(at: index)
+        
+        let infoSuccess = NSKeyedArchiver.archiveRootObject(tracks, toFile: trackArchiveInfoURL.path)
+        
+        if infoSuccess {
+            do {
+                let storageURL = trackArchiveAudioDirectoryURL.appendingPathComponent(track.fileURL)
+                let fileManager = FileManager.default
+                try fileManager.removeItem(at: storageURL)
+                return true
+            } catch {
+                print("could not remove track from storage: \(error.localizedDescription)")
+                return false
+            }
+        } else {
+            print("Could not archive track info")
             return false
         }
     }

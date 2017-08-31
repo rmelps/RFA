@@ -7,9 +7,15 @@
 //
 
 import UIKit
+import FirebaseAuth
 import FirebaseDatabase
 import FirebaseStorage
 import AVFoundation
+
+enum TableDisplayMode {
+    case web
+    case local
+}
 
 class WordsmithFeedTableViewController: UITableViewController {
     
@@ -32,11 +38,15 @@ class WordsmithFeedTableViewController: UITableViewController {
             return compressedHeight + padding
         }
     }
+    
     var selectedRow: Int?
+    var editPoint: CGPoint?
+    var currentMode: TableDisplayMode!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.delegate = self
+        self.tableView.dataSource = self
         
         compressedHeight = self.tableView.frame.height / 6
         
@@ -45,10 +55,9 @@ class WordsmithFeedTableViewController: UITableViewController {
         userDBRef = FIRDatabase.database().reference().child("users")
         uploadStorageRef = FIRStorage.storage().reference().child("uploads")
         
+        currentMode = parentVC.mode
+        
         loadFullTrackSuite()
-        
-        
-  
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -87,6 +96,25 @@ class WordsmithFeedTableViewController: UITableViewController {
         cell.profileImageWidthConstraint.constant = compressedHeight - imagePadding
         cell.profilePic.image = nil
         
+        // Add gesture recognizer to cell to turn on editing of that particular cell
+        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(WordsmithFeedTableViewController.setCellEditing(_:)))
+        cell.addGestureRecognizer(longPressRecognizer)
+        
+        if indexPath.row == selectedRow {
+            cell.displayToolBar(on: true)
+        } else {
+            cell.displayToolBar(on: false)
+        }
+        
+        switch currentMode {
+        case .web:
+            cell.backgroundColor = UIColor(displayP3Red: 223/255, green: 109/255, blue: 99/255, alpha: 1.0)
+        case .local:
+            cell.backgroundColor = UIColor(displayP3Red: 107/255, green: 184/255, blue: 101/255, alpha: 1.0)
+        default:
+            break
+        }
+        
         let photoRef = FIRStorage.storage().reference().child("profilePics/\(trackForCell.user)")
         let fileManager = FileManager.default
         
@@ -109,7 +137,6 @@ class WordsmithFeedTableViewController: UITableViewController {
                 }
             }
         }
-        
         return cell
     }
     
@@ -123,68 +150,78 @@ class WordsmithFeedTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let cell = tableView.cellForRow(at: indexPath) as! TrackTableViewCell
         
         if indexPath.row == selectedRow {
             tableView.deselectRow(at: indexPath, animated: true)
             selectedRow = nil
+            cell.displayToolBar(on: false)
             if audioPlayer != nil {
                 audioPlayer.stop()
             }
         } else {
+            if let oldRow = selectedRow {
+                let oldCell = tableView.cellForRow(at: IndexPath(row: oldRow, section: 0)) as? TrackTableViewCell
+                oldCell?.displayToolBar(on: false)
+            }
             selectedRow = indexPath.row
             let track = tracks[selectedRow!]
-            loadAndStoreAudioFile(forTrack: track)
+            
+            switch currentMode {
+            case .web:
+                cell.displayToolBar(on: true)
+                loadAndStoreAudioFile(forTrack: track)
+            case .local:
+                cell.displayToolBar(on: false)
+                retrieveLocalAudioFile(forTrack: track)
+            default:
+                break
+            }
         }
-        
         tableView.beginUpdates()
         tableView.endUpdates()
     }
- 
-
-    /*
-    // Override to support conditional editing of the table view.
+    
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
+        if let location = editPoint, let path = tableView.indexPathForRow(at: location), path == indexPath {
+            guard let cell = tableView.cellForRow(at: indexPath) as? TrackTableViewCell else {
+                print("unexpectedly could not find cell?")
+                return false
+            }
+            switch currentMode {
+            case .web:
+                if cellBelongsToCurrentUser(cell: cell) {
+                    return true
+                }
+            case .local:
+                return true
+            default:
+                fatalError("no mode has been set")
+            }
+        }
+        return false
     }
-    */
 
-    /*
-    // Override to support editing the table view.
+    
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
+            let track = tracks[indexPath.row]
+            switch currentMode {
+            case .web:
+                removeTrackFromFirebase(track: track)
+            case .local:
+                if SavedTrackManager.removeTrack(atIndex: indexPath.row) {
+                    tracks.remove(at: indexPath.row)
+                    tableView.deleteRows(at: [indexPath], with: .fade)
+                } else {
+                    AppDelegate.presentErrorAlert(withMessage: "Could Not Delete Track!", fromViewController: parentVC)
+                }
+            default:
+                fatalError("currentMode is not set")
+            }
+            
+        }
     }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
     
     func loadFullTrackSuite() {
         tracks = []
@@ -219,12 +256,95 @@ class WordsmithFeedTableViewController: UITableViewController {
         }
     }
     
+    func cellBelongsToCurrentUser(cell: TrackTableViewCell) -> Bool {
+        guard let indexPath = tableView.indexPath(for: cell) else {
+            return false
+        }
+        if let user = FIRAuth.auth()?.currentUser, user.uid == tracks[indexPath.row].user {
+            return true
+        }
+        return false
+    }
+    
+    @objc func dismissCellEditing(_ sender: UITapGestureRecognizer) {
+        print("touch detected")
+        guard editPoint != nil, tableView.isEditing else {
+            print("editPoint: \(editPoint) \n editing?: \(tableView.isEditing)")
+            tableView.removeGestureRecognizer(sender)
+            return
+        }
+        print("made it past guard")
+        let location = sender.location(in: tableView)
+        if let editingPath = tableView.indexPathForRow(at: editPoint!) {
+            print("editing path exists")
+            let thisPath = tableView.indexPathForRow(at: location)
+            if thisPath != editingPath {
+                print("made it")
+                tableView.setEditing(false, animated: true)
+                tableView.removeGestureRecognizer(sender)
+            }
+        }
+    }
+    
+    @objc func setCellEditing(_ sender: UILongPressGestureRecognizer) {
+        guard sender.state == .began else {
+            return
+        }
+        let location = sender.location(in: self.tableView)
+        editPoint = location
+        
+        if let indexPath = tableView.indexPathForRow(at: location) {
+            if let cell = tableView.cellForRow(at: indexPath) as? TrackTableViewCell {
+                guard !cell.isSelected else {
+                    return
+                }
+                if tableView.isEditing {
+                    tableView.setEditing(false, animated: true)
+                } else {
+                    tableView.setEditing(true, animated: true)
+                    let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(WordsmithFeedTableViewController.dismissCellEditing(_:)))
+                    tapGestureRecognizer.numberOfTapsRequired = 2
+                    if cell.isEditing {
+                        tableView.addGestureRecognizer(tapGestureRecognizer)
+                    } else {
+                        tableView.setEditing(false, animated: false)
+                    }
+                }
+                
+            }
+        }
+    }
+    func removeTrackFromFirebase(track: Track) {
+        
+    }
+    
+    func retrieveLocalAudioFile(forTrack track: Track) {
+        guard currentMode == .local else {
+            print("Can not retrieve local audio files while in web mode")
+            return
+        }
+        if let player = audioPlayer, player.isPlaying {
+            player.stop()
+        }
+        
+        do {
+            let url = SavedTrackManager.getLocalURL(forTrack: track)
+            audioPlayer = try AVAudioPlayer(contentsOf: url, fileTypeHint: ".m4a")
+            audioPlayer.numberOfLoops = -1
+            audioPlayer.play()
+        } catch {
+            print("error retriving local track: \(error.localizedDescription)")
+        }
+    }
+    
     func loadAndStoreAudioFile(forTrack track: Track) {
         //TODO: Need to create custom fadeIn and fadeOut on audioplayers (since I'm scrapping audiokit for this view controller)
-        
         guard let key = track.key else {
             print("Can not find key for track")
             return
+        }
+        if let player = audioPlayer, player.isPlaying {
+            player.stop()
         }
         for (name, file) in quickLoadFiles {
             if name == key {
@@ -240,7 +360,6 @@ class WordsmithFeedTableViewController: UITableViewController {
             }
         }
         // If the requested track is not already saved, then we will download the track from firebase, and if our temporary storage contains more than X tracks, we will pop the first one from storage.
-        print("COULD NOT FIND LOCALLY CHECKING FIRSTORAGE FOR FILE")
         
         feedDBRef.child(track.key!).observeSingleEvent(of: .value) { (snapshot: FIRDataSnapshot) in
             let fileManager = FileManager.default
@@ -269,6 +388,17 @@ class WordsmithFeedTableViewController: UITableViewController {
  
                             self.audioPlayer.numberOfLoops = -1
                             self.audioPlayer.play()
+                            //TODO: Perfect this timer for fade in/fade out durations
+                            Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true, block: { (timer) in
+                                print(self.audioPlayer.currentTime)
+                                if self.audioPlayer.currentTime > 10.0 {
+                                    timer.invalidate()
+                                }
+                                if !self.audioPlayer.isPlaying {
+                                    timer.invalidate()
+                                }
+                            }).fire()
+                            
                         } catch {
                             print("error in creating ak audio file: \(error.localizedDescription)")
                         }
@@ -285,5 +415,4 @@ class WordsmithFeedTableViewController: UITableViewController {
         }
         
     }
-
 }

@@ -299,7 +299,14 @@
                                     <constraint firstAttribute="height" constant="60" id="vXF-go-Ez2"/>
                                 </constraints>
                                 <items>
-                                    <navigationItem title="Feed" id="qy9-XU-C9M"/>
+                                    <navigationItem title="Feed" id="qy9-XU-C9M">
+                                        <barButtonItem key="rightBarButtonItem" image="savedMusic" id="iei-al-0Xe">
+                                            <color key="tintColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <connections>
+                                                <action selector="libraryButtonTapped:" destination="dhy-HB-1gW" id="TR8-N5-o4Z"/>
+                                            </connections>
+                                        </barButtonItem>
+                                    </navigationItem>
                                 </items>
                             </navigationBar>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="09p-Ic-eYr">
@@ -320,6 +327,10 @@
                             <constraint firstItem="09p-Ic-eYr" firstAttribute="top" secondItem="EpZ-Bk-ZC0" secondAttribute="bottom" id="s98-Pq-9wM"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="libraryBarButton" destination="iei-al-0Xe" id="S4G-RJ-Amy"/>
+                        <outlet property="tableContainerView" destination="09p-Ic-eYr" id="imY-hL-MMV"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7Hm-Gt-Ykh" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -904,49 +915,65 @@
                                             <fontDescription key="fontDescription" name="GillSans-SemiBoldItalic" family="Gill Sans" pointSize="17"/>
                                             <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                         </textView>
-                                        <stackView opaque="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="YES" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="k2e-ku-tXY">
-                                            <rect key="frame" x="8" y="194" width="359" height="30"/>
+                                        <stackView opaque="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="YES" distribution="fillEqually" spacing="9" translatesAutoresizingMaskIntoConstraints="NO" id="T5a-vr-9HL">
+                                            <rect key="frame" x="8" y="186" width="359" height="45"/>
                                             <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TSN-st-4ea">
-                                                    <rect key="frame" x="0.0" y="0.0" width="90" height="30"/>
-                                                    <state key="normal" title="Like"/>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1m6-eW-bqP">
+                                                    <rect key="frame" x="0.0" y="0.0" width="113.5" height="45"/>
+                                                    <fontDescription key="fontDescription" name="GillSans-SemiBoldItalic" family="Gill Sans" pointSize="14"/>
+                                                    <state key="normal" title=" Like" image="favorite">
+                                                        <color key="titleColor" red="0.37570501179999999" green="0.66657312369999999" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    </state>
+                                                    <connections>
+                                                        <action selector="likeButtonDidTouchUp:" destination="Vj1-1N-YON" eventType="touchUpInside" id="LxR-qR-yD4"/>
+                                                    </connections>
                                                 </button>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VyS-SW-0In">
-                                                    <rect key="frame" x="90" y="0.0" width="89.5" height="30"/>
-                                                    <state key="normal" title="Save"/>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sMD-zt-rro">
+                                                    <rect key="frame" x="122.5" y="0.0" width="114" height="45"/>
+                                                    <fontDescription key="fontDescription" name="GillSans-SemiBoldItalic" family="Gill Sans" pointSize="14"/>
+                                                    <state key="normal" title=" Save" image="saveFeed">
+                                                        <color key="titleColor" red="0.37570501179999999" green="0.66657312369999999" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    </state>
+                                                    <connections>
+                                                        <action selector="saveButtonDidTouchUp:" destination="Vj1-1N-YON" eventType="touchUpInside" id="yjv-xB-1Bw"/>
+                                                    </connections>
                                                 </button>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fne-bA-dOX">
-                                                    <rect key="frame" x="179.5" y="0.0" width="90" height="30"/>
-                                                    <state key="normal" title="Crown"/>
-                                                </button>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YrE-e5-oeU">
-                                                    <rect key="frame" x="269.5" y="0.0" width="89.5" height="30"/>
-                                                    <state key="normal" title="Flag"/>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lPN-Wk-6SZ">
+                                                    <rect key="frame" x="245.5" y="0.0" width="113.5" height="45"/>
+                                                    <fontDescription key="fontDescription" name="GillSans-SemiBoldItalic" family="Gill Sans" pointSize="14"/>
+                                                    <state key="normal" title=" Flag" image="flag">
+                                                        <color key="titleColor" red="0.37570501179999999" green="0.66657312369999999" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    </state>
+                                                    <connections>
+                                                        <action selector="flagButtonDidTouchUp:" destination="Vj1-1N-YON" eventType="touchUpInside" id="I5x-RG-YJv"/>
+                                                    </connections>
                                                 </button>
                                             </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="45" id="n4y-0V-waH"/>
+                                            </constraints>
                                         </stackView>
                                     </subviews>
                                     <constraints>
+                                        <constraint firstAttribute="trailing" secondItem="T5a-vr-9HL" secondAttribute="trailing" constant="8" id="1qX-uU-Klg"/>
                                         <constraint firstItem="IzU-nI-wd7" firstAttribute="leading" secondItem="8IB-8y-2ev" secondAttribute="leadingMargin" id="6g2-E1-JYL"/>
                                         <constraint firstItem="jES-sH-n0q" firstAttribute="leading" secondItem="8IB-8y-2ev" secondAttribute="leadingMargin" constant="83" id="7tl-0S-dqf"/>
                                         <constraint firstItem="IzU-nI-wd7" firstAttribute="top" secondItem="8IB-8y-2ev" secondAttribute="topMargin" constant="3" id="BYz-fI-u9i"/>
-                                        <constraint firstItem="k2e-ku-tXY" firstAttribute="top" secondItem="jES-sH-n0q" secondAttribute="bottom" constant="5" id="Mhg-k8-Gen"/>
+                                        <constraint firstAttribute="bottom" secondItem="T5a-vr-9HL" secondAttribute="bottom" id="GqY-Mf-kUi"/>
+                                        <constraint firstItem="T5a-vr-9HL" firstAttribute="leading" secondItem="8IB-8y-2ev" secondAttribute="leading" constant="8" id="Udq-AS-Qna"/>
                                         <constraint firstItem="jES-sH-n0q" firstAttribute="top" secondItem="IzU-nI-wd7" secondAttribute="bottom" constant="8" id="UeR-Q2-bDc"/>
                                         <constraint firstAttribute="trailingMargin" secondItem="IzU-nI-wd7" secondAttribute="trailing" id="WXa-wM-KQ1"/>
-                                        <constraint firstItem="k2e-ku-tXY" firstAttribute="leading" secondItem="8IB-8y-2ev" secondAttribute="leadingMargin" id="epk-3d-gbn"/>
-                                        <constraint firstAttribute="trailingMargin" secondItem="k2e-ku-tXY" secondAttribute="trailing" id="tPM-Ce-Ukm"/>
                                         <constraint firstItem="jES-sH-n0q" firstAttribute="trailing" secondItem="8IB-8y-2ev" secondAttribute="trailingMargin" id="z4w-52-Bh3"/>
                                     </constraints>
                                 </tableViewCellContentView>
-                                <color key="backgroundColor" red="0.16470588235294117" green="0.827352105609091" blue="0.87843137250000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="backgroundColor" red="0.16470588235294117" green="0.5" blue="0.87843137250000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <connections>
-                                    <outlet property="buttonStackView" destination="k2e-ku-tXY" id="Jf0-vG-0WI"/>
-                                    <outlet property="crownButton" destination="fne-bA-dOX" id="M82-xN-df4"/>
-                                    <outlet property="flagButton" destination="YrE-e5-oeU" id="Ooc-L8-RoE"/>
-                                    <outlet property="likeButton" destination="TSN-st-4ea" id="hLI-Gn-Jr8"/>
+                                    <outlet property="flagButton" destination="lPN-Wk-6SZ" id="XbG-ak-B3c"/>
+                                    <outlet property="likeButton" destination="1m6-eW-bqP" id="MQ9-M1-tS8"/>
                                     <outlet property="profileImageWidthConstraint" destination="RtZ-HN-Ro5" id="5ZU-hu-G6Z"/>
                                     <outlet property="profilePic" destination="Bi4-eD-zrV" id="Ixk-sD-9iG"/>
-                                    <outlet property="saveButton" destination="VyS-SW-0In" id="tAG-b9-aBq"/>
+                                    <outlet property="saveButton" destination="sMD-zt-rro" id="xA4-1J-FdL"/>
+                                    <outlet property="toolbarStackView" destination="T5a-vr-9HL" id="AJb-yM-yYD"/>
                                     <outlet property="trackDescriptionTextView" destination="jES-sH-n0q" id="V7Z-V8-niB"/>
                                     <outlet property="trackNameLabel" destination="LT3-co-LtY" id="yM7-Ka-UeS"/>
                                     <outlet property="userNameLabel" destination="dsv-M9-YJq" id="kcV-Cj-3CF"/>
@@ -967,11 +994,15 @@
         <image name="cassetteIcon" width="25" height="25"/>
         <image name="checkmark" width="50" height="50"/>
         <image name="edit" width="50" height="50"/>
+        <image name="favorite" width="25" height="25"/>
+        <image name="flag" width="25" height="25"/>
         <image name="microphone" width="100" height="100"/>
         <image name="microphoneIcon" width="25" height="25"/>
         <image name="record" width="50" height="50"/>
         <image name="right" width="50" height="50"/>
         <image name="save" width="50" height="50"/>
+        <image name="saveFeed" width="25" height="25"/>
+        <image name="savedMusic" width="25" height="25"/>
         <image name="stop" width="50" height="50"/>
     </resources>
 </document>
