@@ -9,7 +9,7 @@
 import UIKit
 
 class WordsmithHomeViewController: UIViewController, WordsmithPageViewControllerChild {
-    var wordsmithPageVC: WordsmithPageViewController!
+    weak var wordsmithPageVC: WordsmithPageViewController!
     
     
     @IBOutlet weak var welcomeStackView: UIStackView!

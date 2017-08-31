@@ -12,6 +12,9 @@ import FirebaseDatabase
 class Track: NSObject, NSCoding {
     var user: String
     var title: String
+    var stars: [String]
+    var downloads: [String]
+    var flags: [String]
     var details: String
     var uploadTime: String
     var fileURL: String
@@ -29,6 +32,9 @@ class Track: NSObject, NSCoding {
         self.fadeInTime = fadeInTime
         self.fadeOutTime = fadeOutTime
         self.key = nil
+        self.stars = []
+        self.downloads = []
+        self.flags = []
     }
     
     init(snapShot: FIRDataSnapshot) {
@@ -79,10 +85,28 @@ class Track: NSObject, NSCoding {
             self.fadeOutTime = errorMessage
         }
         
+        if let stars = snapShotValue?["stars"] as? [String] {
+            self.stars = stars
+        } else {
+            self.stars = []
+        }
+        
+        if let downloads = snapShotValue?["downloads"] as? [String] {
+            self.downloads = downloads
+        } else {
+            self.downloads = []
+        }
+        
+        if let flags = snapShotValue?["flags"] as? [String] {
+            self.flags = flags
+        } else {
+            self.flags = []
+        }
+        
     }
     
     func toAny() -> Any {
-        return ["user": self.user, "title": self.title, "details": self.details, "uploadTime": self.uploadTime, "fileURL": self.fileURL, "fadeInTime": self.fadeInTime, "fadeOutTime":self.fadeOutTime]
+        return ["user": self.user, "title": self.title, "stars": self.stars, "downloads": self.downloads, "flags": self.flags, "details": self.details, "uploadTime": self.uploadTime, "fileURL": self.fileURL, "fadeInTime": self.fadeInTime, "fadeOutTime":self.fadeOutTime]
     }
     
     //MARK: NSCoding
@@ -95,6 +119,10 @@ class Track: NSObject, NSCoding {
         fileURL = aDecoder.decodeObject(forKey: "fileURL") as! String
         fadeInTime = aDecoder.decodeObject(forKey: "fadeInTime") as! String
         fadeOutTime = aDecoder.decodeObject(forKey: "fadeOutTime") as! String
+        
+        self.stars = []
+        self.downloads = []
+        self.flags = []
         
         super.init()
     }

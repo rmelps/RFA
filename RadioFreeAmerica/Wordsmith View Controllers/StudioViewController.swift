@@ -433,7 +433,7 @@ class StudioViewController: UIViewController {
        self.view.addSubview(micPlot)
     }
     
-    //MARK: Final Audio Bar Button Actions
+    //MARK: - Final Audio Bar Button Actions
     
     @IBAction func finalCancelButtonTapped(_ sender: UIButton) {
         //TODO: Figure out why sound gets louder after cancelling once
@@ -672,7 +672,7 @@ class StudioViewController: UIViewController {
         }
     }
     
-    //MARK: Final Create Audio Window Bar Buttons
+    //MARK: - Final Create Audio Window Bar Buttons
     
     @IBAction func confirmAndUploadTrackButtonTapped(_ sender: UIButton) {
         
@@ -890,7 +890,7 @@ class StudioViewController: UIViewController {
         playOrPauseButton.setImage(UIImage(named: "stop"), for: .normal)
     }
     
-    //MARK: Final Stepper Actions
+    //MARK: - Final Stepper Actions
     
     @IBAction func fadeInStepperValueChanged(_ sender: UIStepper) {
         
@@ -946,7 +946,7 @@ class StudioViewController: UIViewController {
         playOrPauseButton.setImage(UIImage(named: "stop"), for: .normal)
     }
     
-    //MARK: Combine Tracks
+    //MARK: - Combine Tracks
     
     func combineTracksAndPlay(first: URL, second: URL) {
         

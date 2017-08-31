@@ -95,6 +95,7 @@ class WordsmithFeedTableViewController: UITableViewController {
         cell.trackDescriptionTextView.text = trackForCell.details
         cell.profileImageWidthConstraint.constant = compressedHeight - imagePadding
         cell.profilePic.image = nil
+        cell.tableView = self.tableView
         
         // Add gesture recognizer to cell to turn on editing of that particular cell
         let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(WordsmithFeedTableViewController.setCellEditing(_:)))
@@ -147,6 +148,12 @@ class WordsmithFeedTableViewController: UITableViewController {
         }
         
         return compressedHeight
+    }
+    
+    override func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if cell.isEditing {
+            tableView.setEditing(false, animated: false)
+        }
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -213,22 +220,48 @@ class WordsmithFeedTableViewController: UITableViewController {
                 if SavedTrackManager.removeTrack(atIndex: indexPath.row) {
                     tracks.remove(at: indexPath.row)
                     tableView.deleteRows(at: [indexPath], with: .fade)
+                    tableView.setEditing(false, animated: true)
                 } else {
                     AppDelegate.presentErrorAlert(withMessage: "Could Not Delete Track!", fromViewController: parentVC)
                 }
             default:
                 fatalError("currentMode is not set")
             }
+            selectedRow = nil
+            tableView.beginUpdates()
+            tableView.endUpdates()
             
         }
     }
+    
+    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        let deleteAction = UITableViewRowAction(style: .destructive, title: "Delete") { (action:UITableViewRowAction, indexPath: IndexPath) in
+            let track = self.tracks[indexPath.row]
+            switch self.currentMode {
+            case .web:
+                self.removeTrackFromFirebase(track: track)
+            case .local:
+                if SavedTrackManager.removeTrack(atIndex: indexPath.row) {
+                    self.tracks.remove(at: indexPath.row)
+                    tableView.deleteRows(at: [indexPath], with: .fade)
+                } else {
+                    AppDelegate.presentErrorAlert(withMessage: "Could Not Delete Track!", fromViewController: self.parentVC)
+                }
+            default:
+                fatalError("currentMode is not set")
+            }
+        }
+        return [deleteAction]
+    }
+    
+    //MARK: -
     
     func loadFullTrackSuite() {
         tracks = []
         let activityIndicator = ActivityIndicatorView(withProgress: false)
         parentVC.view.addSubview(activityIndicator)
         
-        let recentPostsQuery = feedDBRef.queryLimited(toFirst: 50)
+        let recentPostsQuery = feedDBRef.queryLimited(toFirst: 25)
         
         recentPostsQuery.observeSingleEvent(of: .value) { (snapshot: FIRDataSnapshot) in
             for child in snapshot.children {
@@ -265,21 +298,22 @@ class WordsmithFeedTableViewController: UITableViewController {
         }
         return false
     }
+    //MARK: - Gesture Recognizer Callbacks
     
     @objc func dismissCellEditing(_ sender: UITapGestureRecognizer) {
-        print("touch detected")
+        if sender.state == .possible, !tableView.isEditing {
+            tableView.removeGestureRecognizer(sender)
+            return
+        }
         guard editPoint != nil, tableView.isEditing else {
             print("editPoint: \(editPoint) \n editing?: \(tableView.isEditing)")
             tableView.removeGestureRecognizer(sender)
             return
         }
-        print("made it past guard")
         let location = sender.location(in: tableView)
         if let editingPath = tableView.indexPathForRow(at: editPoint!) {
-            print("editing path exists")
             let thisPath = tableView.indexPathForRow(at: location)
             if thisPath != editingPath {
-                print("made it")
                 tableView.setEditing(false, animated: true)
                 tableView.removeGestureRecognizer(sender)
             }
@@ -314,6 +348,50 @@ class WordsmithFeedTableViewController: UITableViewController {
             }
         }
     }
+    //MARK: - Cell Toolbar Actions
+    func modifyPostStat(statName name: String, increase: Bool) {
+        
+        guard currentMode == .web, let row = selectedRow else {
+            print("Like button should only be selectable in web mode")
+            return
+        }
+        let track = tracks[row]
+        guard let key = track.key else {
+            print("Could not find key for track")
+            return
+        }
+        let ref = feedDBRef.child(key)
+        ref.runTransactionBlock({ (thisData: FIRMutableData) -> FIRTransactionResult in
+            if var post = thisData.value as? [String: Any], let uid = FIRAuth.auth()?.currentUser?.uid {
+                let stat = post[name] as? [String] ?? []
+                var statSet = Set(stat)
+                if increase {
+                    statSet.insert(uid)
+                } else {
+                    statSet.remove(uid)
+                }
+                let statArr = Array(statSet)
+                post[name] = statArr as Any
+                thisData.value = post
+                
+                return FIRTransactionResult.success(withValue: thisData)
+            }
+            return FIRTransactionResult.success(withValue: thisData)
+            
+        }) { (error: Error?, isCommitted: Bool, snapshot: FIRDataSnapshot?) in
+            if let error = error {
+                print("Error is data transaction: \(error.localizedDescription)")
+            }
+            if isCommitted {
+                print("committed data")
+            } else {
+                print("could not commit data")
+            }
+        }
+    }
+    
+    //MARK: - File Handling functions
+    
     func removeTrackFromFirebase(track: Track) {
         
     }
@@ -389,6 +467,7 @@ class WordsmithFeedTableViewController: UITableViewController {
                             self.audioPlayer.numberOfLoops = -1
                             self.audioPlayer.play()
                             //TODO: Perfect this timer for fade in/fade out durations
+                            /*
                             Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true, block: { (timer) in
                                 print(self.audioPlayer.currentTime)
                                 if self.audioPlayer.currentTime > 10.0 {
@@ -398,7 +477,7 @@ class WordsmithFeedTableViewController: UITableViewController {
                                     timer.invalidate()
                                 }
                             }).fire()
-                            
+                            */
                         } catch {
                             print("error in creating ak audio file: \(error.localizedDescription)")
                         }

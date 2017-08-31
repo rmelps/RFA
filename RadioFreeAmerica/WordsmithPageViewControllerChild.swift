@@ -9,5 +9,5 @@
 import UIKit
 
 protocol WordsmithPageViewControllerChild {
-    var wordsmithPageVC: WordsmithPageViewController! { get set }
+    weak var wordsmithPageVC: WordsmithPageViewController! { get set }
 }

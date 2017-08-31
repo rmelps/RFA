@@ -20,6 +20,8 @@ class TrackTableViewCell: UITableViewCell {
     @IBOutlet weak var trackDescriptionTextView: UITextView!
     @IBOutlet weak var profileImageWidthConstraint: NSLayoutConstraint!
     
+    weak var tableView: UITableView!
+    
     // Button Selection Status
     var isLiked: Bool = false
     var isSaved: Bool = false
@@ -61,42 +63,57 @@ class TrackTableViewCell: UITableViewCell {
     }
     
     @IBAction func likeButtonDidTouchUp(_ sender: UIButton) {
+        var increase: Bool!
         var image = UIImage()
         if isLiked {
             image = UIImage(named: "favorite")!
             isLiked = false
+            increase = false
         } else {
             image = UIImage(named: "favoriteFilled")!
             isLiked = true
+            increase = true
+        }
+        if let vc = tableView.delegate as? WordsmithFeedTableViewController {
+            vc.modifyPostStat(statName: "stars", increase: increase)
         }
         setButtonImage(button: sender, image: image)
     }
     @IBAction func saveButtonDidTouchUp(_ sender: UIButton) {
+        var increase: Bool!
+        
         var image = UIImage()
         if isSaved {
             image = UIImage(named: "saveFeed")!
             isSaved = false
+            increase = false
         } else {
             image = UIImage(named: "saveFeedFilled")!
             isSaved = true
+            increase = true
+        }
+        if let vc = tableView.delegate as? WordsmithFeedTableViewController {
+            vc.modifyPostStat(statName: "downloads", increase: increase)
         }
         setButtonImage(button: sender, image: image)
     }
     
     @IBAction func flagButtonDidTouchUp(_ sender: UIButton) {
+        var increase: Bool!
+        
         var image = UIImage()
         if isFlagged {
             image = UIImage(named: "flag")!
             isFlagged = false
+            increase = false
         } else {
             image = UIImage(named: "flagFilled")!
             isFlagged = true
+            increase = true
+        }
+        if let vc = tableView.delegate as? WordsmithFeedTableViewController {
+            vc.modifyPostStat(statName: "flags", increase: increase)
         }
         setButtonImage(button: sender, image: image)
     }
-    
-    
-   
-    
-
 }

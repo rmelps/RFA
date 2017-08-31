@@ -12,7 +12,7 @@ class WordsmithFeedViewController: UIViewController, WordsmithPageViewController
     @IBOutlet weak var libraryBarButton: UIBarButtonItem!
     @IBOutlet weak var tableContainerView: UIView!
     
-    var wordsmithPageVC: WordsmithPageViewController!
+    weak var wordsmithPageVC: WordsmithPageViewController!
     var fromStudio: Bool!
     var tableContainerController: WordsmithFeedTableViewController!
     
@@ -43,11 +43,13 @@ class WordsmithFeedViewController: UIViewController, WordsmithPageViewController
         case .web:
             mode = .local
             let savedTracks = SavedTrackManager.savedTracks
-            tableContainerController.tracks = savedTracks
+            tableContainerController.tracks = savedTracks.reversed()
             tableContainerController.tableView.reloadData()
+            sender.image = UIImage(named: "savedMusicFilled")
         case .local:
             mode = .web
             tableContainerController.loadFullTrackSuite()
+            sender.image = UIImage(named: "savedMusic")
         }
     }
     
