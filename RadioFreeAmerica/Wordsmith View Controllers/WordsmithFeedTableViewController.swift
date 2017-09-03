@@ -12,7 +12,7 @@ import FirebaseDatabase
 import FirebaseStorage
 import AVFoundation
 
-enum TableDisplayMode {
+enum TableDisplayMode: String {
     case web
     case local
 }
@@ -22,7 +22,7 @@ class WordsmithFeedTableViewController: UITableViewController {
     let reuseIdentifier = "trackCell"
     var feedDBRef: FIRDatabaseReference!
     var userDBRef: FIRDatabaseReference!
-    var parentVC: WordsmithFeedViewController!
+    weak var parentVC: WordsmithFeedViewController!
     var uploadStorageRef: FIRStorageReference!
     
     var audioPlayer: AVAudioPlayer!
@@ -176,6 +176,10 @@ class WordsmithFeedTableViewController: UITableViewController {
             
             switch currentMode {
             case .web:
+                // Configure toolbar style for selected cell
+                let uid = FIRAuth.auth()!.currentUser!.uid
+                cell.refreshButtonStyle(forTrack: track, forUser: uid)
+                
                 cell.displayToolBar(on: true)
                 loadAndStoreAudioFile(forTrack: track)
             case .local:
@@ -192,7 +196,6 @@ class WordsmithFeedTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         if let location = editPoint, let path = tableView.indexPathForRow(at: location), path == indexPath {
             guard let cell = tableView.cellForRow(at: indexPath) as? TrackTableViewCell else {
-                print("unexpectedly could not find cell?")
                 return false
             }
             switch currentMode {
@@ -215,9 +218,20 @@ class WordsmithFeedTableViewController: UITableViewController {
             let track = tracks[indexPath.row]
             switch currentMode {
             case .web:
-                removeTrackFromFirebase(track: track)
+                let activityView = ActivityIndicatorView(withProgress: false)
+                parentVC.view.addSubview(activityView)
+                removeTrackFromFirebase(track: track, completion: { (error: Error?) in
+                    activityView.removeFromSuperview()
+                    if let error = error {
+                        print("Could not remove track from Firebase: \(error.localizedDescription)")
+                        return
+                    }
+                    self.tracks.remove(at: indexPath.row)
+                    tableView.deleteRows(at: [indexPath], with: .fade)
+                    tableView.setEditing(false, animated: true)
+                })
             case .local:
-                if SavedTrackManager.removeTrack(atIndex: indexPath.row) {
+                if SavedTrackManager.removeTrack(atIndex: indexPath.row, sourceReversed: true) {
                     tracks.remove(at: indexPath.row)
                     tableView.deleteRows(at: [indexPath], with: .fade)
                     tableView.setEditing(false, animated: true)
@@ -239,9 +253,17 @@ class WordsmithFeedTableViewController: UITableViewController {
             let track = self.tracks[indexPath.row]
             switch self.currentMode {
             case .web:
-                self.removeTrackFromFirebase(track: track)
+                self.removeTrackFromFirebase(track: track, completion: { (error: Error?) in
+                    if let error = error {
+                        print("Could not remove track from Firebase: \(error.localizedDescription)")
+                        return
+                    }
+                    self.tracks.remove(at: indexPath.row)
+                    tableView.deleteRows(at: [indexPath], with: .fade)
+                    tableView.setEditing(false, animated: true)
+                })
             case .local:
-                if SavedTrackManager.removeTrack(atIndex: indexPath.row) {
+                if SavedTrackManager.removeTrack(atIndex: indexPath.row, sourceReversed: true) {
                     self.tracks.remove(at: indexPath.row)
                     tableView.deleteRows(at: [indexPath], with: .fade)
                 } else {
@@ -372,7 +394,23 @@ class WordsmithFeedTableViewController: UITableViewController {
                 }
                 let statArr = Array(statSet)
                 post[name] = statArr as Any
-                thisData.value = post
+                
+                switch name {
+                case "downloads":
+                    if self.saveTrackToLibrary(track) {
+                        
+                        thisData.value = post
+                        track.downloads = statArr
+                    }
+                case "stars":
+                    thisData.value = post
+                    track.stars = statArr
+                case "flags":
+                    thisData.value = post
+                    track.flags = statArr
+                default:
+                    break
+                }
                 
                 return FIRTransactionResult.success(withValue: thisData)
             }
@@ -390,10 +428,60 @@ class WordsmithFeedTableViewController: UITableViewController {
         }
     }
     
+    func saveTrackToLibrary(_ track: Track) -> Bool {
+        let trackToSave = track
+        guard let FIRkey = track.key else {
+            print("no key found for track")
+            return false
+        }
+        var url: URL?
+        
+        for (key,file) in quickLoadFiles {
+            if key == FIRkey {
+                url = file.url
+                break
+            }
+        }
+        
+        if let url = url {
+            trackToSave.fileURL = url.lastPathComponent
+            if SavedTrackManager.saveNewTrack(newTrack: trackToSave, tempLocation: url) {
+                let alert = UIAlertController(title: "Saved!", message: "\"\(track.title)\" has been saved!", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Nice", style: .cancel, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+                return true
+            } else {
+                AppDelegate.presentErrorAlert(withMessage: "Could not save Track", fromViewController: parentVC)
+                return false
+            }
+        } else {
+            AppDelegate.presentErrorAlert(withMessage: "Song has not finished downloading!", fromViewController: parentVC)
+            return false
+        }
+    
+    }
+    
     //MARK: - File Handling functions
     
-    func removeTrackFromFirebase(track: Track) {
+    func removeTrackFromFirebase(track: Track, completion: @escaping (Error?) -> Void) {
+        guard currentMode == .web, let key = track.key else {
+            print("can not remove from Firebase, mode is \(currentMode.rawValue)")
+            return
+        }
+        let fileURL = track.fileURL
+        let ref = feedDBRef.child(key)
         
+        ref.removeValue { (error: Error?, reference: FIRDatabaseReference) in
+            if let error = error {
+                completion(error)
+            }
+            FIRStorage.storage().reference(forURL: fileURL).delete(completion: { (error: Error?) in
+                if let error = error {
+                    completion(error)
+                }
+                completion(nil)
+            })
+        }
     }
     
     func retrieveLocalAudioFile(forTrack track: Track) {

@@ -21,11 +21,36 @@ class TrackTableViewCell: UITableViewCell {
     @IBOutlet weak var profileImageWidthConstraint: NSLayoutConstraint!
     
     weak var tableView: UITableView!
+    weak var track: Track!
     
     // Button Selection Status
-    var isLiked: Bool = false
-    var isSaved: Bool = false
-    var isFlagged: Bool = false
+    var isLiked: Bool = false {
+        didSet{
+            if isLiked {
+                setButtonImage(button: likeButton, image: UIImage(named: "favoriteFilled")!)
+            } else {
+                setButtonImage(button: likeButton, image: UIImage(named: "favorite")!)
+            }
+        }
+    }
+    var isSaved: Bool = false {
+        didSet {
+            if isSaved {
+                setButtonImage(button: saveButton, image: UIImage(named: "saveFeedFilled")!)
+            } else {
+                setButtonImage(button: saveButton, image: UIImage(named: "saveFeed")!)
+            }
+        }
+    }
+    var isFlagged: Bool = false {
+        didSet {
+            if isFlagged {
+                setButtonImage(button: flagButton, image: UIImage(named: "flagFilled")!)
+            } else {
+                setButtonImage(button: flagButton, image: UIImage(named: "flag")!)
+            }
+        }
+    }
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -33,11 +58,6 @@ class TrackTableViewCell: UITableViewCell {
         trackNameLabel.adjustsFontForContentSizeCategory = true
         userNameLabel.adjustsFontForContentSizeCategory = true
         self.selectionStyle = .gray
-    }
-    
-    override func setEditing(_ editing: Bool, animated: Bool) {
-        super.setEditing(editing, animated: animated)
-       // self.setNeedsLayout()
     }
     
     func displayToolBar(on: Bool) {
@@ -62,58 +82,76 @@ class TrackTableViewCell: UITableViewCell {
         button.titleLabel?.textColor = button.tintColor
     }
     
+    func refreshButtonStyle(forTrack track: Track, forUser uid: String) {
+        let downloads = SavedTrackManager.savedTracks
+        let stars = Set(track.stars)
+        let flags = Set(track.flags)
+        
+        for download in downloads {
+            if let key = download.key {
+                if track.key == key {
+                    self.isSaved = true
+                    break
+                } else {
+                    self.isSaved = false
+                }
+            }
+        }
+        if stars.contains(uid) {
+            self.isLiked = true
+        } else {
+            self.isLiked = false
+        }
+        if flags.contains(uid) {
+            self.isFlagged = true
+        } else {
+            self.isFlagged = false
+        }
+    }
+    
     @IBAction func likeButtonDidTouchUp(_ sender: UIButton) {
         var increase: Bool!
-        var image = UIImage()
         if isLiked {
-            image = UIImage(named: "favorite")!
             isLiked = false
             increase = false
         } else {
-            image = UIImage(named: "favoriteFilled")!
             isLiked = true
             increase = true
         }
         if let vc = tableView.delegate as? WordsmithFeedTableViewController {
             vc.modifyPostStat(statName: "stars", increase: increase)
         }
-        setButtonImage(button: sender, image: image)
     }
     @IBAction func saveButtonDidTouchUp(_ sender: UIButton) {
         var increase: Bool!
+        let vc = tableView.delegate as? WordsmithFeedTableViewController
         
-        var image = UIImage()
         if isSaved {
-            image = UIImage(named: "saveFeed")!
-            isSaved = false
-            increase = false
+            if let vc = vc {
+              AppDelegate.presentErrorAlert(withMessage: "File has already been saved!", fromViewController: vc)
+            }
+            return
         } else {
-            image = UIImage(named: "saveFeedFilled")!
             isSaved = true
             increase = true
         }
-        if let vc = tableView.delegate as? WordsmithFeedTableViewController {
+        if let vc = vc {
             vc.modifyPostStat(statName: "downloads", increase: increase)
         }
-        setButtonImage(button: sender, image: image)
     }
     
     @IBAction func flagButtonDidTouchUp(_ sender: UIButton) {
         var increase: Bool!
         
-        var image = UIImage()
         if isFlagged {
-            image = UIImage(named: "flag")!
             isFlagged = false
             increase = false
         } else {
-            image = UIImage(named: "flagFilled")!
             isFlagged = true
             increase = true
         }
         if let vc = tableView.delegate as? WordsmithFeedTableViewController {
             vc.modifyPostStat(statName: "flags", increase: increase)
         }
-        setButtonImage(button: sender, image: image)
     }
 }

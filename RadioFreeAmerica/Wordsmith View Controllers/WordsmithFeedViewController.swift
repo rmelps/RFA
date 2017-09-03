@@ -51,6 +51,8 @@ class WordsmithFeedViewController: UIViewController, WordsmithPageViewController
             tableContainerController.loadFullTrackSuite()
             sender.image = UIImage(named: "savedMusic")
         }
+        let topRow = IndexPath(row: 0, section: 0)
+        tableContainerController.tableView.scrollToRow(at: topRow, at: .top, animated: true)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

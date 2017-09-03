@@ -119,6 +119,7 @@ class Track: NSObject, NSCoding {
         fileURL = aDecoder.decodeObject(forKey: "fileURL") as! String
         fadeInTime = aDecoder.decodeObject(forKey: "fadeInTime") as! String
         fadeOutTime = aDecoder.decodeObject(forKey: "fadeOutTime") as! String
+        key = aDecoder.decodeObject(forKey: "key") as! String?
         
         self.stars = []
         self.downloads = []
@@ -135,6 +136,7 @@ class Track: NSObject, NSCoding {
         aCoder.encode(fileURL, forKey: "fileURL")
         aCoder.encode(fadeInTime, forKey: "fadeInTime")
         aCoder.encode(fadeOutTime, forKey: "fadeOutTime")
+        aCoder.encode(key, forKey: "key")
     }
     
 }
