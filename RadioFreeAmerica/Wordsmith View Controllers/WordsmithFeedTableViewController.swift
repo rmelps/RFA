@@ -56,15 +56,15 @@ class WordsmithFeedTableViewController: UITableViewController {
         uploadStorageRef = FIRStorage.storage().reference().child("uploads")
         
         currentMode = parentVC.mode
-        
-        loadFullTrackSuite()
+    
+        loadFullTrackSuite(withActivityIndicator: true, completion: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         if parentVC.fromStudio {
-            loadFullTrackSuite()
+            loadFullTrackSuite(withActivityIndicator: true, completion: nil)
         }
         
         if let row = selectedRow {
@@ -87,6 +87,7 @@ class WordsmithFeedTableViewController: UITableViewController {
 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! TrackTableViewCell
         let trackForCell = tracks[indexPath.row]
         let imagePadding: CGFloat = 16
@@ -276,16 +277,59 @@ class WordsmithFeedTableViewController: UITableViewController {
         return [deleteAction]
     }
     
-    //MARK: -
+    //MARK: - Scroll View Delegate
     
-    func loadFullTrackSuite() {
-        tracks = []
-        let activityIndicator = ActivityIndicatorView(withProgress: false)
-        parentVC.view.addSubview(activityIndicator)
+    override func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         
-        let recentPostsQuery = feedDBRef.queryLimited(toFirst: 25)
+        // Reload table view if the user scrolls a certain distance above the top cell
+        let topCellYPosInTable = tableView.rectForRow(at: IndexPath(row: 0, section: 0)).origin
+        let topCellYPosInSuper = tableView.convert(topCellYPosInTable, to: parentVC.view)
+        let yPadding = parentVC.tableContainerView.convert(parentVC.tableContainerView.frame.origin, to: parentVC.view).y / 2
+        
+        if topCellYPosInSuper.y > (compressedHeight + yPadding) {
+            if currentMode == .web {
+                let indicator = UIActivityIndicatorView(activityIndicatorStyle: .white)
+                let header = UIView(frame: CGRect(origin: tableView.frame.origin, size: CGSize(width: tableView.bounds.width, height: 60)))
+                indicator.center = header.center
+                header.addSubview(indicator)
+                indicator.startAnimating()
+                indicator.hidesWhenStopped = true
+                tableView.tableHeaderView = header
+                loadFullTrackSuite(withActivityIndicator: false, completion: {
+                    indicator.stopAnimating()
+                    header.frame = CGRect(origin: header.frame.origin, size: CGSize(width: header.frame.width, height: 0.0))
+                })
+            }
+        }
+        
+        // Query new tracks if the user scrolls a certain distance below final cell
+        let bottomCellRectInTable = tableView.rectForRow(at: IndexPath(row: tracks.count - 1, section: 0))
+        let bottomCellYPosInTable = bottomCellRectInTable.origin
+        let bottomCellYPosInSuper = tableView.convert(bottomCellYPosInTable, to: parentVC.view)
+        
+        if bottomCellYPosInSuper.y < (parentVC.view.frame.maxY - bottomCellRectInTable.height - yPadding) {
+            print("should append new tracks")
+            if currentMode == .web {
+                appendNewTracks(completion: nil)
+            }
+            
+        }
+    }
+    
+    //MARK: - Grab track data
+    
+    func loadFullTrackSuite(withActivityIndicator indicator: Bool, completion: (()->Void)?){
+        let activityIndicator = ActivityIndicatorView(withProgress: false)
+        
+        if indicator {
+            parentVC.view.addSubview(activityIndicator)
+        }
+        
+        let recentPostsQuery = feedDBRef.queryOrderedByKey().queryLimited(toLast: 10)
+        
         
         recentPostsQuery.observeSingleEvent(of: .value) { (snapshot: FIRDataSnapshot) in
+            self.tracks = []
             for child in snapshot.children {
                 if let childSnap = child as? FIRDataSnapshot {
                     let track = Track(snapShot: childSnap)
@@ -302,13 +346,69 @@ class WordsmithFeedTableViewController: UITableViewController {
                         self.users.updateValue(name, forKey: track.user)
                     }
                 }
-                 self.tableView.reloadData()
+                
+                self.tableView.reloadData()
+                self.tableView.beginUpdates()
+                self.tableView.endUpdates()
             })
-            self.tableView.reloadData()
-            self.tableView.beginUpdates()
-            self.tableView.endUpdates()
-            activityIndicator.removeFromSuperview()
+            if indicator {
+                activityIndicator.removeFromSuperview()
+            }
+            completion?()
         }
+    }
+    
+    func appendNewTracks(completion: (()->Void)?) {
+        var key: String = ""
+        var index: Int = tracks.count - 1
+        
+        feedDBRef.observeSingleEvent(of: .value, with: { (snapshot: FIRDataSnapshot) in
+            print("running loop")
+            while key == "" {
+                if index < 0 {
+                    break
+                }
+                if let lastKey = self.tracks[index].key, snapshot.hasChild(lastKey) {
+                    key = lastKey
+                    print("found key")
+                    let query = self.feedDBRef.queryOrderedByKey().queryEnding(atValue: key).queryLimited(toLast: 6)
+                    
+                    query.observeSingleEvent(of: .value) { (snapshot: FIRDataSnapshot) in
+                        var newTracks = [Track]()
+                        for child in snapshot.children {
+                            if let childSnap = child as? FIRDataSnapshot {
+                                if childSnap.key == key {
+                                    continue
+                                }
+                                let track = Track(snapShot: childSnap)
+                                newTracks.insert(track, at: 0)
+                            }
+                        }
+                        self.tracks.append(contentsOf: newTracks)
+                        
+                        self.userDBRef.observeSingleEvent(of: .value, with: { (snapshot: FIRDataSnapshot) in
+                            for track in self.tracks {
+                                if snapshot.hasChild(track.user) {
+                                    let uidSnap = snapshot.childSnapshot(forPath: track.user)
+                                    let uidVal = uidSnap.value as! [String: Any]
+                                    let name = uidVal["name"] as! String
+                                    self.users.updateValue(name, forKey: track.user)
+                                }
+                            }
+                            self.tableView.reloadData()
+                            self.tableView.beginUpdates()
+                            self.tableView.endUpdates()
+                        })
+                    }
+                } else {
+                    print("couldn't find key")
+                    index -= 1
+                }
+            }
+            
+        })
+        
+        
     }
     
     func cellBelongsToCurrentUser(cell: TrackTableViewCell) -> Bool {
@@ -575,7 +675,7 @@ class WordsmithFeedTableViewController: UITableViewController {
                 })
                 
             } else {
-                print("Could not find snapshot value")
+                AppDelegate.presentErrorAlert(withMessage: "Track is no longer available", fromViewController: self.parentVC)
                 return
             }
             

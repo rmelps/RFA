@@ -48,7 +48,7 @@ class WordsmithFeedViewController: UIViewController, WordsmithPageViewController
             sender.image = UIImage(named: "savedMusicFilled")
         case .local:
             mode = .web
-            tableContainerController.loadFullTrackSuite()
+            tableContainerController.loadFullTrackSuite(withActivityIndicator: true, completion: nil)
             sender.image = UIImage(named: "savedMusic")
         }
         let topRow = IndexPath(row: 0, section: 0)
