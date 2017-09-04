@@ -763,11 +763,29 @@
                                     <constraint firstAttribute="width" constant="100" id="GuM-5p-wmY"/>
                                 </constraints>
                             </imageView>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="b1a-l5-kjG">
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" bouncesZoom="NO" translatesAutoresizingMaskIntoConstraints="NO" id="b1a-l5-kjG">
                                 <rect key="frame" x="16" y="252" width="343" height="385"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="YES" translatesAutoresizingMaskIntoConstraints="NO" id="F3c-7i-KE9">
+                                        <rect key="frame" x="0.0" y="0.0" width="343" height="30"/>
+                                        <color key="backgroundColor" red="0.87450980392156863" green="0.40392156862745099" blue="0.38823529411764707" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <gestureRecognizers/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="30" id="Hr7-6L-gVe"/>
+                                        </constraints>
+                                        <connections>
+                                            <outletCollection property="gestureRecognizers" destination="Spf-hs-exQ" appends="YES" id="xKA-b8-Ska"/>
+                                        </connections>
+                                    </view>
+                                </subviews>
                                 <color key="backgroundColor" red="0.1647058824" green="0.72941176470000002" blue="0.87843137250000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="385" id="3YH-P6-eEL"/>
+                                    <constraint firstItem="F3c-7i-KE9" firstAttribute="leading" secondItem="b1a-l5-kjG" secondAttribute="leading" id="Vvy-Hu-rIO"/>
+                                    <constraint firstAttribute="trailing" secondItem="F3c-7i-KE9" secondAttribute="trailing" id="aXj-ge-w09"/>
+                                    <constraint firstAttribute="bottom" secondItem="F3c-7i-KE9" secondAttribute="bottom" constant="355" id="dHJ-s5-fwb"/>
+                                    <constraint firstAttribute="width" secondItem="F3c-7i-KE9" secondAttribute="width" id="pCy-Dz-FY6"/>
+                                    <constraint firstItem="F3c-7i-KE9" firstAttribute="top" secondItem="b1a-l5-kjG" secondAttribute="top" id="xNl-2M-VMW"/>
                                 </constraints>
                             </scrollView>
                         </subviews>
@@ -788,11 +806,17 @@
                         <outlet property="profilePicImageView" destination="7WQ-hG-DEg" id="Myb-nJ-6de"/>
                         <outlet property="scrollViewHeightConstraint" destination="3YH-P6-eEL" id="pZv-9D-M6V"/>
                         <outlet property="statView" destination="b1a-l5-kjG" id="RJa-Qs-FjN"/>
+                        <outlet property="topBar" destination="F3c-7i-KE9" id="o8M-mv-mEQ"/>
                         <outlet property="userNameLabel" destination="fkH-od-0Zo" id="4i6-oq-BfV"/>
                         <outlet property="welcomeStackView" destination="YgL-b2-I2t" id="hZI-ot-MM9"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="r4t-OK-zlm" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <panGestureRecognizer minimumNumberOfTouches="1" id="Spf-hs-exQ">
+                    <connections>
+                        <action selector="topBarDidPan:" destination="J7U-QE-YMz" id="mrV-c0-Ocn"/>
+                    </connections>
+                </panGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="2301.5999999999999" y="239.73013493253376"/>
         </scene>

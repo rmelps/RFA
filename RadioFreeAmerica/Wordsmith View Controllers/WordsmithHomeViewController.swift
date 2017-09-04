@@ -12,6 +12,7 @@ class WordsmithHomeViewController: UIViewController, WordsmithPageViewController
     weak var wordsmithPageVC: WordsmithPageViewController!
     
     
+    @IBOutlet weak var topBar: UIView!
     @IBOutlet weak var welcomeStackView: UIStackView!
     @IBOutlet weak var statView: UIScrollView!
     @IBOutlet weak var userNameLabel: UILabel!
@@ -23,12 +24,15 @@ class WordsmithHomeViewController: UIViewController, WordsmithPageViewController
     var firstName: String!
     var image: UIImage?
     
+    var awards = [Stat]()
+    var loadLatch: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         userNameLabel.text = firstName
         profilePicImageView.image = image
+        scrollViewHeightConstraint.constant = topBar.bounds.height
         
         for view in welcomeStackView.arrangedSubviews {
             view.layer.shadowOffset = CGSize(width: 0, height: 0)
@@ -48,17 +52,22 @@ class WordsmithHomeViewController: UIViewController, WordsmithPageViewController
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-        for view in statView.subviews {
-            view.removeFromSuperview()
+        guard !loadLatch else {
+            return
         }
         
+        for view in statView.subviews {
+            if view is StatView {
+                view.removeFromSuperview()
+            }
+        }
+ 
         statView.translatesAutoresizingMaskIntoConstraints = false
-        scrollViewHeightConstraint.constant = self.view.frame.height / 4
         
         let user = wordsmithPageVC!.signedInUser!
         print(user)
         
-        var awards = [Stat]()
+       
         
         awards.append(user.knowledge)
         awards.append(user.crowns)
@@ -75,26 +84,70 @@ class WordsmithHomeViewController: UIViewController, WordsmithPageViewController
             
             self.statView.addSubview(singleStatView)
             
-            let vertSpaceInPoints: CGFloat = 10
-            let horizSpaceInPoints: CGFloat = 20
-            let size = CGSize(width: statView.bounds.width - horizSpaceInPoints, height: singleStatView.bounds.height)
-            let viewOrigin = CGPoint(x: horizSpaceInPoints / 2, y: CGFloat(size.height * CGFloat(index) + vertSpaceInPoints))
+            let leftPadding: CGFloat = 5
+            let horizInterPadding: CGFloat = 3
+            let vertInterPadding: CGFloat = 3
+            let topPadding: CGFloat = 5
             
+            let width = (statView.bounds.width / 2) - (horizInterPadding / 2) - leftPadding
+            let height = width * 0.75
             
+            let size = CGSize(width: width , height: height)
+            
+            var x = CGFloat()
+            var y = CGFloat()
+            
+            if index % 2 == 0 {
+                x = leftPadding
+            } else {
+                x = statView.bounds.width - leftPadding - size.width
+            }
+            if index < 2 {
+                y = topPadding
+            } else {
+                y = topPadding + size.height + vertInterPadding
+            }
+            
+            let viewOrigin = CGPoint(x: x, y: y)
             
             singleStatView.frame = CGRect(origin: viewOrigin, size: size)
-            self.statView.contentSize = CGSize(width: self.statView.bounds.width, height: singleStatView.bounds.height * CGFloat(index) + 50.0)
             
-            singleStatView.alpha = 0.95
+            singleStatView.translatesAutoresizingMaskIntoConstraints = false
+            singleStatView.heightAnchor.constraint(equalToConstant: height).isActive = true
+            singleStatView.widthAnchor.constraint(equalToConstant: width).isActive = true
+            singleStatView.topAnchor.constraint(equalTo: topBar.bottomAnchor, constant: y).isActive = true
+            singleStatView.leftAnchor.constraint(equalTo: statView.leftAnchor, constant: x).isActive = true
+            
+            
+            self.statView.contentSize = CGSize(width: self.statView.bounds.width, height: size.height * 2 + vertInterPadding + (topPadding * 2))
+            
             singleStatView.layer.borderWidth = 1.5
-            singleStatView.layer.borderColor = UIColor.black.cgColor
-            singleStatView.layer.cornerRadius = 25.0
+            singleStatView.layer.borderColor = UIColor.white.cgColor
+            singleStatView.layer.cornerRadius = 5.0
             singleStatView.layer.masksToBounds = false
+            
+            let image = UIImage(named: award.description.lowercased())?.withRenderingMode(.alwaysTemplate)
+            
+            singleStatView.iconImageView.image = image
+            singleStatView.tintColor = .white
             singleStatView.countLabel.text = String(award.value)
             singleStatView.statLabel.text = award.description
-            
         }
+        loadLatch = true
+    }
+    @IBAction func topBarDidPan(_ sender: UIPanGestureRecognizer) {
+        let yTouch = sender.location(in: self.view).y
+        let yView = statView.frame.origin.y
+        let diff = yView - yTouch
+        scrollViewHeightConstraint.constant += diff
         
+        for view in statView.subviews {
+            if view is StatView {
+                view.frame.origin.y += diff
+            }
+        }
+        print(scrollViewHeightConstraint.constant)
+        self.view.layoutIfNeeded()
     }
     
 }

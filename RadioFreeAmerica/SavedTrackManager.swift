@@ -73,9 +73,11 @@ class SavedTrackManager {
     
     static func removeTrack(atIndex index: Int, sourceReversed reversed: Bool) -> Bool {
 
-        var tracks = self.savedTracks
+        var tracks = [Track]()
         if reversed {
             tracks = self.savedTracks.reversed()
+        } else {
+            tracks = self.savedTracks
         }
         
         let track = tracks[index]

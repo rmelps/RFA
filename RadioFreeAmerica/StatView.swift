@@ -10,6 +10,7 @@ import UIKit
 
 class StatView: UIView {
     
+    @IBOutlet weak var iconImageView: UIImageView!
     @IBOutlet weak var statLabel: UILabel!
     @IBOutlet weak var countLabel: UILabel!
     
