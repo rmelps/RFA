@@ -7,11 +7,13 @@
 //
 
 import UIKit
+import FirebaseDatabase
 
 class WordsmithHomeViewController: UIViewController, WordsmithPageViewControllerChild {
     weak var wordsmithPageVC: WordsmithPageViewController!
     
     
+    @IBOutlet weak var menuBarIconView: UIImageView!
     @IBOutlet weak var topBar: UIView!
     @IBOutlet weak var welcomeStackView: UIStackView!
     @IBOutlet weak var statView: UIScrollView!
@@ -19,6 +21,9 @@ class WordsmithHomeViewController: UIViewController, WordsmithPageViewController
     @IBOutlet weak var profilePicImageView: UIImageView!
     
     @IBOutlet weak var scrollViewHeightConstraint: NSLayoutConstraint!
+    
+    // Stat view div sizes
+    var size: CGSize!
     
     // Elements from PageViewController
     var firstName: String!
@@ -33,6 +38,11 @@ class WordsmithHomeViewController: UIViewController, WordsmithPageViewController
         userNameLabel.text = firstName
         profilePicImageView.image = image
         scrollViewHeightConstraint.constant = topBar.bounds.height
+        menuBarIconView.tintColor = .white
+        menuBarIconView.image = UIImage(named: "popUp")?.withRenderingMode(.alwaysTemplate)
+        topBar.layer.cornerRadius = 7.0
+        statView.layer.cornerRadius = 7.0
+        
         
         for view in welcomeStackView.arrangedSubviews {
             view.layer.shadowOffset = CGSize(width: 0, height: 0)
@@ -47,6 +57,7 @@ class WordsmithHomeViewController: UIViewController, WordsmithPageViewController
         profilePicImageView.layer.cornerRadius = profilePicImageView.frame.height / 2
         profilePicImageView.clipsToBounds = true
         
+        addStatObserver()
     }
     
     override func viewDidLayoutSubviews() {
@@ -81,6 +92,7 @@ class WordsmithHomeViewController: UIViewController, WordsmithPageViewController
             
             let views = Bundle.main.loadNibNamed("StatView", owner: nil, options: nil)
             let singleStatView = views?[0] as! StatView
+            singleStatView.accessibilityIdentifier = award.description
             
             self.statView.addSubview(singleStatView)
             
@@ -92,7 +104,7 @@ class WordsmithHomeViewController: UIViewController, WordsmithPageViewController
             let width = (statView.bounds.width / 2) - (horizInterPadding / 2) - leftPadding
             let height = width * 0.75
             
-            let size = CGSize(width: width , height: height)
+            size = CGSize(width: width , height: height)
             
             var x = CGFloat()
             var y = CGFloat()
@@ -137,17 +149,85 @@ class WordsmithHomeViewController: UIViewController, WordsmithPageViewController
     }
     @IBAction func topBarDidPan(_ sender: UIPanGestureRecognizer) {
         let yTouch = sender.location(in: self.view).y
-        let yView = statView.frame.origin.y
-        let diff = yView - yTouch
-        scrollViewHeightConstraint.constant += diff
+        let topHeight = size.height * 2 + topBar.bounds.height * 2
+        let minAlpha: CGFloat = 0.6
+        let maxAlpha: CGFloat = 0.95
+        let alphaDiff = maxAlpha - minAlpha
+        let ratioToFullHeight = scrollViewHeightConstraint.constant / topHeight
         
-        for view in statView.subviews {
-            if view is StatView {
-                view.frame.origin.y += diff
+        switch sender.state {
+        case .began, .possible, .changed:
+            var atMax: Bool = false
+            
+            //Configure alpha for height
+            statView.alpha = (ratioToFullHeight * alphaDiff) / (alphaDiff * 2) + minAlpha
+            
+            let yView = statView.frame.origin.y
+            let diff = yView - yTouch
+            scrollViewHeightConstraint.constant += diff
+            
+            if scrollViewHeightConstraint.constant >= topHeight + 25 {
+                atMax = true
+                sender.state = .ended
+            }
+            if scrollViewHeightConstraint.constant <= topBar.frame.height {
+                atMax = true
+                scrollViewHeightConstraint.constant = topBar.frame.height
+            }
+            if !atMax {
+                for view in statView.subviews {
+                    if view is StatView {
+                        view.frame.origin.y += diff
+                    }
+                }
+            }
+            self.view.layoutIfNeeded()
+        case .ended, .cancelled :
+            let velY = sender.velocity(in: self.view).y
+            let inTopHalf: Bool = scrollViewHeightConstraint.constant > (topHeight / 2)
+            let dirUp: Bool = velY < 0
+            let minUpVel: CGFloat = -500.0
+            let minDownVel = -minUpVel
+            
+            if velY < minUpVel || scrollViewHeightConstraint.constant > topHeight || (inTopHalf && dirUp) {
+                scrollViewHeightConstraint.constant = topHeight
+                UIView.animate(withDuration: 0.3, delay: 0.0, usingSpringWithDamping: 0.4, initialSpringVelocity: 0, options: [], animations: {
+                    self.statView.alpha = maxAlpha
+                    self.view.layoutIfNeeded()
+                }, completion: nil)
+            } else if velY > minDownVel || (!inTopHalf && !dirUp) {
+                scrollViewHeightConstraint.constant = topBar.frame.height
+                UIView.animate(withDuration: 0.3, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: [], animations: {
+                    self.statView.alpha = minAlpha
+                    self.view.layoutIfNeeded()
+                }, completion: nil)
+            }
+        default:
+            break
+        }
+        
+       
+    }
+    
+    func addStatObserver() {
+        print("observed change")
+        let userDBRef = FIRDatabase.database().reference().child("users").child(wordsmithPageVC.signedInUser.uid)
+        userDBRef.observe(.value) { (snapshot: FIRDataSnapshot) in
+            if let val = snapshot.value as? [String:Any] {
+                for view in self.statView.subviews {
+                    print(view.accessibilityIdentifier)
+                    if let id = view.accessibilityIdentifier {
+                        print(val[id.lowercased()])
+                    }
+                    if let statView = view as? StatView, let id = view.accessibilityIdentifier, let stat = val[id.lowercased()] as? Int {
+                        print(stat)
+                        if let text = statView.countLabel.text, stat != Int(text) {
+                            statView.countLabel.text = String(stat)
+                        }
+                    }
+                }
             }
         }
-        print(scrollViewHeightConstraint.constant)
-        self.view.layoutIfNeeded()
     }
     
 }

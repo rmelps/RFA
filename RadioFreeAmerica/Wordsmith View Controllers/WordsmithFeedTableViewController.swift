@@ -522,6 +522,37 @@ class WordsmithFeedTableViewController: UITableViewController {
             }
             if isCommitted {
                 print("committed data")
+                var num = 0
+                
+                if increase {
+                    num += 1
+                } else {
+                    num -= 1
+                }
+                let ref = self.userDBRef.child(track.user)
+                ref.runTransactionBlock({ (data: FIRMutableData) -> FIRTransactionResult in
+                    print("running block")
+                    if var prof = data.value as? [String:Any] {
+                        switch name {
+                        case "downloads":
+                            var dl = prof["downloads"] as? Int ?? 0
+                            dl += num
+                            prof["downloads"] = dl
+                            data.value = prof
+                        case "stars":
+                            var star = prof["stars"] as? Int ?? 0
+                            star += num
+                            prof["stars"] = star
+                            data.value = prof
+                        default:
+                            break
+                        }
+                        print("commiting data: \(name): \(data.value)")
+                        return FIRTransactionResult.success(withValue: data)
+                    }
+                    return FIRTransactionResult.success(withValue: data)
+                })
+                
             } else {
                 print("could not commit data")
             }

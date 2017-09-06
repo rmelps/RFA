@@ -763,15 +763,27 @@
                                     <constraint firstAttribute="width" constant="100" id="GuM-5p-wmY"/>
                                 </constraints>
                             </imageView>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" bouncesZoom="NO" translatesAutoresizingMaskIntoConstraints="NO" id="b1a-l5-kjG">
-                                <rect key="frame" x="16" y="252" width="343" height="385"/>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" alpha="0.59999999999999998" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" bouncesZoom="NO" translatesAutoresizingMaskIntoConstraints="NO" id="b1a-l5-kjG">
+                                <rect key="frame" x="0.0" y="252" width="375" height="385"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="YES" translatesAutoresizingMaskIntoConstraints="NO" id="F3c-7i-KE9">
-                                        <rect key="frame" x="0.0" y="0.0" width="343" height="30"/>
-                                        <color key="backgroundColor" red="0.87450980392156863" green="0.40392156862745099" blue="0.38823529411764707" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="375" height="45"/>
+                                        <subviews>
+                                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="jXI-cr-A72">
+                                                <rect key="frame" x="175" y="10" width="25" height="25"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" secondItem="jXI-cr-A72" secondAttribute="height" multiplier="1:1" id="Njt-pK-aMS"/>
+                                                </constraints>
+                                            </imageView>
+                                        </subviews>
+                                        <color key="backgroundColor" red="0.37570501179999999" green="0.66657312369999999" blue="1" alpha="0.78096931137724546" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <color key="tintColor" white="1" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <gestureRecognizers/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="30" id="Hr7-6L-gVe"/>
+                                            <constraint firstItem="jXI-cr-A72" firstAttribute="top" secondItem="F3c-7i-KE9" secondAttribute="top" constant="10" id="AMR-Bg-ejR"/>
+                                            <constraint firstAttribute="height" constant="45" id="Hr7-6L-gVe"/>
+                                            <constraint firstAttribute="bottom" secondItem="jXI-cr-A72" secondAttribute="bottom" constant="10" id="Pk0-Nf-K1b"/>
+                                            <constraint firstItem="jXI-cr-A72" firstAttribute="centerX" secondItem="F3c-7i-KE9" secondAttribute="centerX" id="sKy-cV-w4T"/>
                                         </constraints>
                                         <connections>
                                             <outletCollection property="gestureRecognizers" destination="Spf-hs-exQ" appends="YES" id="xKA-b8-Ska"/>
@@ -792,17 +804,18 @@
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="YgL-b2-I2t" firstAttribute="leading" secondItem="6km-ac-nr3" secondAttribute="leadingMargin" id="3eP-rf-b2x"/>
+                            <constraint firstAttribute="trailing" secondItem="b1a-l5-kjG" secondAttribute="trailing" id="B67-Jn-WSc"/>
+                            <constraint firstItem="b1a-l5-kjG" firstAttribute="leading" secondItem="6km-ac-nr3" secondAttribute="leading" id="LiK-Nt-3DX"/>
                             <constraint firstItem="7WQ-hG-DEg" firstAttribute="centerX" secondItem="6km-ac-nr3" secondAttribute="centerX" id="MP9-cf-adH"/>
-                            <constraint firstItem="b1a-l5-kjG" firstAttribute="leading" secondItem="6km-ac-nr3" secondAttribute="leadingMargin" id="Rf5-Aa-vaJ"/>
                             <constraint firstItem="2Z1-OV-5gU" firstAttribute="top" secondItem="b1a-l5-kjG" secondAttribute="bottom" constant="30" id="SrG-nj-Ssh"/>
                             <constraint firstItem="YgL-b2-I2t" firstAttribute="top" secondItem="BEo-9I-bRg" secondAttribute="bottom" constant="20" id="Uc6-pA-Glc"/>
-                            <constraint firstItem="b1a-l5-kjG" firstAttribute="trailing" secondItem="6km-ac-nr3" secondAttribute="trailingMargin" id="Y5V-C4-xZa"/>
                             <constraint firstAttribute="trailingMargin" secondItem="YgL-b2-I2t" secondAttribute="trailing" id="ZwR-im-a89"/>
                             <constraint firstItem="YgL-b2-I2t" firstAttribute="centerX" secondItem="6km-ac-nr3" secondAttribute="centerX" id="hgL-6o-Vht"/>
                             <constraint firstItem="7WQ-hG-DEg" firstAttribute="top" secondItem="YgL-b2-I2t" secondAttribute="bottom" constant="5" id="zUv-2Y-slA"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="menuBarIconView" destination="jXI-cr-A72" id="jhj-pR-72F"/>
                         <outlet property="profilePicImageView" destination="7WQ-hG-DEg" id="Myb-nJ-6de"/>
                         <outlet property="scrollViewHeightConstraint" destination="3YH-P6-eEL" id="pZv-9D-M6V"/>
                         <outlet property="statView" destination="b1a-l5-kjG" id="RJa-Qs-FjN"/>

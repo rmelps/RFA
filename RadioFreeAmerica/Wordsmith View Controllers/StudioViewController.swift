@@ -996,7 +996,7 @@ class StudioViewController: UIViewController {
         let duration1: CMTime = assetTrack1.timeRange.duration
         let duration2: CMTime = assetTrack2.timeRange.duration
  
-        //TODO: Improve cropping accuracy
+        //TODO: Improve cropping accuracy, may have to do with rounding of songRangeScrubber values (casting from Double to Int)
         let sampleRate: Double = 44100
         let diff = Int64((songRangeScrubber.upperValue - songRangeScrubber.lowerValue) * sampleRate)
         
