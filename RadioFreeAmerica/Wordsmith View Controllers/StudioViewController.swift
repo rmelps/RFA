@@ -36,7 +36,7 @@ class StudioViewController: UIViewController {
     @IBOutlet weak var confirmAndUploadButton: UIButton!
     @IBOutlet weak var enterTitleTextField: UITextField!
     @IBOutlet weak var descriptionTextView: UITextView!
-    var textViewDelegate = StudioTextViewDelegate()
+    var textViewDelegate = TextViewDelegate()
     var textFieldDelegate = StudioTextFieldDelegate()
     
     // Final Song Container View fields

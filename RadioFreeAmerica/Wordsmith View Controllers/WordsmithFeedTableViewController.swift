@@ -303,7 +303,8 @@ class WordsmithFeedTableViewController: UITableViewController {
         }
         
         // Query new tracks if the user scrolls a certain distance below final cell
-        let bottomCellRectInTable = tableView.rectForRow(at: IndexPath(row: tracks.count - 1, section: 0))
+        let row = tracks.count - 1
+        let bottomCellRectInTable = tableView.rectForRow(at: IndexPath(row: row, section: 0))
         let bottomCellYPosInTable = bottomCellRectInTable.origin
         let bottomCellYPosInSuper = tableView.convert(bottomCellYPosInTable, to: parentVC.view)
         

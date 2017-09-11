@@ -13,6 +13,7 @@ class WordsmithHomeViewController: UIViewController, WordsmithPageViewController
     weak var wordsmithPageVC: WordsmithPageViewController!
     
     
+    @IBOutlet weak var settingsButton: UIButton!
     @IBOutlet weak var menuBarIconView: UIImageView!
     @IBOutlet weak var topBar: UIView!
     @IBOutlet weak var welcomeStackView: UIStackView!
@@ -34,6 +35,7 @@ class WordsmithHomeViewController: UIViewController, WordsmithPageViewController
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.modalPresentationStyle = .currentContext
         
         userNameLabel.text = firstName
         profilePicImageView.image = image
@@ -147,6 +149,11 @@ class WordsmithHomeViewController: UIViewController, WordsmithPageViewController
         }
         loadLatch = true
     }
+    @IBAction func settingsButtonDidTouchUp(_ sender: UIButton) {
+        self.performSegue(withIdentifier: "presentSettingsSegue", sender: self)
+    }
+    
+    
     @IBAction func topBarDidPan(_ sender: UIPanGestureRecognizer) {
         let yTouch = sender.location(in: self.view).y
         let topHeight = size.height * 2 + topBar.bounds.height * 2
@@ -210,23 +217,35 @@ class WordsmithHomeViewController: UIViewController, WordsmithPageViewController
     }
     
     func addStatObserver() {
-        print("observed change")
         let userDBRef = FIRDatabase.database().reference().child("users").child(wordsmithPageVC.signedInUser.uid)
         userDBRef.observe(.value) { (snapshot: FIRDataSnapshot) in
             if let val = snapshot.value as? [String:Any] {
                 for view in self.statView.subviews {
-                    print(view.accessibilityIdentifier)
-                    if let id = view.accessibilityIdentifier {
-                        print(val[id.lowercased()])
-                    }
                     if let statView = view as? StatView, let id = view.accessibilityIdentifier, let stat = val[id.lowercased()] as? Int {
-                        print(stat)
                         if let text = statView.countLabel.text, stat != Int(text) {
                             statView.countLabel.text = String(stat)
                         }
                     }
                 }
             }
+        }
+    }
+    
+    //MARK: - Navigation
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        switch segue.identifier!{
+        case "presentSettingsSegue":
+            let vc = segue.destination as! SettingsViewController
+            let user = wordsmithPageVC.signedInUser
+            if let image = self.profilePicImageView.image {
+                vc.profileImage = image
+            }
+            vc.userName = user!.name
+            vc.tag = user!.tagLine
+            vc.bio = user!.biography
+        default:
+            break
         }
     }
     

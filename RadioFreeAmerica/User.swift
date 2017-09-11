@@ -14,6 +14,8 @@ struct User {
     var uid: String!
     var name: String!
     var photoPath: String?
+    var tagLine: String
+    var biography: String
     var stars: Stat!
     var knowledge: Stat!
     var crowns: Stat!
@@ -38,6 +40,18 @@ struct User {
             }
         } else {
             self.name = ""
+        }
+        
+        if let tagLine = snapShotValue?["tagLine"] as? String {
+            self.tagLine = tagLine
+        } else {
+            self.tagLine = ""
+        }
+        
+        if let biography = snapShotValue?["biography"] as? String {
+            self.biography = biography
+        } else {
+            self.biography = ""
         }
         
         if let photoPath = snapShotValue?["photoPath"] as? String {
@@ -85,6 +99,9 @@ struct User {
         self.crowns = Stat(description: "Crowns", value: 0)
         self.downloads = Stat(description: "Downloads", value: 0)
         
+        self.tagLine = ""
+        self.biography = ""
+        
         if let photoPath = userData.photoURL {
             self.photoPath = String(describing: photoPath)
         }
@@ -101,6 +118,9 @@ struct User {
         self.crowns = Stat(description: "Crowns", value: 0)
         self.downloads = Stat(description: "Downloads", value: 0)
         
+        self.tagLine = ""
+        self.biography = ""
+        
         if let photoPath = photoPath {
             self.photoPath = photoPath
         }
@@ -108,6 +128,15 @@ struct User {
     
     func toAny() -> Any {
         
-        return ["uid":uid, "name":name, "photoPath": photoPath!, "knowledge": knowledge.value, "stars": stars.value, "crowns": crowns.value, "downloads": downloads.value]
+        return ["uid":uid,
+                "name":name,
+                "tagLine": tagLine,
+                "biography": biography,
+                "photoPath": photoPath!,
+                "knowledge": knowledge.value,
+                "stars": stars.value,
+                "crowns": crowns.value,
+                "downloads": downloads.value
+        ]
     }
 }
