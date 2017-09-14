@@ -28,6 +28,7 @@
 		951D22BA1F0AF97B005264A7 /* StatView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 951D22B91F0AF97B005264A7 /* StatView.xib */; };
 		951D22BC1F0AFC41005264A7 /* StatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951D22BB1F0AFC41005264A7 /* StatView.swift */; };
 		951D22BE1F0B10D6005264A7 /* Stat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951D22BD1F0B10D6005264A7 /* Stat.swift */; };
+		952278E01F689BBA0081F51B /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952278DF1F689BBA0081F51B /* Settings.swift */; };
 		95265BAE1F0D88E700F44E05 /* WordsmithChoiceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95265BAD1F0D88E700F44E05 /* WordsmithChoiceViewController.swift */; };
 		9535E3A51F14581B0025531E /* WordsmithPageViewControllerChild.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9535E3A41F14581B0025531E /* WordsmithPageViewControllerChild.swift */; };
 		9535E3AA1F145BFC0025531E /* TrackInfoView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9535E3A91F145BFC0025531E /* TrackInfoView.xib */; };
@@ -81,6 +82,7 @@
 		951D22B91F0AF97B005264A7 /* StatView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = StatView.xib; sourceTree = "<group>"; };
 		951D22BB1F0AFC41005264A7 /* StatView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatView.swift; sourceTree = "<group>"; };
 		951D22BD1F0B10D6005264A7 /* Stat.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stat.swift; sourceTree = "<group>"; };
+		952278DF1F689BBA0081F51B /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		95265BAD1F0D88E700F44E05 /* WordsmithChoiceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordsmithChoiceViewController.swift; sourceTree = "<group>"; };
 		9535E3A41F14581B0025531E /* WordsmithPageViewControllerChild.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordsmithPageViewControllerChild.swift; sourceTree = "<group>"; };
 		9535E3A91F145BFC0025531E /* TrackInfoView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TrackInfoView.xib; sourceTree = "<group>"; };
@@ -164,6 +166,7 @@
 			children = (
 				951D22AC1EFA09FB005264A7 /* User.swift */,
 				951D22AE1EFA0A24005264A7 /* Track.swift */,
+				952278DF1F689BBA0081F51B /* Settings.swift */,
 				951D22BD1F0B10D6005264A7 /* Stat.swift */,
 				9535E3A41F14581B0025531E /* WordsmithPageViewControllerChild.swift */,
 			);
@@ -373,6 +376,7 @@
 				951D22A01EF492C5005264A7 /* MenuButton.swift in Sources */,
 				951D22A41EF9E442005264A7 /* WordsmithPageViewController.swift in Sources */,
 				95E5F8601F64668100DE84DC /* SettingsViewController.swift in Sources */,
+				952278E01F689BBA0081F51B /* Settings.swift in Sources */,
 				95A200971F3933D900FDB910 /* StudioTextFieldDelegate.swift in Sources */,
 				9535E3A51F14581B0025531E /* WordsmithPageViewControllerChild.swift in Sources */,
 			);

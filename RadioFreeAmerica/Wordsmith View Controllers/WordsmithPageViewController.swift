@@ -21,7 +21,6 @@ class WordsmithPageViewController: UIPageViewController, UIPageViewControllerDat
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         signedInUser = (UIApplication.shared.delegate as! AppDelegate).signedInUser!
         
         orderedViewControllers = [
@@ -51,6 +50,7 @@ class WordsmithPageViewController: UIPageViewController, UIPageViewControllerDat
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        signedInUser = (UIApplication.shared.delegate as! AppDelegate).signedInUser!
         
         // Insert background color gradient
         let gradient = AppDelegate.gradient!

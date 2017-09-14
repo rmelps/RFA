@@ -7,6 +7,9 @@
 //
 
 import UIKit
+import FirebaseDatabase
+import FirebaseStorage
+import FirebaseAuth
 
 class SettingsViewController: UIViewController {
     // View containers
@@ -27,6 +30,7 @@ class SettingsViewController: UIViewController {
     var userName: String!
     var tag: String!
     var bio: String!
+    var user: User!
     
     // Local Settings stack view contents
     @IBOutlet weak var localSettingsStackView: UIStackView!
@@ -40,6 +44,17 @@ class SettingsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // Check the current system settings
+        if let settings = Settings.currentSettings {
+            // Configure all fields reliant upon current settings
+            flagsSwitch.isOn = settings.isBlocking
+            thresholdStepper.value = Double(settings.flagThresh)
+            thresholdNumberLabel.text = String(thresholdStepper.value)
+        } else {
+            print("User has not configured settings")
+        }
+        
         
         profPicWidthCon.constant = profileSettingsStackView.bounds.width / 3
         
@@ -99,8 +114,94 @@ class SettingsViewController: UIViewController {
     //MARK: - Bar button actions
     
     @IBAction func cancelBarButtonTapped(_ sender: UIBarButtonItem) {
+        self.view.endEditing(true)
+        self.dismiss(animated: true, completion: nil)
     }
+    
     @IBAction func doneBarButtonTapped(_ sender: UIBarButtonItem) {
+        var newName = self.userName!
+        let newBio = self.bioTextView.text!
+        var newTag = self.tag!
+        let newImage = self.profileImage!
+        
+        // Verify basic user name config before submitting changes, then update newName if passes. Else, leave new name as current username
+        if let text = userNameTextField.text, !text.isEmpty {
+            guard Set(text.characters).count > 1 else {
+                AppDelegate.presentErrorAlert(withMessage: "You must enter a valid user name!", fromViewController: self)
+                return
+            }
+            newName = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+        
+        if let text = taglineTextField.text, !text.isEmpty {
+            newTag = text
+        }
+        
+        AppDelegate.nameDBRef.observeSingleEvent(of: .value, with: { (snapshot: FIRDataSnapshot) in
+            
+            // Ensure that no one has already claimed this userName
+            let value = snapshot.value as? [String: String]
+            let claimedUID = value?[newName]
+            
+            if let claimed = claimedUID, claimed != self.user.uid {
+                AppDelegate.presentErrorAlert(withMessage: "This user name is already taken!", fromViewController: self)
+                return
+            }
+            // Update the names dictionary first
+            AppDelegate.nameDBRef.updateChildValues([newName: self.user.uid] as [AnyHashable : Any])
+            AppDelegate.nameDBRef.updateChildValues([self.user.name: nil] as [AnyHashable : Any?])
+            
+            
+            // Now update the profile picture, if neccesary.
+            self.updateProfilePicture(withImage: newImage, compressionRatio: 0.65, completion: { (error: Error?) in
+                if let error = error {
+                    AppDelegate.presentErrorAlert(withMessage: "There was an error updating the profile picture: \(error.localizedDescription)", fromViewController: self)
+                    return
+                }
+                // Finally, update the user profile
+                AppDelegate.userDBRef.child(self.user.uid).observeSingleEvent(of: .value, with: { (snapshot: FIRDataSnapshot) in
+                    if var value = snapshot.value as? [String: Any] {
+                        value["name"] = newName
+                        value["tagLine"] = newTag
+                        value["biography"] = newBio
+                        
+                        AppDelegate.userDBRef.child(self.user.uid).setValue(value as Any)
+                        let appDel = UIApplication.shared.delegate as! AppDelegate
+                        if let firUser = FIRAuth.auth()?.currentUser {
+                            appDel.signedInUser = User(userData: firUser, snapShot: snapshot, picURL: value["photoUrl"] as? String, nameFromProvider: nil)
+                        }
+                        self.dismiss(animated: true, completion: nil)
+                    }
+                })
+                
+            })
+
+        })
+        
+        // Set Local Settings Values
+        let settings = Settings(blocking: flagsSwitch.isOn, threshold: Int(thresholdStepper.value))
+        settings.updateToCurrentSettings()
+        self.view.endEditing(true)
+    }
+    
+    func updateProfilePicture(withImage image: UIImage, compressionRatio comp: CGFloat, completion: @escaping ((Error?) -> Void)) {
+        
+        guard let profPic = profilePictureImageView.image, image != profPic else {
+            // existing profile pic and the profile pic chosen are the same, do not update picture
+            print("pictures are the same")
+            completion(nil)
+            return
+        }
+        
+        if let data = UIImageJPEGRepresentation(image, comp) {
+            AppDelegate.profPicStorRef.child(user.uid).put(data, metadata: nil) { (meta: FIRStorageMetadata?, error: Error?) in
+                if let error = error {
+                    completion(error)
+                } else {
+                    completion(nil)
+                }
+            }
+        }
     }
     
 

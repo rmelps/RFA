@@ -65,6 +65,7 @@ class WordsmithFeedTableViewController: UITableViewController {
         
         if parentVC.fromStudio {
             loadFullTrackSuite(withActivityIndicator: true, completion: nil)
+            parentVC.fromStudio = false
         }
         
         if let row = selectedRow {

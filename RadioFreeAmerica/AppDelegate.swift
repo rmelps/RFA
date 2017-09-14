@@ -21,6 +21,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
     var signedInProfileImage: UIImage?
     var signedInUser: User?
     static var gradient: CAGradientLayer?
+    static let userDBRef = FIRDatabase.database().reference().child("users")
+    static let profPicStorRef = FIRStorage.storage().reference().child("profilePics")
+    static let nameDBRef = FIRDatabase.database().reference().child("names")
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
@@ -114,6 +117,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
                 
                 let userDBRef = FIRDatabase.database().reference().child("users")
                 let profPicStorRef = FIRStorage.storage().reference().child("profilePics")
+                let nameBDRef = FIRDatabase.database().reference().child("names")
                 
                 let thisUserDBRef = userDBRef.child(firUser.uid)
                 
@@ -122,24 +126,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
                     let profPic = String(describing: profile.photoURL!)
                     
                     userDBRef.observeSingleEvent(of: .value, with: { (snapShot) in
-                    
                         
                         if snapShot.hasChild(firUser.uid) {
                             let snap = snapShot.childSnapshot(forPath: firUser.uid)
                             let snapVal = snap.value as? [String: Any]
                             
-                            let userProf = User(userData: firUser, snapShot: snap, picURL: profPic, nameFromProvider: profile.displayName)
+                            let userProf = User(userData: firUser, snapShot: snap, picURL: profPic, nameFromProvider: nil)
                             self.signedInUser = userProf
                             
                             if let url = snapVal?["photoPath"] as? String {
                                 print("found URL")
                                 
-                                
+                                /*
                                 if url != profPic {
                                     print("url's are not the same")
                                     self.fetchAndSaveProfileImage(url: profile.photoURL!, storeRef: profPicStorRef, uid: firUser.uid)
                                 } else {
-                                    
+                                */
                                     let thisProfPicStoreRef = profPicStorRef.child(firUser.uid)
                                     
                                     thisProfPicStoreRef.data(withMaxSize: 5 * 1024 * 1024, completion: { (data, error) in
@@ -154,15 +157,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
                                             self.signedInProfileImage = UIImage(data: data!)
                                         }
                                     })
-                                }
+                             //   }
                                 
-                                thisUserDBRef.setValue(userProf.toAny())
+                                // thisUserDBRef.setValue(userProf.toAny())
                             }
                         } else {
                             let userProf = User(uid: firUser.uid, name: profile.displayName!, photoPath: profPic)
                             self.signedInUser = userProf
                             self.fetchAndSaveProfileImage(url: profile.photoURL!, storeRef: profPicStorRef, uid: firUser.uid)
                             thisUserDBRef.setValue(userProf.toAny())
+                            nameBDRef.updateChildValues([userProf.name: userProf.uid] as [AnyHashable : Any])
                         }
                         
                     })

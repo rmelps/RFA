@@ -244,6 +244,7 @@ class WordsmithHomeViewController: UIViewController, WordsmithPageViewController
             vc.userName = user!.name
             vc.tag = user!.tagLine
             vc.bio = user!.biography
+            vc.user = user!
         default:
             break
         }

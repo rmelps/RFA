@@ -189,18 +189,18 @@ class MainViewController: UIViewController, GIDSignInUIDelegate {
                                 let snap = snapShot.childSnapshot(forPath: firUser.uid)
                                 let snapVal = snap.value as? [String: Any]
                                 
-                                let userProf = User(userData: firUser, snapShot: snap, picURL: profPic, nameFromProvider: profile.displayName)
+                                let userProf = User(userData: firUser, snapShot: snap, picURL: profPic, nameFromProvider: nil)
                                 appDelegate.signedInUser = userProf
                                 
                                 if let url = snapVal?["photoPath"] as? String {
                                     print("found URL")
                                     
-                                    
+                                    /*
                                     if url != profPic {
                                         print("url's are not the same")
                                         appDelegate.fetchAndSaveProfileImage(url: profile.photoURL!, storeRef: profPicStorRef, uid: firUser.uid)
                                     } else {
-                                        
+                                    */
                                         let thisProfPicStoreRef = profPicStorRef.child(firUser.uid)
                                         
                                         thisProfPicStoreRef.data(withMaxSize: 5 * 1024 * 1024, completion: { (data, error) in
@@ -215,9 +215,9 @@ class MainViewController: UIViewController, GIDSignInUIDelegate {
                                                 appDelegate.signedInProfileImage = UIImage(data: data!)
                                             }
                                         })
-                                    }
+                              //      }
                                     
-                                    thisUserDBRef.setValue(userProf.toAny())
+                                    // thisUserDBRef.setValue(userProf.toAny())
                                 }
                             } else {
                                 let userProf = User(uid: firUser.uid, name: profile.displayName!, photoPath: profPic)
