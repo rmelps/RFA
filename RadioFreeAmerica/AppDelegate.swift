@@ -19,7 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
 
     var window: UIWindow?
     var signedInProfileImage: UIImage?
-    var signedInUser: User?
+    static var signedInUser: User?
     static var gradient: CAGradientLayer?
     static let userDBRef = FIRDatabase.database().reference().child("users")
     static let profPicStorRef = FIRStorage.storage().reference().child("profilePics")
@@ -132,7 +132,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
                             let snapVal = snap.value as? [String: Any]
                             
                             let userProf = User(userData: firUser, snapShot: snap, picURL: profPic, nameFromProvider: nil)
-                            self.signedInUser = userProf
+                            AppDelegate.signedInUser = userProf
                             
                             if let url = snapVal?["photoPath"] as? String {
                                 print("found URL")
@@ -163,7 +163,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
                             }
                         } else {
                             let userProf = User(uid: firUser.uid, name: profile.displayName!, photoPath: profPic)
-                            self.signedInUser = userProf
+                            AppDelegate.signedInUser = userProf
                             self.fetchAndSaveProfileImage(url: profile.photoURL!, storeRef: profPicStorRef, uid: firUser.uid)
                             thisUserDBRef.setValue(userProf.toAny())
                             nameBDRef.updateChildValues([userProf.name: userProf.uid] as [AnyHashable : Any])

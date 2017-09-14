@@ -526,8 +526,7 @@ class StudioViewController: UIViewController {
     }
     
     @IBAction func finalSaveButtonTapped(_ sender: UIButton) {
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        let user = appDelegate.signedInUser!
+        let user = AppDelegate.signedInUser!
         
         finalPlayer.stop()
         
@@ -685,7 +684,7 @@ class StudioViewController: UIViewController {
         let activityIndicatorView = ActivityIndicatorView(withProgress: true)
         self.view.addSubview(activityIndicatorView)
         
-        let user = (UIApplication.shared.delegate as! AppDelegate).signedInUser!
+        let user = AppDelegate.signedInUser!
         
         // Point to the destination where did upload will be stored in the database
         let uploadDBRef = FIRDatabase.database().reference(withPath: "feed/\(genre.rawValue.lowercased())").childByAutoId()

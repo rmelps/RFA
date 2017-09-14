@@ -190,7 +190,7 @@ class MainViewController: UIViewController, GIDSignInUIDelegate {
                                 let snapVal = snap.value as? [String: Any]
                                 
                                 let userProf = User(userData: firUser, snapShot: snap, picURL: profPic, nameFromProvider: nil)
-                                appDelegate.signedInUser = userProf
+                                AppDelegate.signedInUser = userProf
                                 
                                 if let url = snapVal?["photoPath"] as? String {
                                     print("found URL")
@@ -221,7 +221,7 @@ class MainViewController: UIViewController, GIDSignInUIDelegate {
                                 }
                             } else {
                                 let userProf = User(uid: firUser.uid, name: profile.displayName!, photoPath: profPic)
-                                appDelegate.signedInUser = userProf
+                                AppDelegate.signedInUser = userProf
                                 appDelegate.fetchAndSaveProfileImage(url: profile.photoURL!, storeRef: profPicStorRef, uid: firUser.uid)
                                 thisUserDBRef.setValue(userProf.toAny())
                             }
@@ -276,7 +276,7 @@ class MainViewController: UIViewController, GIDSignInUIDelegate {
                                     
                                     let profPic = profile.photoURL!
                                     let userProf = User(uid: firUser.uid, name: profile.displayName!, photoPath: String(describing: profile.photoURL!))
-                                    appDelegate.signedInUser = userProf
+                                    AppDelegate.signedInUser = userProf
                                     
                                     self.userDBRef.observeSingleEvent(of: .value, with: { (snapShot) in
                                         

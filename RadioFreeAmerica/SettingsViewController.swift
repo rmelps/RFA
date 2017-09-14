@@ -147,10 +147,11 @@ class SettingsViewController: UIViewController {
                 AppDelegate.presentErrorAlert(withMessage: "This user name is already taken!", fromViewController: self)
                 return
             }
-            // Update the names dictionary first
-            AppDelegate.nameDBRef.updateChildValues([newName: self.user.uid] as [AnyHashable : Any])
-            AppDelegate.nameDBRef.updateChildValues([self.user.name: nil] as [AnyHashable : Any?])
-            
+            // Update the names dictionary first, if the name is changing
+            if newName != self.userName {
+                AppDelegate.nameDBRef.updateChildValues([self.user.name: NSNull()] as [AnyHashable : Any])
+                AppDelegate.nameDBRef.updateChildValues([newName: self.user.uid] as [AnyHashable : Any])
+            }
             
             // Now update the profile picture, if neccesary.
             self.updateProfilePicture(withImage: newImage, compressionRatio: 0.65, completion: { (error: Error?) in
@@ -165,15 +166,21 @@ class SettingsViewController: UIViewController {
                         value["tagLine"] = newTag
                         value["biography"] = newBio
                         
-                        AppDelegate.userDBRef.child(self.user.uid).setValue(value as Any)
-                        let appDel = UIApplication.shared.delegate as! AppDelegate
-                        if let firUser = FIRAuth.auth()?.currentUser {
-                            appDel.signedInUser = User(userData: firUser, snapShot: snapshot, picURL: value["photoUrl"] as? String, nameFromProvider: nil)
-                        }
+                        AppDelegate.userDBRef.child(self.user.uid).setValue(value as Any, withCompletionBlock: { (error: Error?, ref: FIRDatabaseReference) in
+                            if let error = error {
+                                AppDelegate.presentErrorAlert(withMessage: "Error updating user profile!", fromViewController: self)
+                                return
+                            }
+                            ref.observeSingleEvent(of: .value, with: { (snapshot:FIRDataSnapshot) in
+                                let value = snapshot.value as? [String: Any]
+                                if let firUser = FIRAuth.auth()?.currentUser {
+                                    AppDelegate.signedInUser = User(userData: firUser, snapShot: snapshot, picURL: value?["photoUrl"] as? String, nameFromProvider: nil)
+                                }
+                            })
+                        })
                         self.dismiss(animated: true, completion: nil)
                     }
                 })
-                
             })
 
         })
