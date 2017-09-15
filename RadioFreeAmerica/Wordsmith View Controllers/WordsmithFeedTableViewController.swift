@@ -120,10 +120,13 @@ class WordsmithFeedTableViewController: UITableViewController {
         
         let photoRef = FIRStorage.storage().reference().child("profilePics/\(trackForCell.user)")
         let fileManager = FileManager.default
-        
-        let url = fileManager.temporaryDirectory.appendingPathComponent(trackForCell.user)
+        let base = fileManager.temporaryDirectory.appendingPathComponent("profPics")
+        let url = base.appendingPathComponent(trackForCell.user)
         if fileManager.fileExists(atPath: url.path) {
+            
             let path = url.path
+            print(fileManager.temporaryDirectory.path)
+            print(path)
             if let data = fileManager.contents(atPath: path) {
                 cell.profilePic.image = UIImage(data: data)
             }

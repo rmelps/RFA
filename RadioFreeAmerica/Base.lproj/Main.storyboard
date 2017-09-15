@@ -798,7 +798,7 @@
                                                         <rect key="frame" x="0.0" y="173.5" width="359" height="30"/>
                                                         <nil key="textColor"/>
                                                         <fontDescription key="fontDescription" name="GillSans-LightItalic" family="Gill Sans" pointSize="15"/>
-                                                        <textInputTraits key="textInputTraits"/>
+                                                        <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="done" enablesReturnKeyAutomatically="YES" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no"/>
                                                     </textField>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Tagline" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WkA-Ko-reG">
                                                         <rect key="frame" x="0.0" y="206.5" width="359" height="16.5"/>
@@ -810,7 +810,7 @@
                                                         <rect key="frame" x="0.0" y="226" width="359" height="30"/>
                                                         <nil key="textColor"/>
                                                         <fontDescription key="fontDescription" name="GillSans-LightItalic" family="Gill Sans" pointSize="15"/>
-                                                        <textInputTraits key="textInputTraits"/>
+                                                        <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="done" enablesReturnKeyAutomatically="YES" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no"/>
                                                     </textField>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Bio" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bVt-1r-4Xj">
                                                         <rect key="frame" x="0.0" y="259" width="359" height="16.5"/>
@@ -818,12 +818,12 @@
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
-                                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" verticalHuggingPriority="248" verticalCompressionResistancePriority="747" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="4Gy-qh-wlK">
+                                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" verticalHuggingPriority="248" verticalCompressionResistancePriority="747" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="4Gy-qh-wlK">
                                                         <rect key="frame" x="0.0" y="278.5" width="359" height="171.5"/>
                                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                         <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
                                                         <fontDescription key="fontDescription" name="GillSans-Italic" family="Gill Sans" pointSize="14"/>
-                                                        <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                                        <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="done" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no"/>
                                                     </textView>
                                                 </subviews>
                                                 <color key="backgroundColor" red="0.1647058824" green="0.82735210560000005" blue="0.87843137250000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

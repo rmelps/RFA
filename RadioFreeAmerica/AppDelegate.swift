@@ -46,6 +46,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
     func applicationDidEnterBackground(_ application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+        let profPicDir = FileManager.default.temporaryDirectory.appendingPathComponent("profPics")
+        
+        do{
+            try FileManager.default.removeItem(at: profPicDir)
+        } catch {
+            print("could not remove dir: \(error.localizedDescription)")
+        }
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {

@@ -41,6 +41,12 @@
 	<string>RFA</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>RFA wants to access your microphone so that you may record your own freestyles</string>
+	<key>NSCameraUsageDescription</key>
+	<string>RFA would like to access your camera so that you may update your profile picture</string>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>RFA would like to access your photo library so that you may update your profile picture</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>RFA would like to access your photo library so that you may update your profile picture</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>fbapi</string>

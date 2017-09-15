@@ -11,7 +11,7 @@ import FirebaseDatabase
 import FirebaseStorage
 import FirebaseAuth
 
-class SettingsViewController: UIViewController {
+class SettingsViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     // View containers
     @IBOutlet weak var fullContentView: UIView!
     @IBOutlet weak var profileSettingsView: UIView!
@@ -50,7 +50,7 @@ class SettingsViewController: UIViewController {
             // Configure all fields reliant upon current settings
             flagsSwitch.isOn = settings.isBlocking
             thresholdStepper.value = Double(settings.flagThresh)
-            thresholdNumberLabel.text = String(thresholdStepper.value)
+            thresholdNumberLabel.text = String(Int(thresholdStepper.value))
         } else {
             print("User has not configured settings")
         }
@@ -94,6 +94,40 @@ class SettingsViewController: UIViewController {
     //MARK: - View actions
     
     @IBAction func changePictureButtonDidTapUp(_ sender: UIButton) {
+        let picker = UIImagePickerController()
+        picker.delegate = self
+        picker.allowsEditing = true
+        var mediaTypes = [(String,String, UIImagePickerControllerSourceType)]()
+        if UIImagePickerController.isSourceTypeAvailable(.camera) {
+            let imageCamera = UIImagePickerController.availableMediaTypes(for: .camera)![0]
+            let source = UIImagePickerControllerSourceType.camera
+            mediaTypes.append(("Camera", imageCamera, source))
+        }
+        if UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum) {
+            let savedImages = UIImagePickerController.availableMediaTypes(for: .savedPhotosAlbum)![0]
+            let source = UIImagePickerControllerSourceType.savedPhotosAlbum
+            mediaTypes.append(("Photo Album", savedImages, source))
+        }
+        guard !mediaTypes.isEmpty else {
+            AppDelegate.presentErrorAlert(withMessage: "No place to retrieve photos on this device!", fromViewController: self)
+            return
+        }
+        
+        let actionSheet = UIAlertController(title: "Choose an image source", message: nil, preferredStyle: .actionSheet)
+        
+        for (name, type, source) in mediaTypes {
+            let action = UIAlertAction(title: name, style: .default, handler: { (action: UIAlertAction) in
+                picker.mediaTypes = [type]
+                picker.sourceType = source
+                self.present(picker, animated: true, completion: nil)
+            })
+            actionSheet.addAction(action)
+        }
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (action: UIAlertAction) in
+            actionSheet.dismiss(animated: true, completion: nil)
+        }
+        actionSheet.addAction(cancelAction)
+        self.present(actionSheet, animated: true, completion: nil)
         
     }
     @IBAction func flagSwitchDidChangeValue(_ sender: UISwitch) {
@@ -111,6 +145,20 @@ class SettingsViewController: UIViewController {
         thresholdNumberLabel.text = string
     }
     
+    //MARK: - UIImagePickerController Delegate
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true, completion: nil)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        if let image = info[UIImagePickerControllerEditedImage] as? UIImage {
+            profilePictureImageView.image = image
+        } else{
+            AppDelegate.presentErrorAlert(withMessage: "Could not use image!", fromViewController: self)
+        }
+        picker.dismiss(animated: true, completion: nil)
+    }
+    
     //MARK: - Bar button actions
     
     @IBAction func cancelBarButtonTapped(_ sender: UIBarButtonItem) {
@@ -119,15 +167,20 @@ class SettingsViewController: UIViewController {
     }
     
     @IBAction func doneBarButtonTapped(_ sender: UIBarButtonItem) {
+        
         var newName = self.userName!
         let newBio = self.bioTextView.text!
         var newTag = self.tag!
-        let newImage = self.profileImage!
+        let newImage = self.profilePictureImageView.image!
+        
+        let activityIndicator = ActivityIndicatorView(withProgress: false)
+        self.view.addSubview(activityIndicator)
         
         // Verify basic user name config before submitting changes, then update newName if passes. Else, leave new name as current username
         if let text = userNameTextField.text, !text.isEmpty {
             guard Set(text.characters).count > 1 else {
                 AppDelegate.presentErrorAlert(withMessage: "You must enter a valid user name!", fromViewController: self)
+                activityIndicator.removeFromSuperview()
                 return
             }
             newName = text.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -145,6 +198,7 @@ class SettingsViewController: UIViewController {
             
             if let claimed = claimedUID, claimed != self.user.uid {
                 AppDelegate.presentErrorAlert(withMessage: "This user name is already taken!", fromViewController: self)
+                activityIndicator.removeFromSuperview()
                 return
             }
             // Update the names dictionary first, if the name is changing
@@ -157,6 +211,7 @@ class SettingsViewController: UIViewController {
             self.updateProfilePicture(withImage: newImage, compressionRatio: 0.65, completion: { (error: Error?) in
                 if let error = error {
                     AppDelegate.presentErrorAlert(withMessage: "There was an error updating the profile picture: \(error.localizedDescription)", fromViewController: self)
+                    activityIndicator.removeFromSuperview()
                     return
                 }
                 // Finally, update the user profile
@@ -169,6 +224,7 @@ class SettingsViewController: UIViewController {
                         AppDelegate.userDBRef.child(self.user.uid).setValue(value as Any, withCompletionBlock: { (error: Error?, ref: FIRDatabaseReference) in
                             if let error = error {
                                 AppDelegate.presentErrorAlert(withMessage: "Error updating user profile!", fromViewController: self)
+                                activityIndicator.removeFromSuperview()
                                 return
                             }
                             ref.observeSingleEvent(of: .value, with: { (snapshot:FIRDataSnapshot) in
@@ -188,12 +244,13 @@ class SettingsViewController: UIViewController {
         // Set Local Settings Values
         let settings = Settings(blocking: flagsSwitch.isOn, threshold: Int(thresholdStepper.value))
         settings.updateToCurrentSettings()
+        activityIndicator.removeFromSuperview()
         self.view.endEditing(true)
     }
     
     func updateProfilePicture(withImage image: UIImage, compressionRatio comp: CGFloat, completion: @escaping ((Error?) -> Void)) {
         
-        guard let profPic = profilePictureImageView.image, image != profPic else {
+        guard let profPic = profileImage, image != profPic else {
             // existing profile pic and the profile pic chosen are the same, do not update picture
             print("pictures are the same")
             completion(nil)
