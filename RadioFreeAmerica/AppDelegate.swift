@@ -18,7 +18,7 @@ import GoogleSignIn
 class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
 
     var window: UIWindow?
-    var signedInProfileImage: UIImage?
+    static var signedInProfileImage: UIImage?
     static var signedInUser: User?
     static var gradient: CAGradientLayer?
     static let userDBRef = FIRDatabase.database().reference().child("users")
@@ -46,13 +46,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
     func applicationDidEnterBackground(_ application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
-        let profPicDir = FileManager.default.temporaryDirectory.appendingPathComponent("profPics")
-        
-        do{
-            try FileManager.default.removeItem(at: profPicDir)
-        } catch {
-            print("could not remove dir: \(error.localizedDescription)")
-        }
+        AppDelegate.clearProfPicTempDir()
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
@@ -161,7 +155,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
                                         
                                         if error == nil, data != nil {
                                             print("retrieved image data")
-                                            self.signedInProfileImage = UIImage(data: data!)
+                                            AppDelegate.signedInProfileImage = UIImage(data: data!)
                                         }
                                     })
                              //   }
@@ -198,7 +192,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
         let task = session.dataTask(with: request) { (data:Data?, response:URLResponse?, error:Error?) in
             if error == nil, data != nil {
                 storeRef.child(uid).put(data!)
-                self.signedInProfileImage = UIImage(data: data!)
+                AppDelegate.signedInProfileImage = UIImage(data: data!)
             }
         }
         task.resume()
@@ -209,6 +203,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
         let confirm = UIAlertAction(title: "OK", style: .cancel, handler: nil)
         alert.addAction(confirm)
         cont.present(alert, animated: true, completion: nil)
+    }
+    static func clearProfPicTempDir() {
+        let profPicDir = FileManager.default.temporaryDirectory.appendingPathComponent("profPics")
+        do{
+            try FileManager.default.removeItem(at: profPicDir)
+        } catch {
+            print("could not remove dir: \(error.localizedDescription)")
+        }
     }
 }
 

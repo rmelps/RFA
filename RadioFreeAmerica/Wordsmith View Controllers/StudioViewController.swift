@@ -230,13 +230,14 @@ class StudioViewController: UIViewController {
             
             let waveformWindowSize = CGSize(width: self.view.frame.width, height: self.view.frame.height / 6)
             
-            print(beatPlotView.frame)
             beatPlot = AKNodeOutputPlot(playerCopy, frame: CGRect(origin: beatPlotView.frame.origin, size: waveformWindowSize))
             beatPlot.plotType = .buffer
             beatPlot.shouldFill = true
             beatPlot.backgroundColor = .clear
             beatPlot.shouldMirror = true
-            beatPlot.color = .yellow
+            beatPlot.shouldCenterYAxis = true
+            beatPlot.gain = 4.0
+            beatPlot.color = UIColor(displayP3Red: 211/255, green: 211/255, blue: 86/255, alpha: 0.95)
             
             
             recordedAudioPlot = AKNodeOutputPlot(player, frame: CGRect(origin: recordedAudioPlotView.frame.origin, size: waveformWindowSize))
@@ -244,7 +245,12 @@ class StudioViewController: UIViewController {
             recordedAudioPlot.shouldFill = true
             recordedAudioPlot.backgroundColor = .clear
             recordedAudioPlot.shouldMirror = true
-            recordedAudioPlot.color = .red
+            recordedAudioPlot.shouldCenterYAxis = true
+            recordedAudioPlot.gain = 2.0
+            recordedAudioPlot.color = UIColor(displayP3Red: 211/255, green: 76/255, blue: 61/255, alpha: 0.85)
+            
+            self.view.addSubview(beatPlot)
+            self.view.addSubview(recordedAudioPlot)
             
             if let micCopy = micCopy {
                 
@@ -254,13 +260,15 @@ class StudioViewController: UIViewController {
                 micPlot.shouldFill = true
                 micPlot.backgroundColor = .clear
                 micPlot.shouldMirror = true
-                micPlot.color = .blue
+                micPlot.shouldCenterYAxis = true
+                micPlot.gain = 1.0
+                micPlot.color = UIColor(displayP3Red: 80/255, green: 141/255, blue: 211/255, alpha: 0.70)
                 
                 self.view.addSubview(micPlot)
             }
             
-            self.view.addSubview(recordedAudioPlot)
-            self.view.addSubview(beatPlot)
+            
+            
             
         }
         

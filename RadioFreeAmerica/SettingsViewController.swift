@@ -262,6 +262,7 @@ class SettingsViewController: UIViewController, UIImagePickerControllerDelegate,
                 if let error = error {
                     completion(error)
                 } else {
+                    AppDelegate.signedInProfileImage = UIImage(data: data)
                     completion(nil)
                 }
             }

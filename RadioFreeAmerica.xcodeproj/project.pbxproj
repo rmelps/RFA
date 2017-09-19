@@ -37,6 +37,8 @@
 		9535E3B11F16BBEB0025531E /* CustomShowSegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9535E3B01F16BBEB0025531E /* CustomShowSegue.swift */; };
 		953A2E791F4E101E00D88C52 /* ActivityIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953A2E781F4E101E00D88C52 /* ActivityIndicatorView.swift */; };
 		954434121F4E4821000F59EC /* WordsmithFeedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954434111F4E4821000F59EC /* WordsmithFeedTableViewController.swift */; };
+		9554D1481F70849600104C44 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9554D1471F70849600104C44 /* ProfileViewController.swift */; };
+		9554D14A1F708E8E00104C44 /* ProfileTracksTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9554D1491F708E8E00104C44 /* ProfileTracksTableViewController.swift */; };
 		95A200971F3933D900FDB910 /* StudioTextFieldDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A200961F3933D900FDB910 /* StudioTextFieldDelegate.swift */; };
 		95A200991F39340400FDB910 /* TextViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A200981F39340400FDB910 /* TextViewDelegate.swift */; };
 		95E5F8601F64668100DE84DC /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E5F85F1F64668100DE84DC /* SettingsViewController.swift */; };
@@ -91,6 +93,8 @@
 		9535E3B01F16BBEB0025531E /* CustomShowSegue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomShowSegue.swift; sourceTree = "<group>"; };
 		953A2E781F4E101E00D88C52 /* ActivityIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityIndicatorView.swift; sourceTree = "<group>"; };
 		954434111F4E4821000F59EC /* WordsmithFeedTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordsmithFeedTableViewController.swift; sourceTree = "<group>"; };
+		9554D1471F70849600104C44 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		9554D1491F708E8E00104C44 /* ProfileTracksTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileTracksTableViewController.swift; sourceTree = "<group>"; };
 		95A200961F3933D900FDB910 /* StudioTextFieldDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioTextFieldDelegate.swift; sourceTree = "<group>"; };
 		95A200981F39340400FDB910 /* TextViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextViewDelegate.swift; sourceTree = "<group>"; };
 		95BA8C8B1F16F431008F60C5 /* AudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioKit.framework; path = ../../../Downloads/AudioKit/iOS/AudioKit.framework; sourceTree = "<group>"; };
@@ -152,6 +156,8 @@
 				951D22B11EFA0EC4005264A7 /* GenreCollectionViewController.swift */,
 				951D22A51EF9F016005264A7 /* GenreChoiceViewController.swift */,
 				95E5F85F1F64668100DE84DC /* SettingsViewController.swift */,
+				9554D1471F70849600104C44 /* ProfileViewController.swift */,
+				9554D1491F708E8E00104C44 /* ProfileTracksTableViewController.swift */,
 				951D228E1EEF3DA5005264A7 /* Assets.xcassets */,
 				951D22B31EFD779A005264A7 /* rock.m4v */,
 				951D22901EEF3DA5005264A7 /* LaunchScreen.storyboard */,
@@ -370,6 +376,7 @@
 				95265BAE1F0D88E700F44E05 /* WordsmithChoiceViewController.swift in Sources */,
 				951D22881EEF3DA5005264A7 /* AppDelegate.swift in Sources */,
 				95A200991F39340400FDB910 /* TextViewDelegate.swift in Sources */,
+				9554D1481F70849600104C44 /* ProfileViewController.swift in Sources */,
 				953A2E791F4E101E00D88C52 /* ActivityIndicatorView.swift in Sources */,
 				951D22B81F0AE138005264A7 /* WordsmithHomeViewController.swift in Sources */,
 				95124A421F510BE3001A4B75 /* TrackTableViewCell.swift in Sources */,
@@ -379,6 +386,7 @@
 				952278E01F689BBA0081F51B /* Settings.swift in Sources */,
 				95A200971F3933D900FDB910 /* StudioTextFieldDelegate.swift in Sources */,
 				9535E3A51F14581B0025531E /* WordsmithPageViewControllerChild.swift in Sources */,
+				9554D14A1F708E8E00104C44 /* ProfileTracksTableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -60,6 +60,11 @@ class WordsmithFeedTableViewController: UITableViewController {
         loadFullTrackSuite(withActivityIndicator: true, completion: nil)
     }
     
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        AppDelegate.clearProfPicTempDir()
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -325,6 +330,7 @@ class WordsmithFeedTableViewController: UITableViewController {
     
     func loadFullTrackSuite(withActivityIndicator indicator: Bool, completion: (()->Void)?){
         let activityIndicator = ActivityIndicatorView(withProgress: false)
+        AppDelegate.clearProfPicTempDir()
         
         if indicator {
             parentVC.view.addSubview(activityIndicator)

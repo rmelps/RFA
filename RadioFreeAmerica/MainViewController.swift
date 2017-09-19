@@ -212,7 +212,7 @@ class MainViewController: UIViewController, GIDSignInUIDelegate {
                                             
                                             if error == nil, data != nil {
                                                 print("retrieved image data")
-                                                appDelegate.signedInProfileImage = UIImage(data: data!)
+                                                AppDelegate.signedInProfileImage = UIImage(data: data!)
                                             }
                                         })
                               //      }
@@ -305,7 +305,7 @@ class MainViewController: UIViewController, GIDSignInUIDelegate {
                                                         
                                                         if error == nil, data != nil {
                                                             print("retrieved image data")
-                                                            appDelegate.signedInProfileImage = UIImage(data: data!)
+                                                            AppDelegate.signedInProfileImage = UIImage(data: data!)
                                                         }
                                                     })
                                                 }

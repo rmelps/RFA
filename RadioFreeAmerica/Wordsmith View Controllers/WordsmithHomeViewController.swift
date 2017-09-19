@@ -13,6 +13,7 @@ class WordsmithHomeViewController: UIViewController, WordsmithPageViewController
     weak var wordsmithPageVC: WordsmithPageViewController!
     
     
+    @IBOutlet weak var publicProfButton: UIButton!
     @IBOutlet weak var settingsButton: UIButton!
     @IBOutlet weak var menuBarIconView: UIImageView!
     @IBOutlet weak var topBar: UIView!
@@ -45,6 +46,8 @@ class WordsmithHomeViewController: UIViewController, WordsmithPageViewController
         topBar.layer.cornerRadius = 7.0
         statView.layer.cornerRadius = 7.0
         
+        publicProfButton.layer.cornerRadius = 3.0
+        
         
         for view in welcomeStackView.arrangedSubviews {
             view.layer.shadowOffset = CGSize(width: 0, height: 0)
@@ -53,13 +56,21 @@ class WordsmithHomeViewController: UIViewController, WordsmithPageViewController
             view.layer.shadowColor = statView.backgroundColor?.cgColor
         }
     
-        profilePicImageView.layer.borderWidth = 1
+        profilePicImageView.layer.borderWidth = 3.0
         profilePicImageView.layer.masksToBounds = false
-        profilePicImageView.layer.borderColor = UIColor.black.cgColor
-        profilePicImageView.layer.cornerRadius = profilePicImageView.frame.height / 2
+        profilePicImageView.layer.borderColor = UIColor.white.cgColor
+        profilePicImageView.layer.cornerRadius = 8.0
         profilePicImageView.clipsToBounds = true
         
         addStatObserver()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if let user = AppDelegate.signedInUser {
+            userNameLabel.text = wordsmithPageVC.getFirstName(user: user)
+            profilePicImageView.image = AppDelegate.signedInProfileImage
+        }
     }
     
     override func viewDidLayoutSubviews() {
@@ -78,10 +89,7 @@ class WordsmithHomeViewController: UIViewController, WordsmithPageViewController
         statView.translatesAutoresizingMaskIntoConstraints = false
         
         let user = wordsmithPageVC!.signedInUser!
-        print(user)
-        
        
-        
         awards.append(user.knowledge)
         awards.append(user.crowns)
         awards.append(user.stars)
@@ -153,6 +161,9 @@ class WordsmithHomeViewController: UIViewController, WordsmithPageViewController
         self.performSegue(withIdentifier: "presentSettingsSegue", sender: self)
     }
     
+    @IBAction func publicProfButtonDidTouchUp(_ sender: UIButton) {
+        self.performSegue(withIdentifier: "presentProfileSegue", sender: self)
+    }
     
     @IBAction func topBarDidPan(_ sender: UIPanGestureRecognizer) {
         let yTouch = sender.location(in: self.view).y
@@ -234,17 +245,28 @@ class WordsmithHomeViewController: UIViewController, WordsmithPageViewController
     //MARK: - Navigation
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard let user = wordsmithPageVC.signedInUser else {
+            fatalError("The application has crashed; could not access signed in user")
+        }
+        
         switch segue.identifier!{
         case "presentSettingsSegue":
             let vc = segue.destination as! SettingsViewController
-            let user = wordsmithPageVC.signedInUser
             if let image = self.profilePicImageView.image {
                 vc.profileImage = image
             }
-            vc.userName = user!.name
-            vc.tag = user!.tagLine
-            vc.bio = user!.biography
-            vc.user = user!
+            vc.userName = user.name
+            vc.tag = user.tagLine
+            vc.bio = user.biography
+            vc.user = user
+        case "presentProfileSegue":
+            let vc = segue.destination as! ProfileViewController
+            if let image = self.profilePicImageView.image {
+                vc.image = image
+            }
+            vc.name = user.name
+            vc.tag = user.tagLine
+            vc.bio = user.biography
         default:
             break
         }
