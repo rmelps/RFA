@@ -132,7 +132,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
                             let snap = snapShot.childSnapshot(forPath: firUser.uid)
                             let snapVal = snap.value as? [String: Any]
                             
-                            let userProf = User(userData: firUser, snapShot: snap, picURL: profPic, nameFromProvider: nil)
+                            let userProf = User(uid: firUser.uid, snapShot: snap, picURL: profPic, nameFromProvider: nil)
                             AppDelegate.signedInUser = userProf
                             
                             if let url = snapVal?["photoPath"] as? String {

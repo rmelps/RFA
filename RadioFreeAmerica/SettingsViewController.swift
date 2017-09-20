@@ -230,7 +230,7 @@ class SettingsViewController: UIViewController, UIImagePickerControllerDelegate,
                             ref.observeSingleEvent(of: .value, with: { (snapshot:FIRDataSnapshot) in
                                 let value = snapshot.value as? [String: Any]
                                 if let firUser = FIRAuth.auth()?.currentUser {
-                                    AppDelegate.signedInUser = User(userData: firUser, snapShot: snapshot, picURL: value?["photoUrl"] as? String, nameFromProvider: nil)
+                                    AppDelegate.signedInUser = User(uid: firUser.uid, snapShot: snapshot, picURL: value?["photoUrl"] as? String, nameFromProvider: nil)
                                 }
                             })
                         })

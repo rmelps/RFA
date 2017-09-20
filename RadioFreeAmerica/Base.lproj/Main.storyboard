@@ -287,7 +287,7 @@
         <!--Wordsmith Feed View Controller-->
         <scene sceneID="DjW-VT-5P4">
             <objects>
-                <viewController storyboardIdentifier="wordsmithThird" id="dhy-HB-1gW" customClass="WordsmithFeedViewController" customModule="RadioFreeAmerica" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="dhy-HB-1gW" customClass="WordsmithFeedViewController" customModule="RadioFreeAmerica" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="MNv-Pt-fe4"/>
                         <viewControllerLayoutGuide type="bottom" id="KLr-F9-1l0"/>
@@ -331,6 +331,7 @@
                             <constraint firstItem="09p-Ic-eYr" firstAttribute="top" secondItem="EpZ-Bk-ZC0" secondAttribute="bottom" id="s98-Pq-9wM"/>
                         </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="Gk3-t2-hgX"/>
                     <connections>
                         <outlet property="libraryBarButton" destination="iei-al-0Xe" id="S4G-RJ-Amy"/>
                         <outlet property="tableContainerView" destination="09p-Ic-eYr" id="imY-hL-MMV"/>
@@ -338,7 +339,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7Hm-Gt-Ykh" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2301.5999999999999" y="1556.6716641679161"/>
+            <point key="canvasLocation" x="3124" y="1556"/>
         </scene>
         <!--Studio View Controller-->
         <scene sceneID="hay-VV-VhR">
@@ -1163,7 +1164,7 @@
                         <viewControllerLayoutGuide type="bottom" id="Xs5-6f-vJq"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="YES" id="lwO-Jc-N0U">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="607"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="57k-za-C7z">
@@ -1179,7 +1180,7 @@
                                     <navigationItem title="My Profile" id="Vuc-XM-unp">
                                         <barButtonItem key="leftBarButtonItem" image="backNav" id="hYA-yR-pf2">
                                             <connections>
-                                                <action selector="cancelBarButtonTapped:" destination="7Kn-GV-Euh" id="GeE-GO-8rp"/>
+                                                <action selector="goBackButtonTapped:" destination="oxO-Af-icf" id="yIH-Nw-lvW"/>
                                             </connections>
                                         </barButtonItem>
                                     </navigationItem>
@@ -1201,7 +1202,7 @@
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RLI-eT-QML">
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="RLI-eT-QML">
                                         <rect key="frame" x="0.0" y="78" width="207" height="50"/>
                                         <fontDescription key="fontDescription" name="GillSans-Italic" family="Gill Sans" pointSize="16"/>
                                         <nil key="textColor"/>
@@ -1226,7 +1227,7 @@
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <containerView opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="gNn-Xv-GeU">
-                                <rect key="frame" x="16" y="404" width="343" height="263"/>
+                                <rect key="frame" x="16" y="404" width="343" height="203"/>
                                 <connections>
                                     <segue destination="caZ-aE-F4i" kind="embed" id="kDR-qh-hGM"/>
                                 </connections>
@@ -1287,7 +1288,7 @@
                                 <rect key="frame" x="0.0" y="28" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Qac-7b-05a" id="uPx-yF-j3U">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                             </tableViewCell>
@@ -1378,7 +1379,7 @@
                                 <rect key="frame" x="0.0" y="28" width="375" height="231"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Vj1-1N-YON" id="8IB-8y-2ev">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="230.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="231"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <stackView opaque="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="YES" alignment="top" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="IzU-nI-wd7">
@@ -1460,16 +1461,29 @@
                                                 <constraint firstAttribute="height" constant="45" id="n4y-0V-waH"/>
                                             </constraints>
                                         </stackView>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uyo-7C-DOR">
+                                            <rect key="frame" x="8" y="94" width="75" height="25"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <state key="normal" title="Profile" image="user">
+                                                <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            </state>
+                                            <connections>
+                                                <action selector="profileButtonDidTouchUp:" destination="Vj1-1N-YON" eventType="touchUpInside" id="CIA-vt-wsH"/>
+                                            </connections>
+                                        </button>
                                     </subviews>
                                     <constraints>
                                         <constraint firstAttribute="trailing" secondItem="T5a-vr-9HL" secondAttribute="trailing" constant="8" id="1qX-uU-Klg"/>
                                         <constraint firstItem="IzU-nI-wd7" firstAttribute="leading" secondItem="8IB-8y-2ev" secondAttribute="leadingMargin" id="6g2-E1-JYL"/>
                                         <constraint firstItem="jES-sH-n0q" firstAttribute="leading" secondItem="8IB-8y-2ev" secondAttribute="leadingMargin" constant="83" id="7tl-0S-dqf"/>
                                         <constraint firstItem="IzU-nI-wd7" firstAttribute="top" secondItem="8IB-8y-2ev" secondAttribute="topMargin" constant="3" id="BYz-fI-u9i"/>
+                                        <constraint firstItem="uyo-7C-DOR" firstAttribute="top" secondItem="IzU-nI-wd7" secondAttribute="bottom" constant="8" id="Dxo-mm-Etd"/>
                                         <constraint firstAttribute="bottom" secondItem="T5a-vr-9HL" secondAttribute="bottom" id="GqY-Mf-kUi"/>
+                                        <constraint firstItem="uyo-7C-DOR" firstAttribute="leading" secondItem="8IB-8y-2ev" secondAttribute="leadingMargin" id="OPq-nz-zs3"/>
                                         <constraint firstItem="T5a-vr-9HL" firstAttribute="leading" secondItem="8IB-8y-2ev" secondAttribute="leading" constant="8" id="Udq-AS-Qna"/>
                                         <constraint firstItem="jES-sH-n0q" firstAttribute="top" secondItem="IzU-nI-wd7" secondAttribute="bottom" constant="8" id="UeR-Q2-bDc"/>
                                         <constraint firstAttribute="trailingMargin" secondItem="IzU-nI-wd7" secondAttribute="trailing" id="WXa-wM-KQ1"/>
+                                        <constraint firstItem="uyo-7C-DOR" firstAttribute="width" secondItem="Bi4-eD-zrV" secondAttribute="width" id="oj7-9P-hVH"/>
                                         <constraint firstItem="jES-sH-n0q" firstAttribute="trailing" secondItem="8IB-8y-2ev" secondAttribute="trailingMargin" id="z4w-52-Bh3"/>
                                     </constraints>
                                 </tableViewCellContentView>
@@ -1477,6 +1491,7 @@
                                 <connections>
                                     <outlet property="flagButton" destination="lPN-Wk-6SZ" id="XbG-ak-B3c"/>
                                     <outlet property="likeButton" destination="1m6-eW-bqP" id="MQ9-M1-tS8"/>
+                                    <outlet property="profileButton" destination="uyo-7C-DOR" id="P48-C6-2Ue"/>
                                     <outlet property="profileImageWidthConstraint" destination="RtZ-HN-Ro5" id="5ZU-hu-G6Z"/>
                                     <outlet property="profilePic" destination="Bi4-eD-zrV" id="Ixk-sD-9iG"/>
                                     <outlet property="saveButton" destination="sMD-zt-rro" id="xA4-1J-FdL"/>
@@ -1488,10 +1503,31 @@
                             </tableViewCell>
                         </prototypes>
                     </tableView>
+                    <connections>
+                        <segue destination="oxO-Af-icf" kind="show" identifier="showProfileFromTableSegue" id="0z3-Bb-ay7"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Nxx-67-06m" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3124" y="1574.6626686656673"/>
+            <point key="canvasLocation" x="3962" y="1557"/>
+        </scene>
+        <!--Feed-->
+        <scene sceneID="D5Y-bd-VX9">
+            <objects>
+                <navigationController storyboardIdentifier="wordsmithThird" title="Feed" automaticallyAdjustsScrollViewInsets="NO" id="sfG-0X-vRf" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" alpha="0.0" contentMode="scaleToFill" backIndicatorImage="backNav" id="KWL-n5-8I2">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="dhy-HB-1gW" kind="relationship" relationship="rootViewController" id="Shc-FB-f2u"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="IbR-o2-zon" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2302" y="1556"/>
         </scene>
     </scenes>
     <resources>
@@ -1513,5 +1549,9 @@
         <image name="savedMusic" width="25" height="25"/>
         <image name="settings" width="25" height="25"/>
         <image name="stop" width="50" height="50"/>
+        <image name="user" width="25" height="25"/>
     </resources>
+    <inferredMetricsTieBreakers>
+        <segue reference="0z3-Bb-ay7"/>
+    </inferredMetricsTieBreakers>
 </document>

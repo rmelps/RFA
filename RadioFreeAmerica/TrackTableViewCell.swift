@@ -9,6 +9,7 @@
 import UIKit
 
 class TrackTableViewCell: UITableViewCell {
+    @IBOutlet weak var profileButton: UIButton!
     @IBOutlet weak var toolbarStackView: UIStackView!
     @IBOutlet weak var likeButton: UIButton!
     @IBOutlet weak var saveButton: UIButton!
@@ -22,6 +23,7 @@ class TrackTableViewCell: UITableViewCell {
     
     weak var tableView: UITableView!
     weak var track: Track!
+    var user: User!
     
     // Button Selection Status
     var isLiked: Bool = false {
@@ -57,6 +59,8 @@ class TrackTableViewCell: UITableViewCell {
         
         trackNameLabel.adjustsFontForContentSizeCategory = true
         userNameLabel.adjustsFontForContentSizeCategory = true
+        
+        self.setButtonImage(button: profileButton, image: UIImage(named: "user")!)
         self.selectionStyle = .gray
     }
     
@@ -106,6 +110,21 @@ class TrackTableViewCell: UITableViewCell {
             self.isFlagged = true
         } else {
             self.isFlagged = false
+        }
+    }
+    @IBAction func profileButtonDidTouchUp(_ sender: UIButton) {
+        let tableVC = tableView.delegate as! WordsmithFeedTableViewController
+        let activityIndicator = ActivityIndicatorView(withProgress: false)
+        let parent = tableVC.parentVC
+        parent!.view.addSubview(activityIndicator)
+        tableVC.retrieveUserProfile(forTrack: track) { (user: User?) in
+            activityIndicator.removeFromSuperview()
+            if let user = user {
+                self.user = user
+                tableVC.performSegue(withIdentifier: "showProfileFromTableSegue", sender: self)
+            } else {
+                AppDelegate.presentErrorAlert(withMessage: "Could not load profile!", fromViewController: parent!)
+            }
         }
     }
     

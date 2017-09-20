@@ -97,6 +97,7 @@ class WordsmithFeedTableViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! TrackTableViewCell
         let trackForCell = tracks[indexPath.row]
         let imagePadding: CGFloat = 16
+        cell.track = trackForCell
         cell.trackNameLabel.text = trackForCell.title
         cell.userNameLabel.text = users[trackForCell.user]
         cell.trackDescriptionTextView.text = trackForCell.details
@@ -601,6 +602,34 @@ class WordsmithFeedTableViewController: UITableViewController {
             return false
         }
     
+    }
+    
+    //MARK: - Navigation
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        switch segue.identifier! {
+        case "showProfileFromTableSegue":
+            let vc = segue.destination as! ProfileViewController
+            let cell = sender as! TrackTableViewCell
+            vc.tag = cell.user.tagLine
+            vc.name = cell.user.name
+            vc.bio = cell.user.biography
+            vc.image = cell.profilePic.image
+        default:
+            break
+        }
+    }
+    
+    func retrieveUserProfile(forTrack track: Track, handler: @escaping ((User?) -> Void)) {
+        self.userDBRef.observeSingleEvent(of: .value) { (snapshot:FIRDataSnapshot) in
+            guard snapshot.hasChild(track.user) else {
+                handler(nil)
+                return
+            }
+            let userSnap = snapshot.childSnapshot(forPath: track.user)
+            let user = User(uid: track.user, snapShot: userSnap, picURL: nil, nameFromProvider: nil)
+            handler(user)
+        }
     }
     
     //MARK: - File Handling functions

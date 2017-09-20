@@ -32,8 +32,13 @@ class WordsmithPageViewController: UIPageViewController, UIPageViewControllerDat
         dataSource = self
         
         for vc in orderedViewControllers {
-            var wsvc = vc as! WordsmithPageViewControllerChild
-            wsvc.wordsmithPageVC = self
+            if let navC = vc as? UINavigationController {
+                var wsvc = navC.topViewController as! WordsmithPageViewControllerChild
+                wsvc.wordsmithPageVC = self
+            } else {
+                var wsvc = vc as! WordsmithPageViewControllerChild
+                wsvc.wordsmithPageVC = self
+            }
         }
         
         if let firstViewController = orderedViewControllers.first as? WordsmithHomeViewController {

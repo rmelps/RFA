@@ -22,9 +22,9 @@ struct User {
     var downloads: Stat!
     let itemRef: FIRDatabaseReference?
     
-    init(userData: FIRUser, snapShot: FIRDataSnapshot, picURL: String?, nameFromProvider: String?) {
+    init(uid: String, snapShot: FIRDataSnapshot, picURL: String?, nameFromProvider: String?) {
         
-        uid = userData.uid
+        self.uid = uid
         photoPath = picURL
         name = nameFromProvider
         

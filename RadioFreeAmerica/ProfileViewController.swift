@@ -16,6 +16,9 @@ class ProfileViewController: UIViewController {
     @IBOutlet weak var tagLabel: UILabel!
     @IBOutlet weak var bioTextView: UITextView!
     
+    // Check whether the signed in user is following this user
+    var isFollowed = false
+    
     // Profile specific fields
     var image: UIImage!
     var bio: String!
@@ -28,7 +31,9 @@ class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Assign profile specific fields
-        self.profileImageView.image = image
+        if let image = self.image {
+            self.profileImageView.image = image
+        }
         self.nameLabel.text = name
         self.tagLabel.text = tag
         self.bioTextView.text = bio
@@ -38,6 +43,36 @@ class ProfileViewController: UIViewController {
         
         if contentHeight < bioTextViewHeightConstraint.constant - vertPadding {
             self.bioTextViewHeightConstraint.constant = contentHeight + vertPadding
+        }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if let navCon = self.navigationController {
+            print("found navcon")
+            // Make navigation bar appear
+            navCon.navigationBar.isHidden = false
+            
+            // Add a right bar button item to follow this guy
+            let image = UIImage(named: "addFriend")
+            let followItem = UIBarButtonItem(image: image, style: UIBarButtonItemStyle.plain, target: self, action: #selector(ProfileViewController.followThisUser(_:)))
+            self.navigationItem.rightBarButtonItem = followItem
+        }
+    }
+    @IBAction func goBackButtonTapped(_ sender: UIBarButtonItem) {
+        self.dismiss(animated: true, completion: nil)
+    }
+    
+    @objc func followThisUser(_ sender: Any) {
+        print("following...")
+        
+        if isFollowed {
+            self.navigationItem.rightBarButtonItem?.image = UIImage(named: "addFriend")
+            isFollowed = false
+        } else {
+            self.navigationItem.rightBarButtonItem?.image = UIImage(named: "addFriendFilled")
+            isFollowed = true
         }
     }
 }

@@ -33,6 +33,7 @@ class WordsmithFeedViewController: UIViewController, WordsmithPageViewController
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.navigationController?.navigationBar.isHidden = true
         
         if fromStudio == nil {
             fromStudio = false
