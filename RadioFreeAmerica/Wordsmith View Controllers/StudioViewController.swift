@@ -745,7 +745,8 @@ class StudioViewController: UIViewController {
                         return
                     }
                     if let rootVC = self.presentingViewController as? WordsmithPageViewController {
-                        let feedVC = rootVC.orderedViewControllers[2] as! WordsmithFeedViewController
+                        let navVC = rootVC.orderedViewControllers[2] as! UINavigationController
+                        let feedVC = navVC.topViewController as! WordsmithFeedViewController
                         feedVC.fromStudio = true
                         rootVC.setViewControllers([rootVC.orderedViewControllers[2]], direction: .forward, animated: false, completion: nil)
                     }
