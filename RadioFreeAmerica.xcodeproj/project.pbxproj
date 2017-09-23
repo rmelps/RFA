@@ -43,6 +43,7 @@
 		95A200991F39340400FDB910 /* TextViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A200981F39340400FDB910 /* TextViewDelegate.swift */; };
 		95E5F8601F64668100DE84DC /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E5F85F1F64668100DE84DC /* SettingsViewController.swift */; };
 		95EF0DD21F3F494600EC6DDC /* SavedTrackManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95EF0DD11F3F494600EC6DDC /* SavedTrackManager.swift */; };
+		95F1CD281F75D1D1009D25AF /* ProfileTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F1CD271F75D1D1009D25AF /* ProfileTableViewCell.swift */; };
 		EA25DE04343B6E4ADE610C92 /* Pods_RadioFreeAmerica.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B89A5A22515871740B93D705 /* Pods_RadioFreeAmerica.framework */; };
 /* End PBXBuildFile section */
 
@@ -100,6 +101,7 @@
 		95BA8C8B1F16F431008F60C5 /* AudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioKit.framework; path = ../../../Downloads/AudioKit/iOS/AudioKit.framework; sourceTree = "<group>"; };
 		95E5F85F1F64668100DE84DC /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		95EF0DD11F3F494600EC6DDC /* SavedTrackManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedTrackManager.swift; sourceTree = "<group>"; };
+		95F1CD271F75D1D1009D25AF /* ProfileTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileTableViewCell.swift; sourceTree = "<group>"; };
 		A2EA3C87DBE567095C362C21 /* Pods-RadioFreeAmerica.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RadioFreeAmerica.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RadioFreeAmerica/Pods-RadioFreeAmerica.debug.xcconfig"; sourceTree = "<group>"; };
 		B89A5A22515871740B93D705 /* Pods_RadioFreeAmerica.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RadioFreeAmerica.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -192,6 +194,7 @@
 				9535E3B01F16BBEB0025531E /* CustomShowSegue.swift */,
 				953A2E781F4E101E00D88C52 /* ActivityIndicatorView.swift */,
 				95124A411F510BE3001A4B75 /* TrackTableViewCell.swift */,
+				95F1CD271F75D1D1009D25AF /* ProfileTableViewCell.swift */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -361,6 +364,7 @@
 				951D22BE1F0B10D6005264A7 /* Stat.swift in Sources */,
 				951D22BC1F0AFC41005264A7 /* StatView.swift in Sources */,
 				951D22AB1EFA08CE005264A7 /* GenreCollectionViewCell.swift in Sources */,
+				95F1CD281F75D1D1009D25AF /* ProfileTableViewCell.swift in Sources */,
 				9535E3B11F16BBEB0025531E /* CustomShowSegue.swift in Sources */,
 				954434121F4E4821000F59EC /* WordsmithFeedTableViewController.swift in Sources */,
 				9535E3AE1F15B0770025531E /* StudioViewController.swift in Sources */,

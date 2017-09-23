@@ -20,6 +20,7 @@ enum TableDisplayMode: String {
 class WordsmithFeedTableViewController: UITableViewController {
     
     let reuseIdentifier = "trackCell"
+    var genre: GenreChoices!
     var feedDBRef: FIRDatabaseReference!
     var userDBRef: FIRDatabaseReference!
     weak var parentVC: WordsmithFeedViewController!
@@ -50,7 +51,7 @@ class WordsmithFeedTableViewController: UITableViewController {
         
         compressedHeight = self.tableView.frame.height / 6
         
-        let genre = parentVC.wordsmithPageVC.genreChoice!
+        genre = parentVC.wordsmithPageVC.genreChoice!
         feedDBRef = FIRDatabase.database().reference().child("feed/\(genre.rawValue.lowercased())")
         userDBRef = FIRDatabase.database().reference().child("users")
         uploadStorageRef = FIRStorage.storage().reference().child("uploads")
@@ -95,11 +96,13 @@ class WordsmithFeedTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! TrackTableViewCell
+        guard indexPath.row < tracks.count - 1 else {
+            return cell
+        }
         let trackForCell = tracks[indexPath.row]
         let imagePadding: CGFloat = 16
         cell.track = trackForCell
         cell.trackNameLabel.text = trackForCell.title
-        cell.userNameLabel.text = users[trackForCell.user]
         cell.trackDescriptionTextView.text = trackForCell.details
         cell.profileImageWidthConstraint.constant = compressedHeight - imagePadding
         cell.profilePic.image = nil
@@ -118,8 +121,10 @@ class WordsmithFeedTableViewController: UITableViewController {
         switch currentMode {
         case .web:
             cell.backgroundColor = UIColor(displayP3Red: 223/255, green: 109/255, blue: 99/255, alpha: 1.0)
+            cell.userNameLabel.text = users[trackForCell.user]
         case .local:
             cell.backgroundColor = UIColor(displayP3Red: 107/255, green: 184/255, blue: 101/255, alpha: 1.0)
+        //TODO: Add in method to grab username for locally saved tracks
         default:
             break
         }
@@ -290,7 +295,9 @@ class WordsmithFeedTableViewController: UITableViewController {
     //MARK: - Scroll View Delegate
     
     override func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        
+        guard tracks.count > 0 else {
+            return
+        }
         // Reload table view if the user scrolls a certain distance above the top cell
         let topCellYPosInTable = tableView.rectForRow(at: IndexPath(row: 0, section: 0)).origin
         let topCellYPosInSuper = tableView.convert(topCellYPosInTable, to: parentVC.view)
@@ -483,17 +490,19 @@ class WordsmithFeedTableViewController: UITableViewController {
         }
     }
     //MARK: - Cell Toolbar Actions
-    func modifyPostStat(statName name: String, increase: Bool) {
-        
-        guard currentMode == .web, let row = selectedRow else {
+    func modifyPostStat(statName name: String, increase: Bool, forTrack track: Track, inGenre genre: GenreChoices, fromTempFiles files: [(String, AVAudioFile)]?) {
+        /*
+        guard currentMode == .web else {
             print("Like button should only be selectable in web mode")
             return
         }
-        let track = tracks[row]
+         */
+        //let track = tracks[row]
         guard let key = track.key else {
             print("Could not find key for track")
             return
         }
+        let feedDBRef = FIRDatabase.database().reference().child("feed/\(genre.rawValue.lowercased())")
         let ref = feedDBRef.child(key)
         ref.runTransactionBlock({ (thisData: FIRMutableData) -> FIRTransactionResult in
             if var post = thisData.value as? [String: Any], let uid = FIRAuth.auth()?.currentUser?.uid {
@@ -509,7 +518,7 @@ class WordsmithFeedTableViewController: UITableViewController {
                 
                 switch name {
                 case "downloads":
-                    if self.saveTrackToLibrary(track) {
+                    if let files = files, self.saveTrackToLibrary(track, fromTempDirFiles: files) {
                         
                         thisData.value = post
                         track.downloads = statArr
@@ -541,7 +550,8 @@ class WordsmithFeedTableViewController: UITableViewController {
                 } else {
                     num -= 1
                 }
-                let ref = self.userDBRef.child(track.user)
+                let userDBRef = FIRDatabase.database().reference().child("users")
+                let ref = userDBRef.child(track.user)
                 ref.runTransactionBlock({ (data: FIRMutableData) -> FIRTransactionResult in
                     print("running block")
                     if var prof = data.value as? [String:Any] {
@@ -571,7 +581,7 @@ class WordsmithFeedTableViewController: UITableViewController {
         }
     }
     
-    func saveTrackToLibrary(_ track: Track) -> Bool {
+    func saveTrackToLibrary(_ track: Track, fromTempDirFiles files: [(String, AVAudioFile)]) -> Bool {
         let trackToSave = track
         guard let FIRkey = track.key else {
             print("no key found for track")
@@ -579,7 +589,7 @@ class WordsmithFeedTableViewController: UITableViewController {
         }
         var url: URL?
         
-        for (key,file) in quickLoadFiles {
+        for (key,file) in files {
             if key == FIRkey {
                 url = file.url
                 break
@@ -611,10 +621,12 @@ class WordsmithFeedTableViewController: UITableViewController {
         case "showProfileFromTableSegue":
             let vc = segue.destination as! ProfileViewController
             let cell = sender as! TrackTableViewCell
+            vc.user = cell.user
             vc.tag = cell.user.tagLine
             vc.name = cell.user.name
             vc.bio = cell.user.biography
             vc.image = cell.profilePic.image
+            vc.delegate = self
         default:
             break
         }
@@ -725,18 +737,7 @@ class WordsmithFeedTableViewController: UITableViewController {
  
                             self.audioPlayer.numberOfLoops = -1
                             self.audioPlayer.play()
-                            //TODO: Perfect this timer for fade in/fade out durations
-                            /*
-                            Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true, block: { (timer) in
-                                print(self.audioPlayer.currentTime)
-                                if self.audioPlayer.currentTime > 10.0 {
-                                    timer.invalidate()
-                                }
-                                if !self.audioPlayer.isPlaying {
-                                    timer.invalidate()
-                                }
-                            }).fire()
-                            */
+               
                         } catch {
                             print("error in creating ak audio file: \(error.localizedDescription)")
                         }

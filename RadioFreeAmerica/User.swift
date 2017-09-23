@@ -20,6 +20,9 @@ struct User {
     var knowledge: Stat!
     var crowns: Stat!
     var downloads: Stat!
+    var tracks: [String]
+    var following: [String]
+    
     let itemRef: FIRDatabaseReference?
     
     init(uid: String, snapShot: FIRDataSnapshot, picURL: String?, nameFromProvider: String?) {
@@ -87,6 +90,18 @@ struct User {
         } else {
             self.downloads = Stat(description: "Downloads", value: 0)
         }
+        
+        if let following = snapShotValue?["following"] as? [String] {
+            self.following = following
+        } else {
+            self.following = [String]()
+        }
+        
+        if let tracks = snapShotValue?["tracks"] as? [String] {
+            self.tracks = tracks
+        } else {
+            self.tracks = [String]()
+        }
     }
     
     init(userData: FIRUser) {
@@ -98,14 +113,15 @@ struct User {
         self.stars = Stat(description: "Stars", value: 0)
         self.crowns = Stat(description: "Crowns", value: 0)
         self.downloads = Stat(description: "Downloads", value: 0)
+        self.tracks = [String]()
+        self.following = [String]()
         
         self.tagLine = ""
         self.biography = ""
         
         if let photoPath = userData.photoURL {
             self.photoPath = String(describing: photoPath)
-        }
-        
+        }        
     }
     
     init(uid: String, name: String, photoPath: String?) {
@@ -117,6 +133,8 @@ struct User {
         self.stars = Stat(description: "Stars", value: 0)
         self.crowns = Stat(description: "Crowns", value: 0)
         self.downloads = Stat(description: "Downloads", value: 0)
+        self.tracks = [String]()
+        self.following = [String]()
         
         self.tagLine = ""
         self.biography = ""
@@ -136,7 +154,9 @@ struct User {
                 "knowledge": knowledge.value,
                 "stars": stars.value,
                 "crowns": crowns.value,
-                "downloads": downloads.value
+                "downloads": downloads.value,
+                "tracks": tracks,
+                "following": following
         ]
     }
 }

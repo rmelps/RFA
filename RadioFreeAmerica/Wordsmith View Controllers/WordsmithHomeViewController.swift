@@ -63,6 +63,7 @@ class WordsmithHomeViewController: UIViewController, WordsmithPageViewController
         profilePicImageView.clipsToBounds = true
         
         addStatObserver()
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -264,9 +265,11 @@ class WordsmithHomeViewController: UIViewController, WordsmithPageViewController
             if let image = self.profilePicImageView.image {
                 vc.image = image
             }
+            vc.user = user
             vc.name = user.name
             vc.tag = user.tagLine
             vc.bio = user.biography
+            vc.delegate = self
         default:
             break
         }

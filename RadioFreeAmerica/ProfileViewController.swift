@@ -16,17 +16,20 @@ class ProfileViewController: UIViewController {
     @IBOutlet weak var tagLabel: UILabel!
     @IBOutlet weak var bioTextView: UITextView!
     
+    var delegate: UIViewController?
+    
     // Check whether the signed in user is following this user
     var isFollowed = false
     
     // Profile specific fields
+    var user: User!
     var image: UIImage!
     var bio: String!
     var name: String!
     var tag: String!
     
     // Tracks related to profile
-    var tracks: [Track]!
+    var tracks = [Track]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -73,6 +76,17 @@ class ProfileViewController: UIViewController {
         } else {
             self.navigationItem.rightBarButtonItem?.image = UIImage(named: "addFriendFilled")
             isFollowed = true
+        }
+    }
+    
+    //MARK: - Navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        switch segue.identifier!{
+        case "embedProfileTracksSegue":
+            let vc = segue.destination as! ProfileTracksTableViewController
+            vc.parentVC = self
+        default:
+            break
         }
     }
 }

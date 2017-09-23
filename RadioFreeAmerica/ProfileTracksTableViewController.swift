@@ -7,45 +7,66 @@
 //
 
 import UIKit
+import FirebaseDatabase
 
 class ProfileTracksTableViewController: UITableViewController {
+    
+    var parentVC: ProfileViewController!
+    let reuseIdentifier = "profileTrackCell"
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
+        
+        if let delegate = parentVC.delegate as? WordsmithFeedTableViewController {
+            let thisUserDBRef = delegate.userDBRef.child(parentVC.user.uid)
+            retrieveRecentTracks(fromUserDBRef: thisUserDBRef, feedDBRef: delegate.feedDBRef) { (tracks: [Track]) in
+                self.parentVC.tracks = tracks
+                print("track count: \(tracks.count)")
+                
+                self.tableView.reloadData()
+                self.tableView.beginUpdates()
+                self.tableView.endUpdates()
+            }
+        }
+    }
+    
+    func retrieveRecentTracks(fromUserDBRef ref: FIRDatabaseReference, feedDBRef fref: FIRDatabaseReference, completion: @escaping (([Track]) -> Void)) {
+        var allTracks = [Track]()
+        ref.observeSingleEvent(of: .value) { (snapshot:FIRDataSnapshot) in
+            if let val = snapshot.value as? [String:Any], let tracks = val["tracks"] as? [String] {
+                fref.observeSingleEvent(of: .value, with: { (snapshot: FIRDataSnapshot) in
+                    for trackKey in tracks {
+                        if snapshot.hasChild(trackKey){
+                            allTracks.append(Track(snapShot: snapshot))
+                        }
+                    }
+                    completion(allTracks)
+                })
+            }
+        }
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
 
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 0
+        return 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return 0
+        return parentVC.tracks.count
     }
 
-    /*
+   
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath)
 
         // Configure the cell...
 
         return cell
     }
-    */
 
     /*
     // Override to support conditional editing of the table view.
