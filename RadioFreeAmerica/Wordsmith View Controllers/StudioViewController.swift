@@ -697,6 +697,9 @@ class StudioViewController: UIViewController {
         // Point to the destination where did upload will be stored in the database
         let uploadDBRef = FIRDatabase.database().reference(withPath: "feed/\(genre.rawValue.lowercased())").childByAutoId()
         
+        // Point to the user, where the key of the track will be saved
+        let userDBRef = FIRDatabase.database().reference().child("users")
+        
         // Point to the destination where the audio file will be stored in FIRStorage
         let uploadStorageRef = FIRStorage.storage().reference(withPath: "uploads/\(user.uid!)/\(uploadDBRef.key).m4a")
         
@@ -744,16 +747,29 @@ class StudioViewController: UIViewController {
                         activityIndicatorView.removeFromSuperview()
                         return
                     }
-                    if let rootVC = self.presentingViewController as? WordsmithPageViewController {
-                        let navVC = rootVC.orderedViewControllers[2] as! UINavigationController
-                        let feedVC = navVC.topViewController as! WordsmithFeedViewController
-                        feedVC.fromStudio = true
-                        rootVC.setViewControllers([rootVC.orderedViewControllers[2]], direction: .forward, animated: false, completion: nil)
-                    }
-                    activityIndicatorView.removeFromSuperview()
-                    self.finalPlayer.stop()
-
-                    self.dismiss(animated: true, completion: nil)
+                    userDBRef.child(user.uid).observeSingleEvent(of: .value, with: { (snapshot:FIRDataSnapshot) in
+                        print(snapshot.value)
+                        var val = snapshot.value as! [String:Any]
+                        if var keys = val["tracks"] as? [String] {
+                            keys.append(uploadDBRef.key)
+                            val["tracks"] = keys
+                        } else {
+                            val["tracks"] = [uploadDBRef.key]
+                        }
+                        
+                        userDBRef.child(user.uid).setValue(val as Any, withCompletionBlock: { (error: Error?, ref: FIRDatabaseReference) in
+                            if let rootVC = self.presentingViewController as? WordsmithPageViewController {
+                                let navVC = rootVC.orderedViewControllers[2] as! UINavigationController
+                                let feedVC = navVC.topViewController as! WordsmithFeedViewController
+                                feedVC.fromStudio = true
+                                rootVC.setViewControllers([rootVC.orderedViewControllers[2]], direction: .forward, animated: false, completion: nil)
+                            }
+                            activityIndicatorView.removeFromSuperview()
+                            self.finalPlayer.stop()
+                            
+                            self.dismiss(animated: true, completion: nil)
+                        })
+                    })
                 })
             } else {
                 let message = "Could not access download URL: \(error?.localizedDescription)"
@@ -778,8 +794,6 @@ class StudioViewController: UIViewController {
                     activityIndicatorView.progressLabel!.text = string
                 }
             }
-            
-            
         }
     }
     

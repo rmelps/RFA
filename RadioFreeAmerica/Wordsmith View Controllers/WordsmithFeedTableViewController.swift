@@ -75,8 +75,8 @@ class WordsmithFeedTableViewController: UITableViewController {
         }
         
         if let row = selectedRow {
-            let indexPath = IndexPath(row: row, section: 0)
-            tableView.selectRow(at: indexPath, animated: true, scrollPosition: .middle)
+            //let indexPath = IndexPath(row: row, section: 0)
+            //tableView.selectRow(at: indexPath, animated: true, scrollPosition: .middle)
         }
     }
 
@@ -95,8 +95,9 @@ class WordsmithFeedTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
+        //TODO: There seems to be an issue when uploading the first track of a feed in displaying the correct cell
         let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! TrackTableViewCell
-        guard indexPath.row < tracks.count - 1 else {
+        guard indexPath.row < tracks.count else {
             return cell
         }
         let trackForCell = tracks[indexPath.row]
@@ -658,11 +659,22 @@ class WordsmithFeedTableViewController: UITableViewController {
             if let error = error {
                 completion(error)
             }
-            FIRStorage.storage().reference(forURL: fileURL).delete(completion: { (error: Error?) in
-                if let error = error {
-                    completion(error)
+            self.userDBRef.child(track.user).observeSingleEvent(of: .value, with: { (snapshot:FIRDataSnapshot) in
+                var val = snapshot.value as! [String:Any]
+                if var keys = val["tracks"] as? [String] {
+                    var keysSet = Set(keys)
+                    keysSet.remove(ref.key)
+                    val["tracks"] = Array(keysSet)
                 }
-                completion(nil)
+                self.userDBRef.child(track.user).setValue(val as Any, withCompletionBlock: { (error:Error?, reference: FIRDatabaseReference) in
+                    FIRStorage.storage().reference(forURL: fileURL).delete(completion: { (error: Error?) in
+                        if let error = error {
+                            completion(error)
+                        }
+                        completion(nil)
+                    })
+                })
+                
             })
         }
     }

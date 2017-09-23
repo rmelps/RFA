@@ -267,6 +267,7 @@ class MainViewController: UIViewController, GIDSignInUIDelegate {
                             
                             self.resizeAndMoveLogInButton(button: sender, type: .facebook, signingIn: true)
                             
+                            //TODO: Need to create case where profile already exists, so we don't overwrite it
                             if let firUser = user {
                                 
                                 let thisUserDBRef = self.userDBRef.child(firUser.uid)
@@ -275,25 +276,28 @@ class MainViewController: UIViewController, GIDSignInUIDelegate {
                                 for profile in firUser.providerData {
                                     
                                     let profPic = profile.photoURL!
-                                    let userProf = User(uid: firUser.uid, name: profile.displayName!, photoPath: String(describing: profile.photoURL!))
+                                    var userProf = User(uid: firUser.uid, name: profile.displayName!, photoPath: String(describing: profile.photoURL!))
                                     AppDelegate.signedInUser = userProf
                                     
                                     self.userDBRef.observeSingleEvent(of: .value, with: { (snapShot) in
                                         
                                         if snapShot.hasChild(firUser.uid) {
-                                            let snapVal = snapShot.childSnapshot(forPath: firUser.uid).value as? [String: Any]
+                                            let childSnap = snapShot.childSnapshot(forPath: firUser.uid)
+                                            let snapVal = childSnap.value as! [String: Any]
+                                            userProf = User(uid: firUser.uid, snapShot: childSnap, picURL: String(describing: profPic), nameFromProvider: nil)
+                                            AppDelegate.signedInUser = userProf
                                             print("observing user database...")
                                             
-                                            if let url = snapVal?["photoPath"] as? String {
+                                            if let url = snapVal["photoPath"] as? String {
                                                 print("found URL")
                                                 
                                                 let providerURL = String(describing:profPic)
-                                                
+                                                /*
                                                 if url != providerURL {
                                                     print("url's are not the same")
                                                     appDelegate.fetchAndSaveProfileImage(url: profile.photoURL!, storeRef: profPicStorRef, uid: firUser.uid)
                                                 } else {
-                                                    
+                                                */
                                                     let thisProfPicStoreRef = profPicStorRef.child(firUser.uid)
                                                     
                                                     thisProfPicStoreRef.data(withMaxSize: 5 * 1024 * 1024, completion: { (data, error) in
@@ -308,9 +312,9 @@ class MainViewController: UIViewController, GIDSignInUIDelegate {
                                                             AppDelegate.signedInProfileImage = UIImage(data: data!)
                                                         }
                                                     })
-                                                }
+                                              //  }
                                                 
-                                                thisUserDBRef.setValue(userProf.toAny())
+                                                //thisUserDBRef.setValue(userProf.toAny())
                                             }
                                         } else {
                                             appDelegate.fetchAndSaveProfileImage(url: profile.photoURL!, storeRef: profPicStorRef, uid: firUser.uid)
