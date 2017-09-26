@@ -138,7 +138,7 @@ class TrackTableViewCell: UITableViewCell {
             increase = true
         }
         if let vc = tableView.delegate as? WordsmithFeedTableViewController {
-            vc.modifyPostStat(statName: "stars", increase: increase, forTrack: self.track, inGenre: vc.genre, fromTempFiles: nil)
+            FireAudioManager.modifyPostStat(statName: "stars", increase: increase, forTrack: self.track, inGenre: vc.genre)
         }
     }
     @IBAction func saveButtonDidTouchUp(_ sender: UIButton) {
@@ -155,7 +155,7 @@ class TrackTableViewCell: UITableViewCell {
             increase = true
         }
         if let vc = vc {
-            vc.modifyPostStat(statName: "downloads", increase: increase, forTrack: self.track, inGenre: vc.genre, fromTempFiles: vc.quickLoadFiles)
+            FireAudioManager.modifyPostStat(statName: "downloads", increase: increase, forTrack: self.track, inGenre: vc.genre)
         }
     }
     
@@ -170,7 +170,7 @@ class TrackTableViewCell: UITableViewCell {
             increase = true
         }
         if let vc = tableView.delegate as? WordsmithFeedTableViewController {
-            vc.modifyPostStat(statName: "flags", increase: increase, forTrack: self.track, inGenre: vc.genre, fromTempFiles: nil)
+            FireAudioManager.modifyPostStat(statName: "flags", increase: increase, forTrack: self.track, inGenre: vc.genre)
         }
     }
 }

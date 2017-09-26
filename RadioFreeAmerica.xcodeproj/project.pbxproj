@@ -44,6 +44,7 @@
 		95E5F8601F64668100DE84DC /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E5F85F1F64668100DE84DC /* SettingsViewController.swift */; };
 		95EF0DD21F3F494600EC6DDC /* SavedTrackManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95EF0DD11F3F494600EC6DDC /* SavedTrackManager.swift */; };
 		95F1CD281F75D1D1009D25AF /* ProfileTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F1CD271F75D1D1009D25AF /* ProfileTableViewCell.swift */; };
+		95F1CD2A1F79BB63009D25AF /* FireAudioManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F1CD291F79BB63009D25AF /* FireAudioManager.swift */; };
 		EA25DE04343B6E4ADE610C92 /* Pods_RadioFreeAmerica.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B89A5A22515871740B93D705 /* Pods_RadioFreeAmerica.framework */; };
 /* End PBXBuildFile section */
 
@@ -102,6 +103,7 @@
 		95E5F85F1F64668100DE84DC /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		95EF0DD11F3F494600EC6DDC /* SavedTrackManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedTrackManager.swift; sourceTree = "<group>"; };
 		95F1CD271F75D1D1009D25AF /* ProfileTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileTableViewCell.swift; sourceTree = "<group>"; };
+		95F1CD291F79BB63009D25AF /* FireAudioManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireAudioManager.swift; sourceTree = "<group>"; };
 		A2EA3C87DBE567095C362C21 /* Pods-RadioFreeAmerica.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RadioFreeAmerica.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RadioFreeAmerica/Pods-RadioFreeAmerica.debug.xcconfig"; sourceTree = "<group>"; };
 		B89A5A22515871740B93D705 /* Pods_RadioFreeAmerica.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RadioFreeAmerica.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -153,6 +155,7 @@
 				951D22871EEF3DA5005264A7 /* AppDelegate.swift */,
 				951D22891EEF3DA5005264A7 /* MainViewController.swift */,
 				95EF0DD11F3F494600EC6DDC /* SavedTrackManager.swift */,
+				95F1CD291F79BB63009D25AF /* FireAudioManager.swift */,
 				951D228B1EEF3DA5005264A7 /* Main.storyboard */,
 				9535E3A81F14599D0025531E /* Wordsmith View Controllers */,
 				951D22B11EFA0EC4005264A7 /* GenreCollectionViewController.swift */,
@@ -391,6 +394,7 @@
 				95A200971F3933D900FDB910 /* StudioTextFieldDelegate.swift in Sources */,
 				9535E3A51F14581B0025531E /* WordsmithPageViewControllerChild.swift in Sources */,
 				9554D14A1F708E8E00104C44 /* ProfileTracksTableViewController.swift in Sources */,
+				95F1CD2A1F79BB63009D25AF /* FireAudioManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

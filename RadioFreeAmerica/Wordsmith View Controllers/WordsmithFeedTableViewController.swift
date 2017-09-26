@@ -30,7 +30,6 @@ class WordsmithFeedTableViewController: UITableViewController {
     
     var tracks = [Track]()
     var users = [String:String]()
-    var quickLoadFiles = [(key:String, file: AVAudioFile)]()
     
     var compressedHeight: CGFloat!
     var expandedHeight: CGFloat {
@@ -490,130 +489,6 @@ class WordsmithFeedTableViewController: UITableViewController {
             }
         }
     }
-    //MARK: - Cell Toolbar Actions
-    func modifyPostStat(statName name: String, increase: Bool, forTrack track: Track, inGenre genre: GenreChoices, fromTempFiles files: [(String, AVAudioFile)]?) {
-        /*
-        guard currentMode == .web else {
-            print("Like button should only be selectable in web mode")
-            return
-        }
-         */
-        //let track = tracks[row]
-        guard let key = track.key else {
-            print("Could not find key for track")
-            return
-        }
-        let feedDBRef = FIRDatabase.database().reference().child("feed/\(genre.rawValue.lowercased())")
-        let ref = feedDBRef.child(key)
-        ref.runTransactionBlock({ (thisData: FIRMutableData) -> FIRTransactionResult in
-            if var post = thisData.value as? [String: Any], let uid = FIRAuth.auth()?.currentUser?.uid {
-                let stat = post[name] as? [String] ?? []
-                var statSet = Set(stat)
-                if increase {
-                    statSet.insert(uid)
-                } else {
-                    statSet.remove(uid)
-                }
-                let statArr = Array(statSet)
-                post[name] = statArr as Any
-                
-                switch name {
-                case "downloads":
-                    if let files = files, self.saveTrackToLibrary(track, fromTempDirFiles: files) {
-                        
-                        thisData.value = post
-                        track.downloads = statArr
-                    }
-                case "stars":
-                    thisData.value = post
-                    track.stars = statArr
-                case "flags":
-                    thisData.value = post
-                    track.flags = statArr
-                default:
-                    break
-                }
-                
-                return FIRTransactionResult.success(withValue: thisData)
-            }
-            return FIRTransactionResult.success(withValue: thisData)
-            
-        }) { (error: Error?, isCommitted: Bool, snapshot: FIRDataSnapshot?) in
-            if let error = error {
-                print("Error is data transaction: \(error.localizedDescription)")
-            }
-            if isCommitted {
-                print("committed data")
-                var num = 0
-                
-                if increase {
-                    num += 1
-                } else {
-                    num -= 1
-                }
-                let userDBRef = FIRDatabase.database().reference().child("users")
-                let ref = userDBRef.child(track.user)
-                ref.runTransactionBlock({ (data: FIRMutableData) -> FIRTransactionResult in
-                    print("running block")
-                    if var prof = data.value as? [String:Any] {
-                        switch name {
-                        case "downloads":
-                            var dl = prof["downloads"] as? Int ?? 0
-                            dl += num
-                            prof["downloads"] = dl
-                            data.value = prof
-                        case "stars":
-                            var star = prof["stars"] as? Int ?? 0
-                            star += num
-                            prof["stars"] = star
-                            data.value = prof
-                        default:
-                            break
-                        }
-                        print("commiting data: \(name): \(data.value)")
-                        return FIRTransactionResult.success(withValue: data)
-                    }
-                    return FIRTransactionResult.success(withValue: data)
-                })
-                
-            } else {
-                print("could not commit data")
-            }
-        }
-    }
-    
-    func saveTrackToLibrary(_ track: Track, fromTempDirFiles files: [(String, AVAudioFile)]) -> Bool {
-        let trackToSave = track
-        guard let FIRkey = track.key else {
-            print("no key found for track")
-            return false
-        }
-        var url: URL?
-        
-        for (key,file) in files {
-            if key == FIRkey {
-                url = file.url
-                break
-            }
-        }
-        
-        if let url = url {
-            trackToSave.fileURL = url.lastPathComponent
-            if SavedTrackManager.saveNewTrack(newTrack: trackToSave, tempLocation: url) {
-                let alert = UIAlertController(title: "Saved!", message: "\"\(track.title)\" has been saved!", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Nice", style: .cancel, handler: nil))
-                self.present(alert, animated: true, completion: nil)
-                return true
-            } else {
-                AppDelegate.presentErrorAlert(withMessage: "Could not save Track", fromViewController: parentVC)
-                return false
-            }
-        } else {
-            AppDelegate.presentErrorAlert(withMessage: "Song has not finished downloading!", fromViewController: parentVC)
-            return false
-        }
-    
-    }
     
     //MARK: - Navigation
     
@@ -644,39 +519,15 @@ class WordsmithFeedTableViewController: UITableViewController {
             handler(user)
         }
     }
-    
+ 
     //MARK: - File Handling functions
     
     func removeTrackFromFirebase(track: Track, completion: @escaping (Error?) -> Void) {
-        guard currentMode == .web, let key = track.key else {
+        guard currentMode == .web else {
             print("can not remove from Firebase, mode is \(currentMode.rawValue)")
             return
         }
-        let fileURL = track.fileURL
-        let ref = feedDBRef.child(key)
-        
-        ref.removeValue { (error: Error?, reference: FIRDatabaseReference) in
-            if let error = error {
-                completion(error)
-            }
-            self.userDBRef.child(track.user).observeSingleEvent(of: .value, with: { (snapshot:FIRDataSnapshot) in
-                var val = snapshot.value as! [String:Any]
-                if var keys = val["tracks"] as? [String] {
-                    var keysSet = Set(keys)
-                    keysSet.remove(ref.key)
-                    val["tracks"] = Array(keysSet)
-                }
-                self.userDBRef.child(track.user).setValue(val as Any, withCompletionBlock: { (error:Error?, reference: FIRDatabaseReference) in
-                    FIRStorage.storage().reference(forURL: fileURL).delete(completion: { (error: Error?) in
-                        if let error = error {
-                            completion(error)
-                        }
-                        completion(nil)
-                    })
-                })
-                
-            })
-        }
+        FireAudioManager.removeTrackFromFirebase(track: track, fromFeedDBRef: feedDBRef, completion: completion)
     }
     
     func retrieveLocalAudioFile(forTrack track: Track) {
@@ -687,7 +538,6 @@ class WordsmithFeedTableViewController: UITableViewController {
         if let player = audioPlayer, player.isPlaying {
             player.stop()
         }
-        
         do {
             let url = SavedTrackManager.getLocalURL(forTrack: track)
             audioPlayer = try AVAudioPlayer(contentsOf: url, fileTypeHint: ".m4a")
@@ -699,71 +549,23 @@ class WordsmithFeedTableViewController: UITableViewController {
     }
     
     func loadAndStoreAudioFile(forTrack track: Track) {
-        //TODO: Need to create custom fadeIn and fadeOut on audioplayers (since I'm scrapping audiokit for this view controller)
-        guard let key = track.key else {
-            print("Can not find key for track")
-            return
-        }
+        
         if let player = audioPlayer, player.isPlaying {
             player.stop()
         }
-        for (name, file) in quickLoadFiles {
-            if name == key {
+        
+        FireAudioManager.loadAndStoreAudioFile(forTrack: track, fromFeedDBRef: self.feedDBRef) { (file: AVAudioFile?, error: Error?) in
+            if let error = error {
+                AppDelegate.presentErrorAlert(withMessage: error.localizedDescription, fromViewController: self.parentVC)
+            } else if let file = file {
                 do {
-                    audioPlayer = try AVAudioPlayer(contentsOf: file.url, fileTypeHint: ".m4a")
-                    audioPlayer.numberOfLoops = -1
-                    audioPlayer.play()
-                    return
+                    self.audioPlayer = try AVAudioPlayer(contentsOf: file.url, fileTypeHint: ".m4a")
+                    self.audioPlayer.numberOfLoops = -1
+                    self.audioPlayer.play()
                 } catch {
-                    print("error in playing saved audio file: \(error.localizedDescription)")
-                    return
+                    AppDelegate.presentErrorAlert(withMessage: "Could not play track!", fromViewController: self.parentVC)
                 }
             }
         }
-        // If the requested track is not already saved, then we will download the track from firebase, and if our temporary storage contains more than X tracks, we will pop the first one from storage.
-        
-        feedDBRef.child(track.key!).observeSingleEvent(of: .value) { (snapshot: FIRDataSnapshot) in
-            let fileManager = FileManager.default
-            let fileNameRand = "\(UUID().uuidString).m4a"
-            let localURL = fileManager.temporaryDirectory.appendingPathComponent(fileNameRand)
-            if let value = snapshot.value as? [String: Any] {
-                let url = value["fileURL"] as! String
-                let ref = FIRStorage.storage().reference(forURL: url)
-                
-                ref.write(toFile: localURL, completion: { (url: URL?, error: Error?) in
-                    if let url = url {
-                        do {
-                            let file = try AVAudioFile(forReading: url)
-                            self.audioPlayer = try AVAudioPlayer(contentsOf: url, fileTypeHint: ".m4a")
-                            self.quickLoadFiles.append((key: key, file: file))
-                            
-                            if self.quickLoadFiles.count > 5 {
-                                let first = self.quickLoadFiles.first
-                                do {
-                                    try fileManager.removeItem(at: first!.file.url)
-                                    self.quickLoadFiles.remove(at: 0)
-                                } catch {
-                                    print("Could not remove audio file: \(error.localizedDescription)")
-                                }
-                            }
- 
-                            self.audioPlayer.numberOfLoops = -1
-                            self.audioPlayer.play()
-               
-                        } catch {
-                            print("error in creating ak audio file: \(error.localizedDescription)")
-                        }
-                    } else if let error = error {
-                        print("Audio download error: \(error.localizedDescription)")
-                    }
-                })
-                
-            } else {
-                AppDelegate.presentErrorAlert(withMessage: "Track is no longer available", fromViewController: self.parentVC)
-                return
-            }
-            
-        }
-        
     }
 }
