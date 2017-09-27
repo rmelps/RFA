@@ -105,6 +105,7 @@ struct RFAUser {
     }
     
     init(userData: User) {
+        //Should not show user error
         uid = userData.uid
         name = userData.displayName
         itemRef = nil
